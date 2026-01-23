@@ -1,9 +1,11 @@
+import { useState } from "react";
 import {
   Download,
   MessageSquare,
   CheckCircle,
   Clock,
   Users,
+  Loader2,
 } from "lucide-react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminStatCard from "../../components/admin/AdminStatCard";
@@ -12,10 +14,65 @@ import TrendsTimeChart from "../../components/admin/TrendsTimeChart";
 import UserManagementTable from "../../components/admin/UserManagementTable";
 import { useDashboardSummary } from "../../hooks/useAnalytics";
 import { useCurrentProfile } from "../../hooks/useUsers";
+import { getCategoryStats, getTrendStats } from "../../api/analytics";
+import { exportToCSV, todayString } from "../../lib/exportUtils";
 
 const Dashboard = () => {
   const { data: stats } = useDashboardSummary();
   const { data: currentProfile } = useCurrentProfile();
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const [categories, trends] = await Promise.all([
+        getCategoryStats(),
+        getTrendStats(),
+      ]);
+
+      exportToCSV(`astu-admin-report-${todayString()}`, [
+        {
+          title: "System Summary",
+          rows: [
+            {
+              Metric: "Total Complaints",
+              Value: stats?.total_complaints ?? "N/A",
+            },
+            {
+              Metric: "Resolution Rate",
+              Value: stats?.resolution_rate ?? "N/A",
+            },
+            {
+              Metric: "Avg. Resolution Time",
+              Value: stats?.avg_resolution_time ?? "N/A",
+            },
+            {
+              Metric: "Active Users",
+              Value: stats?.active_users ?? "N/A",
+            },
+          ],
+        },
+        {
+          title: "Complaints by Category",
+          rows: categories.map((c) => ({
+            Category: c.category.replace(/_/g, " "),
+            Count: c.count,
+          })),
+        },
+        {
+          title: "Monthly Trends (Last 6 Months)",
+          rows: trends.map((t) => ({
+            Month: t.month,
+            "Complaints Received": t.count,
+          })),
+        },
+      ]);
+    } catch (err) {
+      console.error("Export failed:", err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <AdminLayout>
@@ -34,9 +91,17 @@ const Dashboard = () => {
               <Clock size={16} />
               Last 30 Days
             </button>
-            <button className="btn-primary shadow-lg shadow-blue-900/20 hover:-translate-y-0.5 transition-all">
-              <Download size={16} />
-              Export Report
+            <button
+              onClick={handleExport}
+              disabled={isExporting}
+              className="btn-primary shadow-lg shadow-blue-900/20 hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
+            >
+              {isExporting ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Download size={16} />
+              )}
+              {isExporting ? "Exporting..." : "Export Report"}
             </button>
           </div>
         </div>
@@ -90,7 +155,6 @@ const Dashboard = () => {
         {/* User Management Section */}
         <UserManagementTable currentUserId={currentProfile?.id} />
       </div>
-
     </AdminLayout>
   );
 };
