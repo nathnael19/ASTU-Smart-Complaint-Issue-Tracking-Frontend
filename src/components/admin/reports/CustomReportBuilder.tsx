@@ -4,17 +4,108 @@ import {
   FileText,
   FileSpreadsheet,
   Send,
+  Loader2,
 } from "lucide-react";
 import { useState } from "react";
+import {
+  exportToCSV,
+  exportToPDF,
+  todayString,
+} from "../../../lib/exportUtils";
+import {
+  getDashboardSummary,
+  getCategoryStats,
+  getTrendStats,
+} from "../../../api/analytics";
 
 const CustomReportBuilder = () => {
   const [format, setFormat] = useState<"PDF" | "EXCEL">("PDF");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [category, setCategory] = useState("All Departments");
+  const [isGenerating, setIsGenerating] = useState(false);
   const [metrics, setMetrics] = useState({
     totalVolume: true,
     resolutionRate: true,
     avgResponseTime: false,
     userFeedback: false,
   });
+
+  const handleGenerate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsGenerating(true);
+    try {
+      const [summary, categories, trends] = await Promise.all([
+        getDashboardSummary(),
+        getCategoryStats(),
+        getTrendStats(),
+      ]);
+
+      const dateRange =
+        startDate && endDate ? `${startDate} to ${endDate}` : "All Time";
+
+      const reportTitle = `ASTU Custom Report — ${category} (${dateRange})`;
+
+      const sections = [];
+
+      if (
+        metrics.totalVolume ||
+        metrics.resolutionRate ||
+        metrics.avgResponseTime
+      ) {
+        const summaryRows: Record<string, string | number>[] = [];
+        if (metrics.totalVolume)
+          summaryRows.push({
+            Metric: "Total Complaints",
+            Value: summary.total_complaints,
+          });
+        if (metrics.resolutionRate)
+          summaryRows.push({
+            Metric: "Resolution Rate",
+            Value: summary.resolution_rate,
+          });
+        if (metrics.avgResponseTime)
+          summaryRows.push({
+            Metric: "Avg. Resolution Time",
+            Value: summary.avg_resolution_time,
+          });
+        if (metrics.userFeedback)
+          summaryRows.push({
+            Metric: "Active Users",
+            Value: summary.active_users,
+          });
+        sections.push({ title: "System Summary", rows: summaryRows });
+      }
+
+      sections.push({
+        title: "Complaints by Category",
+        rows: categories.map((c) => ({
+          Category: c.category.replace(/_/g, " "),
+          Count: c.count,
+        })),
+      });
+
+      sections.push({
+        title: "Monthly Trends",
+        rows: trends.map((t) => ({
+          Month: t.month,
+          "Complaints Received": t.count,
+        })),
+      });
+
+      const filename = `astu-custom-report-${todayString()}`;
+
+      if (format === "EXCEL") {
+        exportToCSV(filename, sections);
+      } else {
+        exportToPDF(reportTitle, sections, new Date().toLocaleString());
+      }
+    } catch (err) {
+      console.error("Report generation failed:", err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 h-full">
@@ -27,7 +118,7 @@ const CustomReportBuilder = () => {
         </h3>
       </div>
 
-      <form className="space-y-8">
+      <form className="space-y-8" onSubmit={handleGenerate}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-3">
             <label className="text-sm font-black text-gray-900 uppercase tracking-widest pl-1">
@@ -36,10 +127,14 @@ const CustomReportBuilder = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <input
                 type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
                 className="flex-1 bg-slate-50 border border-transparent rounded-xl py-3 px-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold"
               />
               <input
                 type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
                 className="flex-1 bg-slate-50 border border-transparent rounded-xl py-3 px-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold"
               />
             </div>
@@ -50,11 +145,16 @@ const CustomReportBuilder = () => {
               Target Category
             </label>
             <div className="relative group">
-              <select className="w-full bg-slate-50 border border-transparent rounded-xl py-3 pl-4 pr-10 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold appearance-none cursor-pointer">
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full bg-slate-50 border border-transparent rounded-xl py-3 pl-4 pr-10 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold appearance-none cursor-pointer"
+              >
                 <option>All Departments</option>
-                <option>Software Engineering</option>
-                <option>Civil Engineering</option>
-                <option>IT Infrastructure</option>
+                <option>IT &amp; Network</option>
+                <option>Facility &amp; Maintenance</option>
+                <option>Academic Affairs</option>
+                <option>Student Services</option>
               </select>
               <ChevronDown
                 size={18}
@@ -123,13 +223,18 @@ const CustomReportBuilder = () => {
 
           <button
             type="submit"
-            className="w-full sm:w-auto bg-primary text-white px-8 py-3.5 rounded-xl font-black text-sm shadow-xl shadow-blue-900/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-3 group"
+            disabled={isGenerating}
+            className="w-full sm:w-auto bg-primary text-white px-8 py-3.5 rounded-xl font-black text-sm shadow-xl shadow-blue-900/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-3 group disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <Send
-              size={18}
-              className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
-            />
-            Generate Report
+            {isGenerating ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <Send
+                size={18}
+                className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
+              />
+            )}
+            {isGenerating ? "Generating..." : "Generate Report"}
           </button>
         </div>
       </form>
