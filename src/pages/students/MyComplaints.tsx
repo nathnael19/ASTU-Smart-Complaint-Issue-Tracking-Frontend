@@ -120,20 +120,18 @@ const MyComplaints = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-8 space-y-8 max-w-[1600px] mx-auto pb-20">
+      <div className="page pb-20">
         {/* Header section */}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
-              My Complaints
-            </h1>
-            <p className="text-gray-400 font-medium font-sans">
+            <h1 className="page-title">My Complaints</h1>
+            <p className="page-subtitle">
               Manage and track the status of all your submitted issues.
             </p>
           </div>
           <button
             onClick={() => navigate("/student/submit")}
-            className="bg-[#1e3a8a] text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0"
+            className="btn-primary px-7 py-4 text-base shadow-xl shadow-blue-900/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
           >
             <Plus size={20} />
             Submit New Complaint
@@ -141,7 +139,7 @@ const MyComplaints = () => {
         </div>
 
         {/* Filter Section */}
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6 space-y-6">
+        <div className="card p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Search Filter */}
             <div className="space-y-2">
@@ -151,7 +149,7 @@ const MyComplaints = () => {
               <div className="relative group">
                 <Search
                   size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
                 />
                 <input
                   type="text"
@@ -160,7 +158,7 @@ const MyComplaints = () => {
                   onChange={(e) =>
                     handleFilterChange("searchQuery", e.target.value)
                   }
-                  className="w-full bg-slate-50 border-none rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all"
+                  className="w-full bg-slate-50 border-none rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all"
                 />
               </div>
             </div>
@@ -175,7 +173,7 @@ const MyComplaints = () => {
                 onChange={(e) =>
                   handleFilterChange("statusFilter", e.target.value)
                 }
-                className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all appearance-none cursor-pointer"
+                className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
               >
                 <option>All Statuses</option>
                 <option>Open</option>
@@ -196,7 +194,7 @@ const MyComplaints = () => {
                   onChange={(e) =>
                     handleFilterChange("startDate", e.target.value)
                   }
-                  className="flex-1 bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all uppercase"
+                  className="flex-1 bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all uppercase"
                 />
                 <span className="text-gray-400 font-bold">to</span>
                 <input
@@ -205,7 +203,7 @@ const MyComplaints = () => {
                   onChange={(e) =>
                     handleFilterChange("endDate", e.target.value)
                   }
-                  className="flex-1 bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all uppercase"
+                  className="flex-1 bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all uppercase"
                 />
               </div>
             </div>
@@ -217,7 +215,7 @@ const MyComplaints = () => {
             filters.endDate) && (
             <button
               onClick={handleClearFilters}
-              className="flex items-center gap-2 text-xs font-black text-gray-500 hover:text-[#1e3a8a] transition-colors bg-gray-50 px-4 py-2 rounded-lg group animate-in fade-in slide-in-from-top-1 duration-300"
+              className="flex items-center gap-2 text-xs font-black text-gray-500 hover:text-primary transition-colors bg-gray-50 px-4 py-2 rounded-lg group animate-in fade-in slide-in-from-top-1 duration-300"
             >
               <X
                 size={14}
@@ -229,7 +227,7 @@ const MyComplaints = () => {
         </div>
 
         {/* Complaints Table */}
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden min-h-[500px] flex flex-col">
+        <div className="card overflow-hidden min-h-[500px] flex flex-col">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left">
               <thead>
@@ -367,7 +365,7 @@ const MyComplaints = () => {
                           </td>
                           <td className="px-8 py-6">
                             <div className="flex flex-col">
-                              <span className="text-sm font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors">
+                              <span className="text-sm font-black text-gray-900 group-hover:text-primary transition-colors">
                                 {complaint.title}
                               </span>
                               <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">
@@ -423,7 +421,7 @@ const MyComplaints = () => {
                               onClick={() =>
                                 navigate(`/student/complaints/${complaint.id}`)
                               }
-                              className="bg-slate-50 hover:bg-[#1e3a8a] text-gray-400 hover:text-white p-2.5 rounded-xl transition-all flex items-center gap-2 ml-auto group/btn shadow-sm"
+                              className="bg-slate-50 hover:bg-primary text-gray-400 hover:text-white p-2.5 rounded-xl transition-all flex items-center gap-2 ml-auto group/btn shadow-sm"
                             >
                               <Eye size={16} />
                               <span className="text-xs font-black uppercase hidden lg:block px-1">
@@ -478,7 +476,7 @@ const MyComplaints = () => {
                       className={cn(
                         "w-8 h-8 flex items-center justify-center rounded-lg text-xs font-black transition-all",
                         currentPage === p
-                          ? "bg-[#1e3a8a] text-white shadow-lg shadow-blue-900/20"
+                          ? "bg-primary text-white shadow-lg shadow-blue-900/20"
                           : "border border-gray-100 text-gray-900 hover:bg-gray-50",
                       )}
                       disabled={isLoading}
