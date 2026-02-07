@@ -49,7 +49,7 @@ const Settings = () => {
               <div className="space-y-4 px-2">
                 <h1 className="text-3xl font-black text-gray-900 tracking-tight pl-2">
                   Account & <br />
-                  <span className="text-[#1e3a8a]">System Settings</span>
+                  <span className="text-primary">System Settings</span>
                 </h1>
               </div>
 
@@ -64,7 +64,7 @@ const Settings = () => {
                       className={cn(
                         "w-full flex items-center gap-4 px-6 py-5 rounded-[1.75rem] transition-all duration-300 group relative",
                         isActive
-                          ? "bg-blue-50/80 text-blue-600 border border-blue-100/50 shadow-none"
+                          ? "bg-primary/5 text-primary border border-primary/10 shadow-none"
                           : "text-gray-400 hover:text-gray-900 hover:bg-slate-50",
                       )}
                     >
@@ -79,7 +79,7 @@ const Settings = () => {
                         {tab.label}
                       </span>
                       {isActive && (
-                        <div className="absolute right-6 w-1.5 h-1.5 rounded-full bg-blue-600" />
+                        <div className="absolute right-6 w-1.5 h-1.5 rounded-full bg-primary" />
                       )}
                     </button>
                   );
@@ -92,7 +92,7 @@ const Settings = () => {
           <div className="flex-1 min-w-0">
             {isLoading ? (
               <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-20 flex flex-col items-center justify-center gap-4">
-                <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
                 <p className="text-gray-400 font-bold">
                   Loading your settings...
                 </p>
@@ -106,7 +106,7 @@ const Settings = () => {
                 </p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="mt-4 text-blue-600 font-black text-sm"
+                  className="mt-4 text-primary font-black text-sm"
                 >
                   Try Again
                 </button>
