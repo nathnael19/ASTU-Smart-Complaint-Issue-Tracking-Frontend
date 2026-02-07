@@ -154,26 +154,23 @@ const SubmitComplaint = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col min-h-full bg-[#fcfdfe]">
-        <div className="p-4 sm:p-8 lg:p-10 max-w-[1400px] mx-auto w-full space-y-6 sm:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          {/* Page Title & Intro */}
-          <div className="space-y-3 sm:space-y-4">
-            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 border border-blue-100 text-[11px] font-medium text-blue-900">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-              New complaint
-            </div>
-            <div className="space-y-2 sm:space-y-3">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">
-                Submit New Complaint
-              </h1>
-              <p className="text-sm sm:text-base font-medium text-gray-500 max-w-2xl leading-relaxed">
-                Tell us what&apos;s going wrong and where it&apos;s happening.{" "}
-                <span className="text-gray-700 font-semibold">
-                  Clear details help us respond faster.
-                </span>
-              </p>
-            </div>
+      <div className="page pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        {/* Page Title & Intro */}
+        <div className="space-y-3 sm:space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary/5 px-3 py-1 border border-primary/10 text-[11px] font-medium text-primary">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            New complaint
           </div>
+          <div className="space-y-2 sm:space-y-3">
+            <h1 className="page-title">Submit New Complaint</h1>
+            <p className="text-sm sm:text-base font-medium text-gray-500 max-w-2xl leading-relaxed">
+              Tell us what&apos;s going wrong and where it&apos;s happening.{" "}
+              <span className="text-gray-700 font-semibold">
+                Clear details help us respond faster.
+              </span>
+            </p>
+          </div>
+        </div>
 
           {isSuccess && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-[1.5rem] p-6 text-center animate-in zoom-in-95 duration-300">
@@ -193,13 +190,13 @@ const SubmitComplaint = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
-            {/* Left Column: Form */}
-            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-              <form
-                onSubmit={handleSubmit}
-                className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 shadow-sm p-6 sm:p-8 lg:p-12 space-y-8 sm:space-y-10 overflow-hidden"
-              >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
+          {/* Left Column: Form */}
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            <form
+              onSubmit={handleSubmit}
+              className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 shadow-sm p-6 sm:p-8 lg:p-12 space-y-8 sm:space-y-10 overflow-hidden"
+            >
                 {/* Complaint Title */}
                 <div className="space-y-2 sm:space-y-3">
                   <label className="flex items-center justify-between px-1">
@@ -215,7 +212,7 @@ const SubmitComplaint = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Wi-Fi connection issue in Block 4"
-                    className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 transition-all"
+                    className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/20 transition-all"
                   />
                 </div>
 
@@ -234,7 +231,7 @@ const SubmitComplaint = () => {
                       <select
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 transition-all appearance-none cursor-pointer"
+                        className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/20 transition-all appearance-none cursor-pointer"
                       >
                         <option value="">Select a category</option>
                         <option value="IT & Network">IT &amp; Network</option>
@@ -291,7 +288,7 @@ const SubmitComplaint = () => {
                           className={cn(
                             "flex-1 min-w-[90px] py-2.5 sm:py-3 rounded-[1rem] sm:rounded-[1.25rem] border text-left px-3 sm:px-4 transition-all",
                             urgency === level.value
-                              ? "border-blue-900 bg-blue-50 text-blue-900 shadow-sm"
+                              ? "border-primary bg-primary/5 text-primary shadow-sm"
                               : "border-gray-200 bg-white text-gray-900 hover:border-gray-300",
                           )}
                         >
@@ -328,7 +325,7 @@ const SubmitComplaint = () => {
                         )
                       }
                       placeholder="Describe what happened, when it started, where it occurs, and any reference numbers (e.g. lab, room, course code)…"
-                      className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 transition-all resize-none leading-relaxed"
+                      className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/20 transition-all resize-none leading-relaxed"
                     />
                     <div className="flex items-center justify-between text-[11px] text-gray-400 px-1">
                       <span>
@@ -360,8 +357,8 @@ const SubmitComplaint = () => {
                     className={cn(
                       "relative border-2 border-dashed rounded-[1.5rem] sm:rounded-[2rem] p-6 sm:p-8 transition-all group flex flex-col items-center justify-center gap-3 sm:gap-4 text-center cursor-pointer",
                       dragActive
-                        ? "border-blue-600 bg-blue-50/40"
-                        : "border-blue-100 bg-slate-50/60 hover:bg-slate-50 hover:border-blue-200",
+                        ? "border-primary bg-primary/5"
+                        : "border-primary/15 bg-slate-50/60 hover:bg-slate-50 hover:border-primary/25",
                     )}
                     onClick={() => {
                       document.getElementById("complaint-file-input")?.click();
@@ -437,7 +434,7 @@ const SubmitComplaint = () => {
                   <div className="flex items-center justify-end gap-3 sm:gap-4 w-full lg:w-auto">
                     <button
                       type="button"
-                      className="text-[11px] sm:text-xs font-semibold text-gray-600 hover:text-blue-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl hover:bg-slate-50 transition-colors"
+                      className="text-[11px] sm:text-xs font-semibold text-gray-600 hover:text-primary px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl hover:bg-slate-50 transition-colors"
                     >
                       Save as draft
                     </button>
@@ -458,20 +455,20 @@ const SubmitComplaint = () => {
                           !category ||
                           !description.trim()
                           ? "bg-gray-300 text-gray-600 cursor-not-allowed shadow-none"
-                          : "bg-[#1e3a8a] text-white shadow-blue-900/20 hover:bg-blue-900 hover:translate-y-[-1px]",
+                          : "bg-primary text-white shadow-blue-900/20 hover:bg-primary/90 hover:translate-y-[-1px]",
                       )}
                     >
                       {isSubmitting ? "Submitting..." : "Submit complaint"}
                     </button>
                   </div>
                 </div>
-              </form>
-            </div>
+            </form>
+          </div>
 
-            {/* Right Column: Information & Sidebars */}
-            <div className="space-y-6 sm:space-y-10">
-              {/* Submission Guide Card */}
-              <div className="bg-[#1e3a8a] rounded-[1.5rem] sm:rounded-[2.5rem] p-8 sm:p-12 text-white space-y-6 sm:space-y-10 shadow-2xl shadow-blue-900/10 relative overflow-hidden group">
+          {/* Right Column: Information & Sidebars */}
+          <div className="space-y-6 sm:space-y-10">
+            {/* Submission Guide Card */}
+            <div className="bg-primary rounded-[1.5rem] sm:rounded-[2.5rem] p-8 sm:p-12 text-white space-y-6 sm:space-y-10 shadow-2xl shadow-blue-900/10 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
                 <h3 className="text-xl sm:text-2xl font-black tracking-tight">
                   Submission Guide
@@ -492,7 +489,7 @@ const SubmitComplaint = () => {
                     </div>
                   ))}
                 </div>
-              </div>
+            </div>
 
               {/* Need Help Card */}
               <div className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] p-8 sm:p-12 border border-gray-100 shadow-sm space-y-8 sm:space-y-10">
@@ -553,7 +550,6 @@ const SubmitComplaint = () => {
                   </p>
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </div>
