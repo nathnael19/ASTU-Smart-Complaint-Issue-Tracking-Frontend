@@ -66,13 +66,11 @@ const MyTickets = () => {
 
   return (
     <StaffDashboardLayout>
-      <div className="p-8 space-y-8 max-w-[1600px] mx-auto">
+      <div className="page">
         {/* Page Header */}
         <div className="space-y-1">
-          <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
-            My Tickets
-          </h1>
-          <p className="text-gray-500 font-medium max-w-xl">
+          <h1 className="page-title">My Tickets</h1>
+          <p className="page-subtitle max-w-xl">
             Review and manage your assigned student complaints.
           </p>
         </div>
@@ -111,13 +109,13 @@ const MyTickets = () => {
         </div>
 
         {/* Tickets Table Card */}
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div className="card overflow-hidden">
           {/* Search + Filters */}
           <div className="px-6 sm:px-8 pt-6 pb-4 border-b border-gray-50 space-y-4">
             <div className="flex flex-col lg:flex-row lg:items-center gap-4">
               <div className="flex-1">
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
                     <Search size={18} />
                   </div>
                   <input
@@ -125,7 +123,7 @@ const MyTickets = () => {
                     placeholder="Search by Ticket ID or Subject..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-slate-50 border border-gray-100 rounded-2xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 focus:border-[#1e3a8a]/20 transition-all text-sm font-medium"
+                    className="w-full bg-slate-50 border border-gray-100 rounded-2xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/20 transition-all text-sm font-medium"
                   />
                 </div>
               </div>
@@ -197,7 +195,7 @@ const MyTickets = () => {
                       key={ticket.id}
                       className="hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-6 sm:px-8 py-5 text-xs font-black text-[#1e3a8a]">
+                      <td className="px-6 sm:px-8 py-5 text-xs font-black text-primary">
                         {ticket.ticket_number || ticket.id.substring(0, 8)}
                       </td>
                       <td className="px-6 sm:px-8 py-5">
@@ -239,7 +237,7 @@ const MyTickets = () => {
                           ticket.status !== "CLOSED" && (
                             <button
                               onClick={() => handleProcess(ticket.id)}
-                              className="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-bold bg-[#1e3a8a] text-white shadow-sm hover:bg-blue-900 transition-colors"
+                              className="btn-primary px-4 py-2 rounded-xl text-xs"
                             >
                               Process
                             </button>
@@ -262,7 +260,7 @@ const MyTickets = () => {
               <button className="w-8 h-8 rounded-full border border-gray-200 text-xs font-semibold text-gray-500 hover:bg-gray-50">
                 {"<"}
               </button>
-              <button className="w-8 h-8 rounded-full bg-[#1e3a8a] text-white text-xs font-semibold">
+              <button className="w-8 h-8 rounded-full bg-primary text-white text-xs font-semibold">
                 1
               </button>
               <button className="w-8 h-8 rounded-full border border-gray-200 text-xs font-semibold text-gray-500 hover:bg-gray-50">
