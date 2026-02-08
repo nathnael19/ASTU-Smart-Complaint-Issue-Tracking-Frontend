@@ -34,20 +34,18 @@ const StaffSettings = () => {
 
   return (
     <StaffDashboardLayout>
-      <div className="p-8 max-w-[1000px] mx-auto min-h-screen bg-slate-50/30">
+      <div className="page max-w-[1000px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 px-2">
           <div>
-            <h1 className="text-[28px] font-black text-gray-900 tracking-tight leading-tight">
-              Account Settings
-            </h1>
-            <p className="text-[14px] text-gray-500 font-medium mt-1">
+            <h1 className="page-title">Account Settings</h1>
+            <p className="page-subtitle mt-1">
               Manage your professional profile and application preferences.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="px-6 py-2.5 bg-[#1e3a8a] text-white rounded-xl font-bold text-[13px] shadow-sm hover:bg-blue-900 transition-colors">
+            <button className="btn-primary px-6 py-2.5 rounded-xl text-[13px] shadow-sm">
               Save Changes
             </button>
           </div>
@@ -65,7 +63,7 @@ const StaffSettings = () => {
                   onClick={() => setActiveTab(tab.name)}
                   className={`flex items-center gap-2 px-4 py-3 border-b-2 text-[13px] font-bold transition-all whitespace-nowrap ${
                     isActive
-                      ? "border-[#1e3a8a] text-[#1e3a8a]"
+                      ? "border-primary text-primary"
                       : "border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-200"
                   }`}
                 >
@@ -95,7 +93,7 @@ const StaffSettings = () => {
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     />
                   </div>
                   <div>
@@ -106,7 +104,7 @@ const StaffSettings = () => {
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     />
                   </div>
                   <div>
@@ -117,7 +115,7 @@ const StaffSettings = () => {
                       <select
                         value={department}
                         onChange={(e) => setDepartment(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold appearance-none focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       >
                         <option value="Electrical & Computer Engineering">
                           Electrical & Computer Engineering
@@ -146,7 +144,7 @@ const StaffSettings = () => {
                       type="text"
                       value={officeLocation}
                       onChange={(e) => setOfficeLocation(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     />
                   </div>
                 </div>
@@ -175,7 +173,7 @@ const StaffSettings = () => {
                       type="button"
                       onClick={() => setEmailAlerts(!emailAlerts)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        emailAlerts ? "bg-[#1e3a8a]" : "bg-gray-200"
+                        emailAlerts ? "bg-primary" : "bg-gray-200"
                       }`}
                     >
                       <span
@@ -201,7 +199,7 @@ const StaffSettings = () => {
                       type="button"
                       onClick={() => setSmsAlerts(!smsAlerts)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        smsAlerts ? "bg-[#1e3a8a]" : "bg-gray-200"
+                        smsAlerts ? "bg-primary" : "bg-gray-200"
                       }`}
                     >
                       <span
@@ -231,7 +229,7 @@ const StaffSettings = () => {
                       6 months for better security.
                     </p>
                   </div>
-                  <button className="px-5 py-2 border-2 border-[#1e3a8a] text-[#1e3a8a] rounded-xl font-bold text-[13px] hover:bg-blue-50 transition-colors whitespace-nowrap">
+                  <button className="px-5 py-2 border-2 border-primary text-primary rounded-xl font-bold text-[13px] hover:bg-primary/5 transition-colors whitespace-nowrap">
                     Change Password
                   </button>
                 </div>
@@ -262,7 +260,7 @@ const StaffSettings = () => {
             <button className="text-[13px] font-bold text-gray-500 hover:text-gray-900 transition-colors">
               Discard
             </button>
-            <button className="px-8 py-3 bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-xl font-bold text-[13px] shadow-sm transition-colors">
+            <button className="btn-primary px-8 py-3 rounded-xl text-[13px] shadow-sm">
               Update Profile
             </button>
           </div>

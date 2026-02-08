@@ -50,23 +50,23 @@ const ResolvedIssues = () => {
 
   return (
     <StaffDashboardLayout>
-      <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50/30">
+      <div className="page">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 px-2">
           <div>
-            <h1 className="text-[28px] font-black text-gray-900 tracking-tight leading-tight">
+            <h1 className="page-title">
               Department Resolved Issues
               <br />
               History
             </h1>
-            <p className="text-[14px] text-gray-500 font-medium mt-2">
+            <p className="page-subtitle mt-2">
               Archival records of all closed and settled department tickets.
             </p>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
                 <Search size={16} />
               </div>
               <input
@@ -74,11 +74,11 @@ const ResolvedIssues = () => {
                 placeholder="Search by Ticket ID or keyword..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-72 bg-slate-100/80 border-transparent rounded-[0.85rem] py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:bg-white transition-all text-[13px] font-medium placeholder:text-gray-500"
+                className="w-72 bg-slate-100/80 border-transparent rounded-[0.85rem] py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-[13px] font-medium placeholder:text-gray-500"
               />
             </div>
 
-            <button className="inline-flex items-center gap-2 px-5 py-3 bg-white border border-gray-200/80 text-gray-700 rounded-[0.85rem] font-bold text-[13px] shadow-sm hover:bg-gray-50 transition-colors">
+            <button className="btn-secondary px-5 py-3 rounded-[0.85rem] text-[13px] shadow-sm">
               <Filter size={16} className="text-gray-500" />
               <span>Advanced Search</span>
             </button>
@@ -261,7 +261,7 @@ const ResolvedIssues = () => {
                         )}
                       </td>
                       <td className="px-8 py-6 text-right">
-                        <button className="inline-flex items-center gap-1.5 text-[#1e3a8a] hover:text-blue-800 font-bold text-[13px] transition-colors bg-blue-50/50 hover:bg-blue-100 px-4 py-2 rounded-xl">
+                        <button className="inline-flex items-center gap-1.5 text-primary hover:text-primary/90 font-bold text-[13px] transition-colors bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-xl">
                           <History size={14} strokeWidth={2.5} />
                           <span className="text-left leading-tight">
                             Re-open
@@ -292,7 +292,7 @@ const ResolvedIssues = () => {
               <button className="px-4 py-2 text-gray-500 hover:text-gray-900 border border-gray-200/60 rounded-xl mr-2 hover:bg-gray-50 transition-colors disabled:opacity-50">
                 Previous
               </button>
-              <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#1e3a8a] text-white shadow-sm">
+              <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white shadow-sm">
                 1
               </button>
               <button className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-600 hover:bg-gray-100 transition-colors">
