@@ -222,7 +222,7 @@ const ComplaintDetail = () => {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="p-8 flex items-center justify-center min-h-[60vh]">
+        <div className="flex items-center justify-center min-h-[60vh]">
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
             <p className="text-gray-500 font-bold">Loading ticket details...</p>
@@ -235,7 +235,7 @@ const ComplaintDetail = () => {
   if (error || !complaint) {
     return (
       <DashboardLayout>
-        <div className="p-8">
+        <div className="py-10">
           <div className="bg-red-50 border border-red-100 rounded-[2rem] p-10 text-center space-y-4">
             <AlertCircle className="mx-auto text-red-500" size={48} />
             <h2 className="text-2xl font-black text-red-900">
@@ -271,13 +271,13 @@ const ComplaintDetail = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-8 space-y-8 max-w-[1200px] mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="page pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1200px] mx-auto">
         {/* Back Button & Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-4">
             <button
               onClick={() => navigate("/student/complaints")}
-              className="flex items-center gap-2 text-gray-400 hover:text-[#1e3a8a] font-bold text-sm transition-colors group"
+              className="flex items-center gap-2 text-gray-400 hover:text-primary font-bold text-sm transition-colors group"
             >
               <ChevronLeft
                 size={18}
@@ -287,7 +287,7 @@ const ComplaintDetail = () => {
             </button>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <span className="text-sm font-black text-[#1e3a8a] bg-blue-50 px-3 py-1 rounded-lg">
+                <span className="text-sm font-black text-primary bg-primary/5 px-3 py-1 rounded-lg">
                   #{complaint.ticket_number}
                 </span>
                 <div
@@ -300,9 +300,7 @@ const ComplaintDetail = () => {
                   {statusInfo.label}
                 </div>
               </div>
-              <h1 className="text-4xl font-black text-gray-900 tracking-tight leading-tight">
-                {complaint.title}
-              </h1>
+              <h1 className="page-title leading-tight">{complaint.title}</h1>
             </div>
           </div>
 
@@ -382,7 +380,7 @@ const ComplaintDetail = () => {
             {/* Description Card */}
             <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10 space-y-6">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 text-[#1e3a8a]">
+                <div className="flex items-center gap-3 text-primary">
                   <FileText size={20} />
                   <h2 className="text-xl font-black">
                     {isEditMode ? "Edit Complaint" : "Complaint Description"}
@@ -415,7 +413,7 @@ const ComplaintDetail = () => {
                           title: e.target.value,
                         })
                       }
-                      className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-lg font-black text-gray-900 focus:ring-2 focus:ring-blue-600/10 transition-all"
+                      className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-lg font-black text-gray-900 focus:ring-2 focus:ring-primary/10 transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -431,7 +429,7 @@ const ComplaintDetail = () => {
                           description: e.target.value,
                         })
                       }
-                      className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-base font-medium text-gray-600 focus:ring-2 focus:ring-blue-600/10 transition-all resize-none"
+                      className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-base font-medium text-gray-600 focus:ring-2 focus:ring-primary/10 transition-all resize-none"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -447,7 +445,7 @@ const ComplaintDetail = () => {
                             category: e.target.value,
                           })
                         }
-                        className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-blue-600/10 transition-all appearance-none cursor-pointer"
+                        className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
                       >
                         <option value="IT_AND_NETWORK">IT & Network</option>
                         <option value="FACILITY_AND_MAINTENANCE">
@@ -480,7 +478,7 @@ const ComplaintDetail = () => {
                             priority: e.target.value as any,
                           })
                         }
-                        className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-blue-600/10 transition-all appearance-none cursor-pointer"
+                        className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
                       >
                         <option value="LOW">Low</option>
                         <option value="MEDIUM">Medium</option>
@@ -550,7 +548,7 @@ const ComplaintDetail = () => {
                     <button
                       onClick={handleUpdate}
                       disabled={isUpdating}
-                      className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center gap-2"
+                      className="bg-primary text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl shadow-blue-900/15 hover:bg-primary/90 transition-all flex items-center gap-2"
                     >
                       {isUpdating ? (
                         <Clock className="animate-spin" size={18} />
@@ -608,7 +606,7 @@ const ComplaintDetail = () => {
             {complaint.status === "RESOLVED" &&
               !complaint.satisfaction_rating &&
               !showRatingSuccess && (
-                <div className="bg-gradient-to-br from-blue-600 to-[#1e3a8a] rounded-[2.5rem] p-10 text-white shadow-xl shadow-blue-900/20 space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                <div className="bg-gradient-to-br from-accent to-primary rounded-[2.5rem] p-10 text-white shadow-xl shadow-blue-900/20 space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
                       <CheckCircle2 size={24} className="text-blue-100" />
@@ -758,7 +756,7 @@ const ComplaintDetail = () => {
             </div>
 
             {/* Help Card */}
-            <div className="bg-[#1e3a8a] rounded-[2rem] p-8 text-white space-y-4 shadow-xl shadow-blue-900/20">
+            <div className="bg-primary rounded-[2rem] p-8 text-white space-y-4 shadow-xl shadow-blue-900/20">
               <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
                 <AlertCircle size={20} />
               </div>
