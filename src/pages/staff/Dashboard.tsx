@@ -74,13 +74,11 @@ const StaffDashboard = () => {
   return (
     <ErrorBoundary>
       <StaffDashboardLayout>
-        <div className="p-8 space-y-8 max-w-[1600px] mx-auto">
+        <div className="page">
           {/* Welcome Section */}
           <div className="space-y-2">
-            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
-              Staff Dashboard
-            </h1>
-            <p className="text-gray-500 font-medium">
+            <h1 className="page-title">Staff Dashboard</h1>
+            <p className="page-subtitle">
               Welcome back, {user?.first_name || "Staff"}. Here&apos;s your
               department overview.
             </p>

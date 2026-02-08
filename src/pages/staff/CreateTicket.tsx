@@ -34,7 +34,7 @@ const CreateTicket = () => {
 
   return (
     <StaffDashboardLayout>
-      <div className="min-h-screen bg-slate-50/50 pb-20">
+      <div className="pb-20">
         {/* Header Section */}
         <div className="bg-white border-b border-gray-100 px-6 sm:px-10 py-6 sticky top-0 z-10">
           <div className="max-w-[1000px] mx-auto flex items-center justify-between">
@@ -80,7 +80,7 @@ const CreateTicket = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Brief summary of the issue..."
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-sm font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-sm font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 required
               />
             </div>
@@ -95,7 +95,7 @@ const CreateTicket = () => {
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-sm font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-sm font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     required
                   >
                     <option value="" disabled>
@@ -121,7 +121,7 @@ const CreateTicket = () => {
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-sm font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-sm font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   >
                     <option value="Low">Low - Informational</option>
                     <option value="Normal - Default">Normal - Default</option>
@@ -148,7 +148,7 @@ const CreateTicket = () => {
                 <select
                   value={assignee}
                   onChange={(e) => setAssignee(e.target.value)}
-                  className="w-full pl-11 pr-10 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-sm font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                  className="w-full pl-11 pr-10 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-sm font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 >
                   <option value="Keep Unassigned">Keep Unassigned</option>
                   <option value="John Doe">John Doe (Network Admin)</option>
@@ -236,11 +236,11 @@ const CreateTicket = () => {
                 Attachments
               </label>
               <div className="border-2 border-dashed border-gray-200 rounded-2xl bg-slate-50/50 p-8 text-center hover:bg-slate-50 hover:border-blue-300 transition-all cursor-pointer group">
-                <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center text-[#1e3a8a] mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center text-primary mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <UploadCloud size={24} />
                 </div>
                 <p className="text-sm font-bold text-gray-900 mb-1">
-                  <span className="text-[#1e3a8a] hover:underline">
+                  <span className="text-primary hover:underline">
                     Click to upload
                   </span>{" "}
                   or drag and drop files
@@ -268,7 +268,7 @@ const CreateTicket = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-[#1e3a8a] text-white rounded-xl text-sm font-bold shadow-sm hover:bg-blue-900 hover:shadow-md transition-all flex items-center gap-2 transform active:scale-95"
+                  className="btn-primary px-8 py-3 rounded-xl text-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 transform active:scale-95"
                 >
                   Create Ticket
                   <span className="opacity-70 ml-1">▶</span>
