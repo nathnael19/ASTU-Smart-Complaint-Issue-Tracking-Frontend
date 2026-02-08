@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, Filter, List, Info, UserPlus } from "lucide-react";
+import { Search, Plus, Filter, List, Info } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import { useDepartmentUsers } from "../../hooks/useUsers";
 import { useComplaints } from "../../hooks/useComplaints";
@@ -92,33 +92,31 @@ const DepartmentTasks = () => {
 
   return (
     <StaffDashboardLayout>
-      <div className="p-8 max-w-[1600px] mx-auto min-h-screen">
+      <div className="page">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1 mb-8">
           <div>
-            <h1 className="text-[28px] font-black text-gray-900 tracking-tight leading-tight">
-              Department Tasks Overview
-            </h1>
-            <p className="text-[14px] text-gray-500 font-medium mt-1">
+            <h1 className="page-title">Department Tasks Overview</h1>
+            <p className="page-subtitle mt-1">
               Managing all ICT Department tickets and staff allocation.
             </p>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
                 <Search size={16} />
               </div>
               <input
                 type="text"
                 placeholder="Search department tasks..."
-                className="w-64 bg-slate-50/80 border border-gray-200/60 rounded-[0.85rem] py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 focus:border-[#1e3a8a]/20 transition-all text-[13px] font-medium placeholder:text-gray-400"
+                className="w-64 bg-slate-50/80 border border-gray-200/60 rounded-[0.85rem] py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/20 transition-all text-[13px] font-medium placeholder:text-gray-400"
               />
             </div>
 
             <button
               onClick={() => navigate("/staff/tasks/create")}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-[0.85rem] font-bold text-[13px] shadow-sm transition-colors transform active:scale-95"
+              className="btn-primary px-4 py-2.5 rounded-[0.85rem] text-[13px] shadow-sm transform active:scale-95"
             >
               <Plus size={16} strokeWidth={2.5} />
               <span>Create Ticket</span>
@@ -139,7 +137,7 @@ const DepartmentTasks = () => {
                       onClick={() => setActiveTab(tab)}
                       className={`px-5 py-2 rounded-xl transition-all ${
                         activeTab === tab
-                          ? "text-blue-600 bg-blue-50/50"
+                          ? "text-primary bg-primary/5"
                           : "text-gray-500 hover:text-gray-900"
                       }`}
                     >
@@ -222,7 +220,7 @@ const DepartmentTasks = () => {
                           onClick={() => navigate(`/staff/tickets/${task.id}`)}
                         >
                           <td className="px-6 py-5">
-                            <span className="text-[13px] font-black text-slate-400 group-hover:text-blue-600 transition-colors">
+                            <span className="text-[13px] font-black text-slate-400 group-hover:text-primary transition-colors">
                               {task.ticket_number || task.id.substring(0, 8)}
                             </span>
                           </td>
@@ -303,7 +301,7 @@ const DepartmentTasks = () => {
                 <button className="px-3 py-1.5 text-gray-500 hover:text-gray-900 border border-gray-200/60 rounded-lg mr-1 disabled:opacity-50">
                   Previous
                 </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1e3a8a] text-white">
+                <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white">
                   1
                 </button>
                 <button className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100">
@@ -360,7 +358,7 @@ const DepartmentTasks = () => {
                       </div>
                     </div>
                     <div className="text-right flex flex-col items-end">
-                      <span className="text-[13px] font-black text-[#1e3a8a] bg-blue-50/50 px-2 py-0.5 rounded-md">
+                      <span className="text-[13px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded-md">
                         {member.activeCount} active
                       </span>
                     </div>
@@ -369,7 +367,7 @@ const DepartmentTasks = () => {
                   <div className="space-y-1.5">
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full ${member.capacityLevel > 85 ? "bg-red-500" : "bg-[#1e3a8a]"}`}
+                        className={`h-full rounded-full ${member.capacityLevel > 85 ? "bg-red-500" : "bg-primary"}`}
                         style={{ width: `${member.capacityLevel}%` }}
                       ></div>
                     </div>
@@ -394,7 +392,7 @@ const DepartmentTasks = () => {
 
             {/* Dept Summary Card */}
             <div className="bg-blue-50/50 rounded-3xl border border-blue-100/50 p-5 mt-4">
-              <div className="flex items-center gap-2 mb-4 text-[#1e3a8a]">
+              <div className="flex items-center gap-2 mb-4 text-primary">
                 <Info size={16} />
                 <h3 className="text-[14px] font-black">Dept Summary</h3>
               </div>
