@@ -68,20 +68,18 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-8 space-y-10 max-w-[1600px] mx-auto">
+      <div className="page space-y-10">
         {/* Welcome Section */}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
-              Dashboard
-            </h1>
-            <p className="text-gray-400 font-medium">
+            <h1 className="page-title">Dashboard</h1>
+            <p className="page-subtitle">
               Welcome back, {firstName}. Track your academic and campus issues.
             </p>
           </div>
           <button
             onClick={() => navigate("/student/submit")}
-            className="bg-[#1e3a8a] text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0"
+            className="btn-primary px-7 py-4 text-base shadow-xl shadow-blue-900/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
           >
             <Plus size={20} />
             Submit New Complaint
@@ -115,7 +113,7 @@ const Dashboard = () => {
             label="In Progress"
             value={stats.inProgress.toString().padStart(2, "0")}
             icon={Clock}
-            color="text-[#1e3a8a]"
+            color="text-primary"
             bgColor="bg-blue-50"
           />
           <StatCard
@@ -170,14 +168,17 @@ const Dashboard = () => {
                   key={i}
                   className="flex items-center gap-3 group cursor-pointer hover:translate-x-1 transition-transform"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-200 group-hover:bg-[#1e3a8a] transition-colors" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-200 group-hover:bg-primary transition-colors" />
                   <span className="text-sm font-bold text-gray-500 group-hover:text-gray-900 transition-colors">
                     {q}
                   </span>
                 </li>
               ))}
             </ul>
-            <button className="text-[#1e3a8a] font-black text-sm hover:underline underline-offset-4 pt-2 block w-full text-center">
+            <button
+              onClick={() => navigate("/student/kb")}
+              className="btn-secondary w-full"
+            >
               Visit Knowledge Base
             </button>
           </div>
