@@ -75,7 +75,7 @@ const TicketDetail = () => {
     return (
       <StaffDashboardLayout>
         <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <Loader2 className="w-12 h-12 text-primary animate-spin" />
           <p className="text-lg font-bold text-gray-600">Loading ticket...</p>
         </div>
       </StaffDashboardLayout>
@@ -112,7 +112,7 @@ const TicketDetail = () => {
 
   return (
     <StaffDashboardLayout>
-      <div className="p-8 max-w-[1600px] mx-auto">
+      <div className="page">
         <TicketDetailHeader
           ticketId={ticketId}
           status={complaint.status}
