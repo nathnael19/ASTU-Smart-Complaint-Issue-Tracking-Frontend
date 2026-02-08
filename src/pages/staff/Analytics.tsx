@@ -38,24 +38,22 @@ const Analytics = () => {
 
   return (
     <StaffDashboardLayout>
-      <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50/30">
+      <div className="page">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 px-2">
           <div>
-            <h1 className="text-[28px] font-black text-gray-900 tracking-tight leading-tight">
-              Staff Analytics & Reports Hub
-            </h1>
-            <p className="text-[14px] text-gray-500 font-medium mt-1">
+            <h1 className="page-title">Staff Analytics & Reports Hub</h1>
+            <p className="page-subtitle mt-1">
               Performance tracking and department data insights.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200/80 text-gray-700 rounded-xl font-bold text-[13px] shadow-sm hover:bg-gray-50 transition-colors">
+            <button className="btn-secondary px-4 py-2.5 rounded-xl text-[13px] shadow-sm">
               <Calendar size={16} className="text-gray-400" />
               <span>Last 30 Days</span>
             </button>
-            <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1e3a8a] text-white rounded-xl font-bold text-[13px] shadow-sm hover:bg-blue-900 transition-colors">
+            <button className="btn-primary px-5 py-2.5 rounded-xl text-[13px] shadow-sm">
               <Download size={16} />
               <span>Export All</span>
             </button>
@@ -72,7 +70,7 @@ const Analytics = () => {
               </span>
               <BarChart4
                 size={20}
-                className="text-[#1e3a8a]"
+                className="text-primary"
                 strokeWidth={2.5}
               />
             </div>
@@ -329,7 +327,7 @@ const Analytics = () => {
                               <FileSpreadsheet size={18} />
                             )}
                           </div>
-                          <span className="text-[14px] font-black text-gray-900 hover:text-[#1e3a8a] cursor-pointer transition-colors max-w-[250px] truncate">
+                          <span className="text-[14px] font-black text-gray-900 hover:text-primary cursor-pointer transition-colors max-w-[250px] truncate">
                             {report.name}
                           </span>
                         </div>
