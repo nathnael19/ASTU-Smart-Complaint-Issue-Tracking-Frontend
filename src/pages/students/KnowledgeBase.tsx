@@ -87,14 +87,12 @@ const KnowledgeBase = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1400px] mx-auto px-8 py-10 pb-20 space-y-10">
+      <div className="page pb-20">
         {/* Search Hero – plain background, dark text (matches mockup) */}
         <div className="text-center space-y-5">
           <div>
-            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
-              How can we help you today?
-            </h1>
-            <p className="text-gray-400 font-medium mt-2">
+            <h1 className="page-title">How can we help you today?</h1>
+            <p className="page-subtitle mt-2">
               Search our knowledge base for answers to your questions and
               helpful guides.
             </p>
@@ -112,7 +110,7 @@ const KnowledgeBase = () => {
                 className="flex-1 bg-transparent py-4 px-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none"
               />
             </div>
-            <button className="bg-[#1e3a8a] hover:bg-blue-950 text-white px-8 py-4 font-bold text-sm transition-colors shrink-0">
+            <button className="btn-primary rounded-none rounded-r-2xl px-8 py-4 shrink-0">
               Search
             </button>
           </div>
@@ -150,7 +148,7 @@ const KnowledgeBase = () => {
             <h2 className="text-2xl font-black text-gray-900">
               Frequently Asked Questions
             </h2>
-            <button className="text-[#1e3a8a] font-bold text-sm flex items-center gap-1 hover:underline underline-offset-2">
+            <button className="text-primary font-bold text-sm flex items-center gap-1 hover:underline underline-offset-2">
               View all FAQs
               <ExternalLink size={13} />
             </button>
@@ -173,7 +171,7 @@ const KnowledgeBase = () => {
                     size={18}
                     className={cn(
                       "text-gray-400 transition-transform duration-300 shrink-0 ml-4",
-                      openFaq === index && "rotate-180 text-[#1e3a8a]",
+                      openFaq === index && "rotate-180 text-primary",
                     )}
                   />
                 </button>
