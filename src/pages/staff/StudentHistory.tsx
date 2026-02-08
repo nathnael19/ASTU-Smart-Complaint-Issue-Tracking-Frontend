@@ -79,7 +79,7 @@ const StudentHistory = () => {
     return (
       <StaffDashboardLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <Loader2 className="w-12 h-12 text-primary animate-spin" />
           <p className="text-lg font-bold text-gray-600">
             Loading student history...
           </p>
@@ -91,7 +91,7 @@ const StudentHistory = () => {
   if (error || !student) {
     return (
       <StaffDashboardLayout>
-        <div className="p-8 max-w-[1200px] mx-auto">
+        <div className="py-10 max-w-[1200px] mx-auto">
           <button
             onClick={() => navigate(-1)}
             className="flex items-center text-gray-500 hover:text-gray-900 transition-colors mb-6 font-medium"
@@ -122,7 +122,7 @@ const StudentHistory = () => {
 
   return (
     <StaffDashboardLayout>
-      <div className="p-8 max-w-[1200px] mx-auto">
+      <div className="page max-w-[1200px] mx-auto">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center text-gray-500 hover:text-gray-900 transition-colors mb-6 font-medium"
@@ -190,7 +190,7 @@ const StudentHistory = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] shadow-md p-8 text-white">
+            <div className="bg-gradient-to-br from-accent to-primary rounded-[2rem] shadow-md p-8 text-white">
               <div className="flex items-center mb-4">
                 <History className="w-8 h-8 text-blue-200 mr-4" />
                 <div>
@@ -210,7 +210,7 @@ const StudentHistory = () => {
             <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
               <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
                 <div className="flex items-center">
-                  <TicketIcon className="w-6 h-6 text-blue-600 mr-3" />
+                  <TicketIcon className="w-6 h-6 text-primary mr-3" />
                   <h2 className="text-2xl font-black text-gray-900">
                     Complaint History
                   </h2>
@@ -223,7 +223,7 @@ const StudentHistory = () => {
                     <div
                       key={index}
                       onClick={() => navigate(`/staff/tickets/${ticket.id}`)}
-                      className="p-5 rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group"
+                      className="p-5 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">
@@ -234,7 +234,7 @@ const StudentHistory = () => {
                             <p className="text-sm font-black text-gray-500 mb-1">
                               {ticket.ticket_number}
                             </p>
-                            <h4 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            <h4 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">
                               {ticket.title}
                             </h4>
                             <div className="flex items-center gap-3 mt-2 text-sm font-medium text-gray-500">
