@@ -66,13 +66,13 @@ const DashboardHeader = () => {
       {/* Search Bar */}
       <div className="flex-1 max-w-xl">
         <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
             <Search size={18} />
           </div>
           <input
             type="text"
             placeholder="Search tickets, FAQs..."
-            className="w-full bg-slate-50 border-none rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all text-sm font-medium"
+            className="w-full bg-slate-50 border-none rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all text-sm font-medium"
           />
         </div>
       </div>
@@ -106,7 +106,7 @@ const DashboardHeader = () => {
         {/* User Profile */}
         <button className="flex items-center gap-4 hover:bg-gray-50 p-2 rounded-2xl transition-all group border border-transparent hover:border-gray-100">
           <div className="flex flex-col text-right">
-            <span className="text-sm font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors">
+            <span className="text-sm font-black text-gray-900 group-hover:text-primary transition-colors">
               {fullName}
             </span>
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
