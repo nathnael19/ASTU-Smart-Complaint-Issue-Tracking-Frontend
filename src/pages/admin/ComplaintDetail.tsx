@@ -22,7 +22,7 @@ const ComplaintDetail = () => {
     return (
       <AdminLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <Loader2 className="w-12 h-12 text-primary animate-spin" />
           <p className="text-lg font-bold text-gray-600">
             Loading ticket details...
           </p>
@@ -45,7 +45,7 @@ const ComplaintDetail = () => {
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 bg-[#1e3a8a] text-white px-6 py-2 rounded-xl font-bold"
+            className="btn-primary px-6 py-2 rounded-xl"
           >
             Try Again
           </button>
@@ -58,7 +58,7 @@ const ComplaintDetail = () => {
 
   return (
     <AdminLayout>
-      <div className="p-8 lg:p-12 space-y-8 max-w-[1600px] mx-auto pb-24">
+      <div className="page pb-24">
         {/* Breadcrumbs */}
         <ComplaintBreadcrumbs ticketId={ticketId} />
 
@@ -134,24 +134,6 @@ const ComplaintDetail = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer minimal representation */}
-      <footer className="py-6 px-12 border-t border-gray-100 flex items-center justify-between mt-auto">
-        <span className="text-xs font-medium text-gray-400">
-          © 2024 ASTU Smart Tracking System. All rights reserved.
-        </span>
-        <div className="flex gap-6">
-          <button className="text-xs font-medium text-gray-400 hover:text-gray-900 transition-colors">
-            Help Center
-          </button>
-          <button className="text-xs font-medium text-gray-400 hover:text-gray-900 transition-colors">
-            Privacy Policy
-          </button>
-          <button className="text-xs font-medium text-gray-400 hover:text-gray-900 transition-colors">
-            System Status
-          </button>
-        </div>
-      </footer>
     </AdminLayout>
   );
 };

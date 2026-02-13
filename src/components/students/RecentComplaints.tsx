@@ -28,10 +28,10 @@ const RecentComplaints = ({ complaints, loading }: RecentComplaintsProps) => {
   };
 
   return (
-    <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+    <div className="card overflow-hidden">
       <div className="p-8 pb-4 flex items-center justify-between border-b border-gray-50 mb-2">
         <h3 className="text-xl font-black text-gray-900">Recent Complaints</h3>
-        <button className="text-sm font-bold text-[#1e3a8a] hover:underline underline-offset-4">
+        <button className="text-sm font-bold text-primary hover:underline underline-offset-4">
           View All
         </button>
       </div>
@@ -137,7 +137,7 @@ const RecentComplaints = ({ complaints, loading }: RecentComplaintsProps) => {
                       onClick={() =>
                         navigate(`/student/complaints/${complaint.id}`)
                       }
-                      className="p-2 text-gray-400 hover:text-[#1e3a8a] hover:bg-blue-50 rounded-xl transition-all"
+                      className="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
                     >
                       <Eye size={18} />
                     </button>
