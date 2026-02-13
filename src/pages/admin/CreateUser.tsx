@@ -60,7 +60,7 @@ const AdminCreateUser = () => {
 
   return (
     <AdminLayout>
-      <div className="p-8 lg:p-12 max-w-[1000px] mx-auto min-h-[calc(100vh-5rem)] flex flex-col pb-24">
+      <div className="page pb-24 max-w-[1000px] mx-auto">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-8 border-b border-gray-100 pb-6">
           <Link
@@ -95,7 +95,7 @@ const AdminCreateUser = () => {
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
           <div className="p-10">
             <div className="flex items-center gap-3 mb-10 pb-6 border-b border-gray-50">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-[#1e3a8a]">
+              <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
                 <UserPlus size={24} />
               </div>
               <div>
@@ -122,7 +122,7 @@ const AdminCreateUser = () => {
                     First Name
                   </label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
                       <User size={18} />
                     </div>
                     <input
@@ -131,7 +131,7 @@ const AdminCreateUser = () => {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       placeholder="e.g. Abebe"
-                      className="w-full bg-slate-50 border border-transparent rounded-2xl py-3.5 pl-11 pr-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold placeholder:text-gray-400"
+                      className="w-full bg-slate-50 border border-transparent rounded-2xl py-3.5 pl-11 pr-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold placeholder:text-gray-400"
                     />
                   </div>
                 </div>
@@ -141,7 +141,7 @@ const AdminCreateUser = () => {
                     Last Name
                   </label>
                   <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
                       <User size={18} />
                     </div>
                     <input
@@ -150,7 +150,7 @@ const AdminCreateUser = () => {
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       placeholder="e.g. Kebede"
-                      className="w-full bg-slate-50 border border-transparent rounded-2xl py-3.5 pl-11 pr-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold placeholder:text-gray-400"
+                      className="w-full bg-slate-50 border border-transparent rounded-2xl py-3.5 pl-11 pr-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold placeholder:text-gray-400"
                     />
                   </div>
                 </div>
@@ -162,7 +162,7 @@ const AdminCreateUser = () => {
                   Email Address
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
                     <Mail size={18} />
                   </div>
                   <input
@@ -171,7 +171,7 @@ const AdminCreateUser = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="example@astu.edu.et"
-                    className="w-full bg-slate-50 border border-transparent rounded-2xl py-3.5 pl-11 pr-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold placeholder:text-gray-400"
+                    className="w-full bg-slate-50 border border-transparent rounded-2xl py-3.5 pl-11 pr-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold placeholder:text-gray-400"
                   />
                 </div>
               </div>
@@ -182,14 +182,14 @@ const AdminCreateUser = () => {
                   Department
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
                     <Building2 size={18} />
                   </div>
                   <select
                     value={departmentId}
                     onChange={(e) => setDepartmentId(e.target.value)}
                     disabled={isDepartmentsLoading}
-                    className="w-full bg-slate-50 border border-transparent rounded-2xl py-3.5 pl-11 pr-10 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold appearance-none cursor-pointer disabled:opacity-50"
+                    className="w-full bg-slate-50 border border-transparent rounded-2xl py-3.5 pl-11 pr-10 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold appearance-none cursor-pointer disabled:opacity-50"
                   >
                     {isDepartmentsLoading ? (
                       <option>Loading departments...</option>
@@ -211,7 +211,7 @@ const AdminCreateUser = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/admin/users")}
-                  className="px-8 py-3.5 rounded-2xl font-black text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all flex items-center gap-2"
+                  className="btn-secondary px-8 py-3.5 rounded-2xl text-sm flex items-center gap-2"
                 >
                   <X size={18} />
                   Cancel
@@ -219,7 +219,7 @@ const AdminCreateUser = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-10 py-3.5 rounded-2xl bg-[#1e3a8a] text-white font-black text-sm shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all flex items-center gap-2 group disabled:opacity-50"
+                  className="btn-primary px-10 py-3.5 rounded-2xl text-sm shadow-xl shadow-blue-900/20 transition-all flex items-center gap-2 group disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <Loader2 size={18} className="animate-spin" />
@@ -235,13 +235,6 @@ const AdminCreateUser = () => {
             </form>
           </div>
         </div>
-
-        {/* Footer */}
-        <footer className="mt-auto pt-12 flex items-center justify-center">
-          <span className="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">
-            ASTU SMART TRACKING SYSTEM • 2024
-          </span>
-        </footer>
       </div>
     </AdminLayout>
   );
