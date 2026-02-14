@@ -67,8 +67,8 @@ export default function ChatBot() {
         aria-label={open ? "Close chat" : "Open AI assistant"}
         className={cn(
           "fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all",
-          "bg-[#1e3a8a] text-white hover:bg-blue-950 hover:scale-105",
-          "focus:outline-none focus:ring-4 focus:ring-[#1e3a8a]/30"
+          "bg-primary text-white hover:bg-primary/90 hover:scale-105",
+          "focus:outline-none focus:ring-4 focus:ring-primary/30",
         )}
       >
         {open ? <X size={24} /> : <MessageCircle size={24} />}
@@ -81,7 +81,7 @@ export default function ChatBot() {
             "fixed bottom-24 right-6 z-50 flex w-[380px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
           )}
         >
-          <div className="border-b border-gray-100 bg-[#1e3a8a] px-4 py-3">
+          <div className="border-b border-gray-100 bg-primary px-4 py-3">
             <div className="flex items-center gap-2 text-white">
               <MessageCircle size={20} />
               <span className="font-bold text-sm">ASTU Assistant</span>
@@ -106,7 +106,7 @@ export default function ChatBot() {
                 className={cn(
                   "max-w-[90%] rounded-2xl px-4 py-2.5 text-sm",
                   m.role === "user"
-                    ? "ml-auto bg-[#1e3a8a] text-white"
+                    ? "ml-auto bg-primary text-white"
                     : "bg-slate-50 text-gray-800"
                 )}
               >
@@ -133,13 +133,13 @@ export default function ChatBot() {
                 onKeyDown={handleKeyDown}
                 placeholder="Type your question..."
                 disabled={loading}
-                className="flex-1 rounded-xl border border-gray-200 bg-slate-50 px-4 py-2.5 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-[#1e3a8a]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 disabled:opacity-60"
+                className="flex-1 rounded-xl border border-gray-200 bg-slate-50 px-4 py-2.5 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-primary/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/10 disabled:opacity-60"
               />
               <button
                 type="button"
                 onClick={handleSend}
                 disabled={loading || !input.trim()}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1e3a8a] text-white transition-colors hover:bg-blue-950 disabled:opacity-50"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
               >
                 <Send size={18} />
               </button>
