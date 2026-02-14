@@ -68,7 +68,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
 
           <button
             disabled={isLoading || isSuccess}
-            className="w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-primary/90 transition-all hover:translate-y-[-2px] active:translate-y-0 text-base disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Sending..." : "Send Reset Link"}{" "}
             <ArrowRight size={18} />
