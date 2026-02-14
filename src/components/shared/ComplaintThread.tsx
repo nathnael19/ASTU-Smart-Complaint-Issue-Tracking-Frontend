@@ -117,7 +117,7 @@ const ComplaintThread = ({
     >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <MessageSquare size={20} className="text-[#1e3a8a]" />
+          <MessageSquare size={20} className="text-primary" />
           <h3 className="text-xl font-black text-gray-900">{title}</h3>
         </div>
         <span className="text-xs font-bold text-gray-400">
@@ -146,13 +146,13 @@ const ComplaintThread = ({
             remarks.map((remark) => (
               <div key={remark.id} className="flex gap-4">
                 <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1 border border-gray-200 overflow-hidden">
-                  <span className="text-sm font-black text-[#1e3a8a]">
+                  <span className="text-sm font-black text-primary">
                     {getAuthorDisplay(remark).charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="bg-[#f8fafc] rounded-2xl rounded-tl-none p-5 border border-slate-100 flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="text-sm font-black text-[#1e3a8a]">
+                    <span className="text-sm font-black text-primary">
                       {getAuthorDisplay(remark)}
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-100 text-blue-700">
@@ -181,14 +181,14 @@ const ComplaintThread = ({
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
           placeholder={placeholder}
-          className="w-full min-h-[100px] bg-white border border-gray-200 rounded-xl p-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none mb-4"
+        className="w-full min-h-[100px] bg-white border border-gray-200 rounded-xl p-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none mb-4"
           disabled={posting}
         />
         <div className="flex justify-end">
           <button
             type="submit"
             disabled={posting || !newContent.trim()}
-            className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-blue-950 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="btn-primary px-6 py-2.5 rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {posting ? (
               <Loader2 className="w-4 h-4 animate-spin" />

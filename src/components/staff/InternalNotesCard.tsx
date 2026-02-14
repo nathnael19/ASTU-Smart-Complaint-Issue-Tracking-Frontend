@@ -24,7 +24,7 @@ const InternalNotesCard = ({ notes }: InternalNotesCardProps) => {
           </div>
           <h3 className="text-xl font-black text-gray-900">Internal Notes</h3>
         </div>
-        <button className="inline-flex items-center gap-2 text-sm font-bold text-[#1e3a8a] hover:underline underline-offset-4">
+        <button className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline underline-offset-4">
           <Plus size={16} />
           Add Note
         </button>
