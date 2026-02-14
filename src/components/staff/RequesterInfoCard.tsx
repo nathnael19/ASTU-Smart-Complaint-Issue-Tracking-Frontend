@@ -43,8 +43,8 @@ const RequesterInfoCard = ({
             className="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover"
           />
         ) : (
-          <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center border-4 border-white shadow-md">
-            <span className="text-blue-600 font-black text-2xl">
+          <div className="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center border-4 border-white shadow-md">
+            <span className="text-primary font-black text-2xl">
               {getInitials(name)}
             </span>
           </div>
@@ -55,7 +55,7 @@ const RequesterInfoCard = ({
 
       <div className="space-y-3 pt-6 border-t border-gray-100">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+          <div className="w-8 h-8 bg-primary/5 rounded-lg flex items-center justify-center text-primary shrink-0">
             <IdCard size={16} />
           </div>
           <div className="flex-1 min-w-0">
@@ -67,7 +67,7 @@ const RequesterInfoCard = ({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+          <div className="w-8 h-8 bg-primary/5 rounded-lg flex items-center justify-center text-primary shrink-0">
             <Mail size={16} />
           </div>
           <div className="flex-1 min-w-0">
@@ -79,7 +79,7 @@ const RequesterInfoCard = ({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+          <div className="w-8 h-8 bg-primary/5 rounded-lg flex items-center justify-center text-primary shrink-0">
             <Phone size={16} />
           </div>
           <div className="flex-1 min-w-0">
@@ -95,7 +95,7 @@ const RequesterInfoCard = ({
         onClick={() =>
           navigate(`/staff/students/${encodeURIComponent(id)}/history`)
         }
-        className="w-full mt-6 py-3 px-4 rounded-xl text-sm font-bold text-[#1e3a8a] bg-blue-50 hover:bg-blue-100 transition-colors border border-blue-200"
+        className="w-full mt-6 py-3 px-4 rounded-xl text-sm font-bold text-primary bg-primary/5 hover:bg-primary/10 transition-colors border border-primary/15"
       >
         View Student History
       </button>
