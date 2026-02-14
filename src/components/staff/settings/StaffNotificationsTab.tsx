@@ -16,9 +16,9 @@ const StaffNotificationsTab = () => {
       <div className="space-y-12">
         {/* Email Notifications Section */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <Mail size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               Email Notifications
             </h3>
           </div>
@@ -94,9 +94,9 @@ const StaffNotificationsTab = () => {
 
         {/* In-App Notifications Section */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <BellRing size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               In-App / System Notifications
             </h3>
           </div>
@@ -150,9 +150,9 @@ const StaffNotificationsTab = () => {
 
         {/* Urgent Alerts (Mobile/SMS) */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <Smartphone size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               Urgent & Mobile Alerts
             </h3>
           </div>
@@ -170,7 +170,7 @@ const StaffNotificationsTab = () => {
                 trigger automated SMS overrides. Only enable this if your role
                 requires immediate emergency dispatch.
               </p>
-              <button className="px-5 py-2.5 bg-white border border-gray-200 text-gray-700 hover:text-[#1e3a8a] hover:border-[#1e3a8a] rounded-xl text-[12px] font-bold transition-colors">
+              <button className="px-5 py-2.5 bg-white border border-gray-200 text-gray-700 hover:text-primary hover:border-primary rounded-xl text-[12px] font-bold transition-colors">
                 Configure SMS Setup
               </button>
             </div>

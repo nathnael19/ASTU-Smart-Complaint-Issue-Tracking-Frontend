@@ -60,7 +60,7 @@ const TicketDetailHeader = ({
           <Printer size={16} />
           Print PDF
         </button>
-        <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#1e3a8a] hover:bg-blue-900 transition-colors shadow-sm">
+        <button className="btn-primary px-4 py-2 rounded-xl text-sm shadow-sm">
           <CheckCircle2 size={16} />
           Mark as Resolved
         </button>
