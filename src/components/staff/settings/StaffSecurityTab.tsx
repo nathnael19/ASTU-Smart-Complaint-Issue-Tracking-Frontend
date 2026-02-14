@@ -16,9 +16,9 @@ const StaffSecurityTab = () => {
       <div className="space-y-12">
         {/* Password Section */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <KeySquare size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               Password Management
             </h3>
           </div>
@@ -32,7 +32,7 @@ const StaffSecurityTab = () => {
                 <input
                   type="password"
                   placeholder="••••••••••••"
-                  className="w-full max-w-md px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                  className="w-full max-w-md px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
               </div>
               <div>
@@ -42,7 +42,7 @@ const StaffSecurityTab = () => {
                 <input
                   type="password"
                   placeholder="Enter new password"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
                 <p className="text-[11px] font-medium text-gray-400 mt-2">
                   Must be at least 8 characters long and include a number and
@@ -56,7 +56,7 @@ const StaffSecurityTab = () => {
                 <input
                   type="password"
                   placeholder="Confirm new password"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
               </div>
             </div>
@@ -65,9 +65,9 @@ const StaffSecurityTab = () => {
 
         {/* Two-Factor Authentication */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <ShieldCheck size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               Two-Factor Authentication
             </h3>
           </div>
@@ -105,9 +105,9 @@ const StaffSecurityTab = () => {
 
         {/* Active Sessions */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <History size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               Active Sessions
             </h3>
           </div>
@@ -144,7 +144,7 @@ const StaffSecurityTab = () => {
             </div>
 
             <div className="p-4 bg-slate-50 border-t border-gray-100 flex justify-center">
-              <button className="flex items-center gap-2 text-[12px] font-bold text-[#1e3a8a] hover:text-blue-800 transition-colors">
+              <button className="flex items-center gap-2 text-[12px] font-bold text-primary hover:text-primary/90 transition-colors">
                 <LogOut size={14} />
                 Sign out of all other sessions
               </button>

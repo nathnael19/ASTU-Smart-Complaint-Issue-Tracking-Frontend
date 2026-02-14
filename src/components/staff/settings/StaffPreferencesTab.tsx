@@ -11,9 +11,9 @@ const StaffPreferencesTab = () => {
       <div className="space-y-12">
         {/* Appearance Section */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <Palette size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               Appearance & Theme
             </h3>
           </div>
@@ -33,17 +33,17 @@ const StaffPreferencesTab = () => {
                   onClick={() => setTheme("light")}
                   className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                     theme === "light"
-                      ? "border-[#1e3a8a] bg-blue-50/30"
+                      ? "border-primary bg-primary/5"
                       : "border-gray-100 hover:border-gray-200 bg-white"
                   }`}
                 >
                   <div className="w-full h-16 rounded-lg bg-slate-50 border border-gray-200 flex flex-col gap-1.5 p-2">
                     <div className="w-full h-2 bg-white rounded-sm"></div>
                     <div className="w-2/3 h-2 bg-white rounded-sm"></div>
-                    <div className="w-1/2 h-2 bg-[#1e3a8a]/20 rounded-sm mt-auto"></div>
+                    <div className="w-1/2 h-2 bg-primary/20 rounded-sm mt-auto"></div>
                   </div>
                   <span
-                    className={`text-[12px] font-bold ${theme === "light" ? "text-[#1e3a8a]" : "text-gray-600"}`}
+                    className={`text-[12px] font-bold ${theme === "light" ? "text-primary" : "text-gray-600"}`}
                   >
                     Light Mode
                   </span>
@@ -54,7 +54,7 @@ const StaffPreferencesTab = () => {
                   onClick={() => setTheme("dark")}
                   className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                     theme === "dark"
-                      ? "border-[#1e3a8a] bg-blue-50/30"
+                      ? "border-primary bg-primary/5"
                       : "border-gray-100 hover:border-gray-200 bg-white"
                   }`}
                 >
@@ -64,7 +64,7 @@ const StaffPreferencesTab = () => {
                     <div className="w-1/2 h-2 bg-blue-500/40 rounded-sm mt-auto"></div>
                   </div>
                   <span
-                    className={`text-[12px] font-bold ${theme === "dark" ? "text-[#1e3a8a]" : "text-gray-600"}`}
+                    className={`text-[12px] font-bold ${theme === "dark" ? "text-primary" : "text-gray-600"}`}
                   >
                     Dark Mode
                   </span>
@@ -75,7 +75,7 @@ const StaffPreferencesTab = () => {
                   onClick={() => setTheme("system")}
                   className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                     theme === "system"
-                      ? "border-[#1e3a8a] bg-blue-50/30"
+                      ? "border-primary bg-primary/5"
                       : "border-gray-100 hover:border-gray-200 bg-white"
                   }`}
                 >
@@ -90,7 +90,7 @@ const StaffPreferencesTab = () => {
                     </div>
                   </div>
                   <span
-                    className={`text-[12px] font-bold ${theme === "system" ? "text-[#1e3a8a]" : "text-gray-600"}`}
+                    className={`text-[12px] font-bold ${theme === "system" ? "text-primary" : "text-gray-600"}`}
                   >
                     System Sync
                   </span>
@@ -102,9 +102,9 @@ const StaffPreferencesTab = () => {
 
         {/* Regional & Language */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <Globe size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               Localization Options
             </h3>
           </div>
@@ -118,7 +118,7 @@ const StaffPreferencesTab = () => {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold appearance-none focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-gray-900 text-[14px] font-semibold appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 >
                   <option value="en">English (US)</option>
                   <option value="am">Amharic (አማርኛ)</option>
@@ -156,9 +156,9 @@ const StaffPreferencesTab = () => {
 
         {/* Table/List View Density */}
         <section>
-          <div className="flex items-center gap-3 text-[#1e3a8a] border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-3 text-primary border-b border-gray-100 pb-4 mb-6">
             <Layout size={18} />
-            <h3 className="text-[13px] font-black uppercase tracking-widest text-[#1e3a8a]">
+            <h3 className="text-[13px] font-black uppercase tracking-widest text-primary">
               Workspace Layout
             </h3>
           </div>
@@ -175,7 +175,7 @@ const StaffPreferencesTab = () => {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <label
-                  className={`flex-1 flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${density === "compact" ? "border-[#1e3a8a] bg-blue-50/30" : "border-gray-100 hover:border-gray-200 bg-white"}`}
+                  className={`flex-1 flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${density === "compact" ? "border-primary bg-primary/5" : "border-gray-100 hover:border-gray-200 bg-white"}`}
                 >
                   <input
                     type="radio"
@@ -183,7 +183,7 @@ const StaffPreferencesTab = () => {
                     value="compact"
                     checked={density === "compact"}
                     onChange={() => setDensity("compact")}
-                    className="w-4 h-4 text-[#1e3a8a] focus:ring-[#1e3a8a] border-gray-300"
+                    className="w-4 h-4 text-primary focus:ring-primary border-gray-300"
                   />
                   <div>
                     <span className="block text-[13px] font-bold text-gray-900">
@@ -196,7 +196,7 @@ const StaffPreferencesTab = () => {
                 </label>
 
                 <label
-                  className={`flex-1 flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${density === "comfortable" ? "border-[#1e3a8a] bg-blue-50/30" : "border-gray-100 hover:border-gray-200 bg-white"}`}
+                  className={`flex-1 flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${density === "comfortable" ? "border-primary bg-primary/5" : "border-gray-100 hover:border-gray-200 bg-white"}`}
                 >
                   <input
                     type="radio"
@@ -204,7 +204,7 @@ const StaffPreferencesTab = () => {
                     value="comfortable"
                     checked={density === "comfortable"}
                     onChange={() => setDensity("comfortable")}
-                    className="w-4 h-4 text-[#1e3a8a] focus:ring-[#1e3a8a] border-gray-300"
+                    className="w-4 h-4 text-primary focus:ring-primary border-gray-300"
                   />
                   <div>
                     <span className="block text-[13px] font-bold text-gray-900">
