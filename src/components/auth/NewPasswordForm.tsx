@@ -164,7 +164,7 @@ const NewPasswordForm: React.FC<NewPasswordFormProps> = ({
 
           <button
             disabled={isLoading}
-            className="w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0 text-base mt-4 disabled:opacity-50"
+            className="w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-primary/90 transition-all hover:translate-y-[-2px] active:translate-y-0 text-base mt-4 disabled:opacity-50"
           >
             {isLoading ? "Resetting..." : "Reset Password"} <Lock size={18} />
           </button>

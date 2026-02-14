@@ -143,10 +143,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
           <button
             disabled={isLoading}
             className={cn(
-              "w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 transition-all",
+              "w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 transition-all",
               isLoading
                 ? "opacity-70 cursor-not-allowed"
-                : "hover:bg-blue-950 hover:translate-y-[-2px] active:translate-y-0",
+                : "hover:bg-primary/90 hover:translate-y-[-2px] active:translate-y-0",
             )}
           >
             {isLoading ? (
