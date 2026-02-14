@@ -24,7 +24,9 @@ const StaffDashboardLayout = ({ children }: StaffDashboardLayoutProps) => {
       <div className="flex-1 flex flex-col min-w-0">
         <StaffDashboardHeader />
         <main ref={mainRef} className="flex-1 overflow-y-auto">
-          {children}
+          <div className="w-full max-w-[1600px] mx-auto px-6 py-8 lg:px-10 lg:py-10">
+            {children}
+          </div>
         </main>
       </div>
     </div>
