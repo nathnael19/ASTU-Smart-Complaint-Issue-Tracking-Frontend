@@ -14,7 +14,7 @@ import { useState } from "react";
 export const SystemConfiguration = () => (
   <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm p-8">
     <div className="flex items-center gap-3 mb-8">
-      <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#1e3a8a]">
+      <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
         <Monitor size={20} />
       </div>
       <h3 className="text-xl font-black text-gray-900">System Configuration</h3>
@@ -27,7 +27,7 @@ export const SystemConfiguration = () => (
         <input
           type="text"
           defaultValue="ASTU Smart Complaint & Issue Tracking System"
-          className="w-full bg-slate-50 border border-transparent rounded-xl py-3.5 px-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold"
+          className="w-full bg-slate-50 border border-transparent rounded-xl py-3.5 px-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold"
         />
       </div>
       <div className="space-y-2">
@@ -41,7 +41,7 @@ export const SystemConfiguration = () => (
           <input
             type="text"
             defaultValue="astu.edu.et"
-            className="w-full bg-slate-50 border border-transparent rounded-xl py-3.5 pl-10 pr-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold"
+            className="w-full bg-slate-50 border border-transparent rounded-xl py-3.5 pl-10 pr-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold"
           />
         </div>
       </div>
@@ -71,8 +71,8 @@ export const MaintenanceMode = () => {
         </div>
         <button
           onClick={() => setEnabled(!enabled)}
-          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#1e3a8a] focus:ring-offset-2 ${
-            enabled ? "bg-[#1e3a8a]" : "bg-gray-300"
+          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+            enabled ? "bg-primary" : "bg-gray-300"
           }`}
         >
           <span
@@ -110,7 +110,7 @@ export const SecuritySettings = () => (
         <input
           type="number"
           defaultValue="30"
-          className="w-full bg-slate-50 border border-transparent rounded-xl py-3.5 px-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold"
+          className="w-full bg-slate-50 border border-transparent rounded-xl py-3.5 px-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold"
         />
       </div>
       <div className="space-y-2">
@@ -119,7 +119,7 @@ export const SecuritySettings = () => (
         </label>
         <textarea
           placeholder="Enter IP addresses separated by commas..."
-          className="w-full h-32 bg-slate-50 border border-transparent rounded-xl py-3.5 px-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold resize-none"
+          className="w-full h-32 bg-slate-50 border border-transparent rounded-xl py-3.5 px-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold resize-none"
         />
         <p className="text-[10px] font-medium text-gray-400 pl-1 uppercase tracking-widest">
           Leave blank to allow admin access from any IP.
@@ -166,7 +166,7 @@ export const ApiIntegrations = () => {
             className="flex items-center justify-between p-4 rounded-2xl border border-gray-50 hover:border-gray-100 hover:bg-slate-50/50 transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-gray-400 group-hover:text-[#1e3a8a] transition-colors">
+              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
                 <item.icon size={20} />
               </div>
               <div>
@@ -184,7 +184,7 @@ export const ApiIntegrations = () => {
                 </p>
               </div>
             </div>
-            <button className="text-[10px] font-black text-[#1e3a8a] tracking-[0.1em] hover:underline">
+            <button className="text-[10px] font-black text-primary tracking-[0.1em] hover:underline">
               {item.actionLabel}
             </button>
           </div>

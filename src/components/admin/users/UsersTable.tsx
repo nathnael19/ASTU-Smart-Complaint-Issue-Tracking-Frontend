@@ -82,7 +82,7 @@ const UsersTable = ({
       {/* Selection Action Bar */}
       {selectedIds.size > 0 && (
         <div className="bg-[#f8fafc] px-8 py-4 border-b border-gray-100 flex items-center gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
-          <span className="text-sm font-bold text-[#1e3a8a]">
+          <span className="text-sm font-bold text-primary">
             {selectedIds.size} users selected
           </span>
           <div className="w-px h-4 bg-gray-300" />
@@ -111,7 +111,7 @@ const UsersTable = ({
               <th className="py-5 px-8 w-12 text-center">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-gray-300 text-[#1e3a8a] focus:ring-[#1e3a8a] cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                   checked={
                     selectedIds.size === users.length && users.length > 0
                   }
@@ -170,7 +170,7 @@ const UsersTable = ({
                   <td className="py-4 px-8 w-12 text-center">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300 text-[#1e3a8a] focus:ring-[#1e3a8a] cursor-pointer"
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                       checked={selectedIds.has(user.id)}
                       onChange={() => toggleSelect(user.id)}
                     />
@@ -285,7 +285,7 @@ const UsersTable = ({
             <ChevronLeft size={16} />
           </button>
 
-          <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1e3a8a] text-white font-bold text-sm shadow-sm transition-colors">
+          <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white font-bold text-sm shadow-sm transition-colors">
             {currentPage}
           </button>
 
