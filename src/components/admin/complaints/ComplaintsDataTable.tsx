@@ -77,7 +77,7 @@ const ComplaintsDataTable = ({
   };
 
   return (
-    <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm overflow-hidden mt-8">
+    <div className="card overflow-hidden mt-8 rounded-[1.5rem]">
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
@@ -140,7 +140,7 @@ const ComplaintsDataTable = ({
                     className="hover:bg-slate-50/50 transition-colors group"
                   >
                     <td className="py-4 px-6">
-                      <span className="text-sm font-bold text-[#1e3a8a]">
+                      <span className="text-sm font-bold text-primary">
                         {complaint.ticket_number ||
                           `#${complaint.id.split("-")[0].toUpperCase()}`}
                       </span>
@@ -191,7 +191,7 @@ const ComplaintsDataTable = ({
                     <td className="py-4 px-6 text-right">
                       <Link
                         to={`/admin/complaints/${complaint.id}`}
-                        className="inline-flex items-center gap-2 text-sm font-black text-[#1e3a8a] py-2 px-3 rounded-xl hover:bg-blue-50 transition-colors"
+                        className="inline-flex items-center gap-2 text-sm font-black text-primary py-2 px-3 rounded-xl hover:bg-primary/5 transition-colors"
                       >
                         View
                         <ExternalLink size={16} />

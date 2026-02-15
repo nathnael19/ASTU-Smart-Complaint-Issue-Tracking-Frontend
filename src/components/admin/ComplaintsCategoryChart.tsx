@@ -64,7 +64,7 @@ const ComplaintsCategoryChart = () => {
             >
               <div className="relative w-full h-full flex items-end justify-center">
                 <div
-                  className="w-full bg-[#1e3a8a]/10 rounded-t-xl transition-all duration-500 group-hover:bg-[#1e3a8a]/20"
+                  className="w-full bg-primary/10 rounded-t-xl transition-all duration-500 group-hover:bg-primary/20"
                   style={{ height: `${(item.count / maxCount) * 100}%` }}
                 >
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-[10px] font-black px-2 py-1 rounded mb-2 whitespace-nowrap">
