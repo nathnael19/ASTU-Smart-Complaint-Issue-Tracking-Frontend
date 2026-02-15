@@ -61,7 +61,7 @@ const RecentDownloads = () => {
                 {file.date} • {file.size}
               </p>
             </div>
-            <button className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 border border-gray-100 hover:text-[#1e3a8a] hover:bg-white transition-all shadow-sm">
+            <button className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 border border-gray-100 hover:text-primary hover:bg-white transition-all shadow-sm">
               <Download size={16} />
             </button>
           </div>

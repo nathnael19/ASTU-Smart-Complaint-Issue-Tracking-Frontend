@@ -19,7 +19,7 @@ const CustomReportBuilder = () => {
   return (
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 h-full">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#1e3a8a]">
+        <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
           <FileBarChart size={20} />
         </div>
         <h3 className="text-xl font-black text-gray-900">
@@ -36,11 +36,11 @@ const CustomReportBuilder = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <input
                 type="date"
-                className="flex-1 bg-slate-50 border border-transparent rounded-xl py-3 px-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold"
+                className="flex-1 bg-slate-50 border border-transparent rounded-xl py-3 px-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold"
               />
               <input
                 type="date"
-                className="flex-1 bg-slate-50 border border-transparent rounded-xl py-3 px-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold"
+                className="flex-1 bg-slate-50 border border-transparent rounded-xl py-3 px-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold"
               />
             </div>
           </div>
@@ -50,7 +50,7 @@ const CustomReportBuilder = () => {
               Target Category
             </label>
             <div className="relative group">
-              <select className="w-full bg-slate-50 border border-transparent rounded-xl py-3 pl-4 pr-10 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-bold appearance-none cursor-pointer">
+              <select className="w-full bg-slate-50 border border-transparent rounded-xl py-3 pl-4 pr-10 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-bold appearance-none cursor-pointer">
                 <option>All Departments</option>
                 <option>Software Engineering</option>
                 <option>Civil Engineering</option>
@@ -58,7 +58,7 @@ const CustomReportBuilder = () => {
               </select>
               <ChevronDown
                 size={18}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors pointer-events-none"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors pointer-events-none"
               />
             </div>
           </div>
@@ -78,7 +78,7 @@ const CustomReportBuilder = () => {
                   type="checkbox"
                   checked={value}
                   onChange={() => setMetrics({ ...metrics, [key]: !value })}
-                  className="w-5 h-5 rounded border-gray-300 text-[#1e3a8a] focus:ring-[#1e3a8a]/20 cursor-pointer"
+                  className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary/20 cursor-pointer"
                 />
                 <span className="text-sm font-bold text-gray-700 group-hover:text-gray-900 capitalize">
                   {key.replace(/([A-Z])/g, " $1").trim()}
@@ -99,7 +99,7 @@ const CustomReportBuilder = () => {
                 onClick={() => setFormat("PDF")}
                 className={`flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-black transition-all ${
                   format === "PDF"
-                    ? "bg-white text-[#1e3a8a] shadow-sm"
+                    ? "bg-white text-primary shadow-sm"
                     : "text-gray-400 hover:text-gray-600"
                 }`}
               >
@@ -111,7 +111,7 @@ const CustomReportBuilder = () => {
                 onClick={() => setFormat("EXCEL")}
                 className={`flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-black transition-all ${
                   format === "EXCEL"
-                    ? "bg-white text-[#1e3a8a] shadow-sm"
+                    ? "bg-white text-primary shadow-sm"
                     : "text-gray-400 hover:text-gray-600"
                 }`}
               >
@@ -123,7 +123,7 @@ const CustomReportBuilder = () => {
 
           <button
             type="submit"
-            className="w-full sm:w-auto bg-[#1e3a8a] text-white px-8 py-3.5 rounded-xl font-black text-sm shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all flex items-center justify-center gap-3 group"
+            className="w-full sm:w-auto bg-primary text-white px-8 py-3.5 rounded-xl font-black text-sm shadow-xl shadow-blue-900/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-3 group"
           >
             <Send
               size={18}
