@@ -17,7 +17,7 @@ const ResolutionTimeline = ({
   return (
     <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm p-8 mb-6">
       <div className="flex items-center gap-3 mb-8">
-        <Activity size={20} className="text-[#1e3a8a]" />
+        <Activity size={20} className="text-primary" />
         <h3 className="text-xl font-black text-gray-900">
           Resolution Timeline
         </h3>
@@ -78,7 +78,7 @@ const ResolutionTimeline = ({
         {/* Step: Complaint Opened */}
         <div className="relative flex gap-6">
           <div
-            className={`w-6 h-6 rounded-full bg-[#1e3a8a] flex items-center justify-center shrink-0 z-10 mt-0.5 ring-4 ring-blue-50`}
+            className={`w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0 z-10 mt-0.5 ring-4 ring-primary/10`}
           >
             <CheckCircle2 size={12} className="text-white" />
           </div>
