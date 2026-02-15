@@ -62,7 +62,7 @@ const ComplaintDetailHeader = ({
         <button
           type="button"
           onClick={onAssignStaff}
-          className="bg-[#1e3a8a] text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-900/20 hover:bg-blue-950 transition-colors text-sm"
+          className="btn-primary px-5 py-2.5 rounded-xl text-sm shadow-lg shadow-blue-900/20"
         >
           <UserPlus size={16} />
           Assign Staff

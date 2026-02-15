@@ -19,7 +19,7 @@ const ComplaintDescription = ({
   return (
     <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm p-8 mb-6">
       <div className="flex items-center gap-3 mb-6">
-        <FileText size={20} className="text-[#1e3a8a]" />
+        <FileText size={20} className="text-primary" />
         <h3 className="text-xl font-black text-gray-900">
           Complaint Description
         </h3>
@@ -57,7 +57,7 @@ const ComplaintDescription = ({
                   <>
                     <ImageIcon
                       size={24}
-                      className="text-gray-400 mb-2 group-hover:text-blue-500 transition-colors"
+                      className="text-gray-400 mb-2 group-hover:text-primary transition-colors"
                     />
                     <span className="text-xs font-bold text-gray-500 truncate w-full px-4 text-center">
                       {file.file_name}
