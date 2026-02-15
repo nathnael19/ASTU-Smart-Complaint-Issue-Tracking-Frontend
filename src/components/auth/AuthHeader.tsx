@@ -18,7 +18,7 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({
           className="w-10 h-10 object-contain"
         />
         <div className="flex flex-col -gap-1">
-          <span className="text-sm font-black text-[#1e3a8a] uppercase leading-tight tracking-tight">
+          <span className="text-sm font-black text-primary uppercase leading-tight tracking-tight">
             ASTU Smart Complaint
           </span>
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -48,7 +48,7 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({
         <div className="h-4 w-[1px] bg-gray-200 mx-2" />
         <Link
           to={actionPath}
-          className="bg-[#e2e8f0] text-[#1e3a8a] px-6 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors shadow-sm"
+          className="bg-slate-100 text-primary px-6 py-2 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors shadow-sm"
         >
           {actionLabel}
         </Link>

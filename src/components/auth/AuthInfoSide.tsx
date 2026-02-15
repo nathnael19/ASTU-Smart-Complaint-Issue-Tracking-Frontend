@@ -2,7 +2,7 @@ import { ShieldCheck, Activity } from "lucide-react";
 
 const AuthInfoSide = () => {
   return (
-    <div className="bg-[#1e3a8a] md:w-5/12 p-10 md:p-14 text-white relative overflow-hidden flex flex-col justify-center">
+    <div className="bg-primary md:w-5/12 p-10 md:p-14 text-white relative overflow-hidden flex flex-col justify-center">
       {/* Background pattern */}
       <div className="absolute top-10 left-10 w-40 h-40 border-2 border-white/5 rounded-full" />
       <div className="absolute bottom-10 right-10 w-60 h-60 border-2 border-white/5 rounded-full" />
