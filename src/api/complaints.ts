@@ -134,7 +134,7 @@ export const getComplaintDetails = async (id: string) => {
 
 export const updateComplaint = async (
   id: string,
-  data: Partial<ComplaintCreate> & { status?: string },
+  data: Partial<ComplaintCreate> & { status?: string; assigned_to?: string | null },
 ) => {
   const token = localStorage.getItem("access_token");
   const response = await fetch(`${API_URL}/complaints/${id}`, {

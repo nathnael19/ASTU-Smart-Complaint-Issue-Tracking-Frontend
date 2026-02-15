@@ -40,7 +40,7 @@ const AdminHeader = () => {
     <header className="h-20 bg-white border-b border-gray-100 flex items-center px-8 sticky top-0 z-10 w-full">
       {/* Logo Section */}
       <div className="flex items-center gap-3 mr-12 shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-[#1e3a8a] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
           {/* simple icon for ASTU smart tracking */}
           <svg
             width="20"
@@ -65,7 +65,7 @@ const AdminHeader = () => {
             />
           </svg>
         </div>
-        <span className="text-xl font-black text-[#1e3a8a] tracking-tight">
+        <span className="text-xl font-black text-primary tracking-tight">
           ASTU Smart Tracking
         </span>
       </div>
@@ -73,13 +73,13 @@ const AdminHeader = () => {
       {/* Search Bar */}
       <div className="flex-1 max-w-sm mr-auto">
         <div className="relative group">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#1e3a8a] transition-colors">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
             <Search size={18} />
           </div>
           <input
             type="text"
             placeholder="Search analytics..."
-            className="w-full bg-slate-50 border border-transparent rounded-xl py-2.5 pl-11 pr-4 focus:outline-none focus:bg-white focus:border-[#1e3a8a]/20 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-medium"
+            className="w-full bg-slate-50 border border-transparent rounded-xl py-2.5 pl-11 pr-4 focus:outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all text-sm font-medium"
           />
         </div>
       </div>
@@ -92,13 +92,13 @@ const AdminHeader = () => {
             to={link.path}
             className={`text-sm font-bold transition-colors relative py-8 ${
               location.pathname === link.path
-                ? "text-[#1e3a8a]"
+                ? "text-primary"
                 : "text-gray-500 hover:text-gray-900"
             }`}
           >
             {link.name}
             {location.pathname === link.path && (
-              <span className="absolute bottom-0 left-0 right-0 h-1 bg-[#1e3a8a] rounded-t-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />
             )}
           </Link>
         ))}
