@@ -22,7 +22,7 @@ const ComplaintsFilterBar = ({
           value={filters.search || ""}
           onChange={(e) => onFilterChange("search", e.target.value)}
           placeholder="Search by Ticket ID, name or subject..."
-          className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all text-sm font-medium"
+          className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
         />
       </div>
 
@@ -32,7 +32,7 @@ const ComplaintsFilterBar = ({
           <select
             value={filters.category || ""}
             onChange={(e) => onFilterChange("category", e.target.value)}
-            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] cursor-pointer min-w-[140px]"
+            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer min-w-[140px]"
           >
             <option value="">All Categories</option>
             <option value="IT_AND_NETWORK">IT & Network</option>
@@ -53,7 +53,7 @@ const ComplaintsFilterBar = ({
           <select
             value={filters.status || ""}
             onChange={(e) => onFilterChange("status", e.target.value)}
-            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] cursor-pointer min-w-[130px]"
+            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer min-w-[130px]"
           >
             <option value="">All Statuses</option>
             <option value="OPEN">Open</option>
@@ -71,7 +71,7 @@ const ComplaintsFilterBar = ({
           <select
             value={filters.priority || ""}
             onChange={(e) => onFilterChange("priority", e.target.value)}
-            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] cursor-pointer min-w-[130px]"
+            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer min-w-[130px]"
           >
             <option value="">All Priorities</option>
             <option value="HIGH">High</option>

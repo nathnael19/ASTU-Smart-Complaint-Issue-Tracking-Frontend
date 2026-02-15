@@ -87,7 +87,7 @@ const UserManagementTable = ({ currentUserId }: UserManagementTableProps) => {
       {/* Table Header Section */}
       <div className="p-8 border-b border-gray-100 flex items-center justify-between">
         <h3 className="text-xl font-black text-gray-900">User Management</h3>
-        <button className="text-sm font-bold text-[#1e3a8a] py-2 px-4 rounded-xl hover:bg-blue-50 transition-colors">
+        <button className="text-sm font-bold text-primary py-2 px-4 rounded-xl hover:bg-primary/5 transition-colors">
           View All Users
         </button>
       </div>
