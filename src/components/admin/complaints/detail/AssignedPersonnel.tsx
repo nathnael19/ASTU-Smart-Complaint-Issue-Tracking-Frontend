@@ -67,7 +67,7 @@ const AssignedPersonnel = ({
 
         <button
           type="button"
-          className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-[#1e3a8a] hover:bg-blue-50 transition-colors"
+          className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-primary hover:bg-primary/5 transition-colors"
           aria-label="Email assigned staff"
         >
           <Mail size={18} />
