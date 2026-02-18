@@ -165,3 +165,61 @@ export const deleteComplaint = async (id: string) => {
 
   return response.json();
 };
+
+// ── Complaint thread (remarks) ─────────────────────────────────────────────────
+
+export interface ComplaintRemarkAuthor {
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+  role?: string;
+}
+
+export interface ComplaintRemark {
+  id: string;
+  complaint_id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+  users?: ComplaintRemarkAuthor;
+}
+
+export const getComplaintRemarks = async (
+  complaintId: string,
+): Promise<{ data: ComplaintRemark[] }> => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(
+    `${API_URL}/complaints/${complaintId}/remarks`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+};
+
+export const postComplaintRemark = async (
+  complaintId: string,
+  content: string,
+): Promise<ComplaintRemark> => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(
+    `${API_URL}/complaints/${complaintId}/remarks`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ content: content.trim() }),
+    },
+  );
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+  return response.json();
+};
