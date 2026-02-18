@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   FileText,
   Download,
-  MessageSquare,
   History,
   Shield,
   ExternalLink,
@@ -19,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
+import ComplaintThread from "../../components/shared/ComplaintThread";
 import { updateComplaint, deleteComplaint } from "../../api/complaints";
 import { useComplaintDetail } from "../../hooks/useComplaints";
 import { invalidateCache } from "../../lib/cache";
@@ -568,17 +568,15 @@ const ComplaintDetail = () => {
               )}
             </div>
 
-            {/* Conversation/Notes Placeholder (Can be expanded later) */}
-            <div className="bg-slate-50 rounded-[2.5rem] border border-dashed border-gray-200 p-10 text-center space-y-4">
-              <MessageSquare className="mx-auto text-gray-300" size={32} />
-              <p className="text-gray-400 font-bold">
-                No updates or comments from staff yet.
-              </p>
-              <p className="text-xs text-gray-400 max-w-xs mx-auto">
-                Once a staff member reviews your complaint, their notes or
-                responses will appear here.
-              </p>
-            </div>
+            {/* Conversation: student, staff & admin can chat on this complaint */}
+            {id && (
+              <ComplaintThread
+                complaintId={id}
+                title="Conversation"
+                placeholder="Ask a question or add a message for staff..."
+                submitLabel="Send"
+              />
+            )}
           </div>
 
           {/* Sidebar Info */}
