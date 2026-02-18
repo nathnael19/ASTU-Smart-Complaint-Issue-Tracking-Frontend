@@ -62,10 +62,15 @@ const ComplaintDetail = () => {
         <ComplaintDetailHeader
           ticketId={ticketId}
           status={complaint.status}
-          studentName={complaint.users?.full_name || "Unknown Student"}
+          studentName={
+            complaint.users?.full_name ||
+            [complaint.users?.first_name, complaint.users?.last_name].filter(Boolean).join(" ").trim() ||
+            "Unknown Student"
+          }
           studentId={
-            complaint.users?.id_number ||
-            complaint.submitted_by?.slice(0, 8) ||
+            complaint.users?.student_id_number ??
+            complaint.users?.id_number ??
+            complaint.submitted_by?.slice(0, 8) ??
             "N/A"
           }
           dateSubmitted={new Date(complaint.created_at).toLocaleString(
