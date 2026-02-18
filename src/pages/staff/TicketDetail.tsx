@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import TicketDetailHeader from "../../components/staff/TicketDetailHeader";
 import ComplaintDescriptionCard from "../../components/staff/ComplaintDescriptionCard";
-import InternalNotesCard from "../../components/staff/InternalNotesCard";
+import ComplaintThread from "../../components/shared/ComplaintThread";
 import CommunicationLogCard from "../../components/staff/CommunicationLogCard";
 import TicketActionsCard from "../../components/staff/TicketActionsCard";
 import RequesterInfoCard from "../../components/staff/RequesterInfoCard";
@@ -76,7 +76,14 @@ const TicketDetail = () => {
               location={ticketData.location}
               reportedVia={ticketData.reportedVia}
             />
-            <InternalNotesCard notes={ticketData.internalNotes} />
+            {id && (
+              <ComplaintThread
+                complaintId={id}
+                title="Conversation"
+                placeholder="Add an update or reply for the student..."
+                submitLabel="Post"
+              />
+            )}
             <CommunicationLogCard entries={ticketData.communicationLog} />
           </div>
 
