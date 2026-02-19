@@ -1,6 +1,19 @@
 import { Activity, Check, RefreshCcw, CheckCircle2 } from "lucide-react";
 
-const ResolutionTimeline = () => {
+interface ResolutionTimelineProps {
+  status: string;
+  createdAt: string;
+  resolvedAt?: string;
+}
+
+const ResolutionTimeline = ({
+  status,
+  createdAt,
+  resolvedAt,
+}: ResolutionTimelineProps) => {
+  const isResolved = status === "RESOLVED" || status === "CLOSED";
+  const isInProgress = status === "IN_PROGRESS" || status === "IN PROGRESS";
+
   return (
     <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm p-8 mb-6">
       <div className="flex items-center gap-3 mb-8">
@@ -14,37 +27,59 @@ const ResolutionTimeline = () => {
         {/* Vertical Line */}
         <div className="absolute left-7 top-2 bottom-4 w-0.5 bg-gray-100" />
 
-        {/* Step: Resolved (Pending future) */}
-        <div className="relative flex gap-6 opacity-40">
-          <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center shrink-0 z-10 mt-0.5">
-            <Check size={12} className="text-gray-300" />
+        {/* Step: Resolved */}
+        <div
+          className={`relative flex gap-6 ${isResolved ? "opacity-100" : "opacity-40"}`}
+        >
+          <div
+            className={`w-6 h-6 rounded-full bg-white border-2 ${isResolved ? "border-emerald-500" : "border-gray-200"} flex items-center justify-center shrink-0 z-10 mt-0.5`}
+          >
+            <Check
+              size={12}
+              className={isResolved ? "text-emerald-500" : "text-gray-300"}
+            />
           </div>
           <div>
-            <h4 className="text-sm font-black text-gray-500">Resolved</h4>
-            <p className="text-xs font-bold text-gray-400 mt-0.5">Pending</p>
+            <h4
+              className={`text-sm font-black ${isResolved ? "text-gray-900" : "text-gray-500"}`}
+            >
+              Resolved
+            </h4>
+            <p className="text-xs font-bold text-gray-400 mt-0.5">
+              {resolvedAt
+                ? new Date(resolvedAt).toLocaleString()
+                : isResolved
+                  ? "Completed"
+                  : "Pending"}
+            </p>
           </div>
         </div>
 
-        {/* Step: In Progress (Current) */}
-        <div className="relative flex gap-6">
-          <div className="absolute w-0.5 bg-amber-500 h-[calc(100%+2rem)] left-[11px] top-6" />
-          <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center shrink-0 z-10 mt-0.5 ring-4 ring-amber-50">
+        {/* Step: In Progress */}
+        <div
+          className={`relative flex gap-6 ${isInProgress || isResolved ? "opacity-100" : "opacity-40"}`}
+        >
+          {isResolved && (
+            <div className="absolute w-0.5 bg-emerald-500 h-[calc(100%+2rem)] left-[11px] top-6" />
+          )}
+          <div
+            className={`w-6 h-6 rounded-full ${isInProgress || isResolved ? "bg-amber-500" : "bg-gray-200"} flex items-center justify-center shrink-0 z-10 mt-0.5 ring-4 ring-amber-50`}
+          >
             <RefreshCcw size={12} className="text-white" />
           </div>
           <div>
             <h4 className="text-sm font-black text-gray-900">In Progress</h4>
             <p className="text-xs font-medium text-gray-500 mt-1">
-              Feb 24, 11:30 AM
-            </p>
-            <p className="text-xs font-bold text-[#1e3a8a] mt-1">
-              Assigned to: Maintenance
+              {isInProgress || isResolved ? "Active / Completed" : "Waiting"}
             </p>
           </div>
         </div>
 
-        {/* Step: Complaint Opened (Past) */}
+        {/* Step: Complaint Opened */}
         <div className="relative flex gap-6">
-          <div className="w-6 h-6 rounded-full bg-[#1e3a8a] flex items-center justify-center shrink-0 z-10 mt-0.5 ring-4 ring-blue-50">
+          <div
+            className={`w-6 h-6 rounded-full bg-[#1e3a8a] flex items-center justify-center shrink-0 z-10 mt-0.5 ring-4 ring-blue-50`}
+          >
             <CheckCircle2 size={12} className="text-white" />
           </div>
           <div>
@@ -52,10 +87,7 @@ const ResolutionTimeline = () => {
               Complaint Opened
             </h4>
             <p className="text-xs font-medium text-gray-500 mt-1">
-              Feb 24, 10:45 AM
-            </p>
-            <p className="text-xs font-medium text-gray-400 mt-1 italic">
-              "System generated entry"
+              {new Date(createdAt).toLocaleString()}
             </p>
           </div>
         </div>
