@@ -7,13 +7,50 @@ import InternalRemarks from "../../components/admin/complaints/detail/InternalRe
 import ManagementControls from "../../components/admin/complaints/detail/ManagementControls";
 import ResolutionTimeline from "../../components/admin/complaints/detail/ResolutionTimeline";
 import AssignedPersonnel from "../../components/admin/complaints/detail/AssignedPersonnel";
+import { useComplaintDetail } from "../../hooks/useComplaints";
+import { Loader2, AlertCircle } from "lucide-react";
 
 const ComplaintDetail = () => {
   const { id } = useParams();
+  const { data: complaint, loading, error } = useComplaintDetail(id);
 
-  // In a real app we would fetch the detail using `id`.
-  // For UI implementation, we mock the ticket data.
-  const ticketId = id ? `#ASTU-${id}` : "#ASTU-8821";
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <p className="text-lg font-bold text-gray-600">
+            Loading ticket details...
+          </p>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (!!error || !complaint) {
+    return (
+      <AdminLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <AlertCircle className="w-12 h-12 text-red-500" />
+          <h2 className="text-2xl font-black text-gray-900">
+            Failed to load ticket
+          </h2>
+          <p className="text-gray-600 font-medium">
+            {error ||
+              "The ticket you are looking for does not exist or you don't have permission to view it."}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 bg-[#1e3a8a] text-white px-6 py-2 rounded-xl font-bold"
+          >
+            Try Again
+          </button>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  const ticketId = complaint.ticket_number || `#ASTU-${id?.slice(0, 4)}`;
 
   return (
     <AdminLayout>
@@ -24,25 +61,53 @@ const ComplaintDetail = () => {
         {/* Header */}
         <ComplaintDetailHeader
           ticketId={ticketId}
-          status="IN PROGRESS"
-          studentName="John Doe"
-          studentId="12044"
-          dateSubmitted="Feb 24, 2024, 10:45 AM"
+          status={complaint.status}
+          studentName={complaint.users?.full_name || "Unknown Student"}
+          studentId={
+            complaint.users?.id_number ||
+            complaint.submitted_by?.slice(0, 8) ||
+            "N/A"
+          }
+          dateSubmitted={new Date(complaint.created_at).toLocaleString(
+            "en-US",
+            {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            },
+          )}
         />
 
         {/* Two Column Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column (Main Content) */}
           <div className="lg:col-span-2 space-y-6">
-            <ComplaintDescription />
-            <InternalRemarks />
+            <ComplaintDescription
+              description={complaint.description}
+              attachments={complaint.attachments || []}
+            />
+            <InternalRemarks complaintId={complaint.id} />
           </div>
 
           {/* Right Column (Controls & Meta) */}
           <div className="lg:col-span-1 space-y-6">
-            <ManagementControls />
-            <ResolutionTimeline />
-            <AssignedPersonnel />
+            <ManagementControls
+              complaintId={complaint.id}
+              currentStatus={complaint.status}
+              currentPriority={complaint.priority}
+            />
+            <ResolutionTimeline
+              status={complaint.status}
+              createdAt={complaint.created_at}
+              resolvedAt={complaint.resolved_at}
+            />
+            <AssignedPersonnel
+              assignedTo={complaint.assigned_to}
+              assignedUser={complaint.assigned_user}
+            />
           </div>
         </div>
       </div>
