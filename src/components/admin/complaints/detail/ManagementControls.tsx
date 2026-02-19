@@ -1,6 +1,38 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { updateComplaint } from "../../../../api/complaints";
 
-const ManagementControls = () => {
+interface ManagementControlsProps {
+  complaintId: string;
+  currentStatus: string;
+  currentPriority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+}
+
+const ManagementControls = ({
+  complaintId,
+  currentStatus,
+  currentPriority,
+}: ManagementControlsProps) => {
+  const [status, setStatus] = useState(currentStatus);
+  const [priority, setPriority] = useState<
+    "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
+  >(currentPriority);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleUpdate = async () => {
+    setIsUpdating(true);
+    setError(null);
+    try {
+      await updateComplaint(complaintId, { status, priority });
+      window.location.reload(); // Simple refresh to show new state
+    } catch (err: any) {
+      setError(err.message || "Failed to update ticket");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <div className="bg-[#1e3a8a] rounded-[1.5rem] shadow-sm p-6 text-white mb-6">
       <h3 className="text-sm font-black uppercase tracking-widest mb-6 text-blue-100">
@@ -14,10 +46,15 @@ const ManagementControls = () => {
             Change Status
           </label>
           <div className="relative">
-            <select className="w-full appearance-none bg-[#1e40af] border border-blue-700/50 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer">
-              <option>In Progress</option>
-              <option>Open</option>
-              <option>Resolved</option>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full appearance-none bg-[#1e40af] border border-blue-700/50 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
+            >
+              <option value="OPEN">Open</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="RESOLVED">Resolved</option>
+              <option value="CLOSED">Closed</option>
             </select>
             <ChevronDown
               size={16}
@@ -32,20 +69,33 @@ const ManagementControls = () => {
             Priority Level
           </label>
           <div className="flex bg-[#1e40af] rounded-xl border border-blue-700/50 p-1">
-            <button className="flex-1 py-2 text-[10px] font-black uppercase tracking-wider text-blue-200 hover:text-white transition-colors rounded-lg">
-              Low
-            </button>
-            <button className="flex-1 py-2 text-[10px] font-black uppercase tracking-wider bg-amber-500 text-white shadow-sm rounded-lg transition-colors">
-              Medium
-            </button>
-            <button className="flex-1 py-2 text-[10px] font-black uppercase tracking-wider text-blue-200 hover:text-white transition-colors rounded-lg">
-              High
-            </button>
+            {["LOW", "MEDIUM", "HIGH"].map((p) => (
+              <button
+                key={p}
+                onClick={() =>
+                  setPriority(p as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL")
+                }
+                className={`flex-1 py-2 text-[10px] font-black uppercase tracking-wider transition-colors rounded-lg ${
+                  priority === p
+                    ? "bg-amber-500 text-white shadow-sm"
+                    : "text-blue-200 hover:text-white"
+                }`}
+              >
+                {p}
+              </button>
+            ))}
           </div>
         </div>
 
+        {error && <p className="text-xs font-bold text-red-300">{error}</p>}
+
         {/* Update Button */}
-        <button className="w-full bg-white text-[#1e3a8a] py-3.5 rounded-xl font-black text-sm hover:bg-blue-50 transition-colors shadow-lg mt-2">
+        <button
+          onClick={handleUpdate}
+          disabled={isUpdating}
+          className="w-full bg-white text-[#1e3a8a] py-3.5 rounded-xl font-black text-sm hover:bg-blue-50 transition-colors shadow-lg mt-2 flex items-center justify-center gap-2"
+        >
+          {isUpdating && <Loader2 size={16} className="animate-spin" />}
           Update Ticket Status
         </button>
       </div>
