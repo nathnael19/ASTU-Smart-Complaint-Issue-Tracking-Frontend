@@ -9,7 +9,14 @@ interface Remark {
   avatarSeed: string;
 }
 
-const InternalRemarks = () => {
+interface InternalRemarksProps {
+  complaintId: string;
+}
+
+const InternalRemarks = ({ complaintId }: InternalRemarksProps) => {
+  // In a real app, we would fetch remarks using `complaintId`.
+  // For now, we use the mock data since the API for notes is not yet visible.
+  console.log("Fetching remarks for complaint:", complaintId);
   const remarks: Remark[] = [
     {
       id: "1",
