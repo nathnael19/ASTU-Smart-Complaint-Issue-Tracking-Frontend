@@ -2,7 +2,7 @@ import { Download, UserPlus } from "lucide-react";
 
 interface ComplaintDetailHeaderProps {
   ticketId: string;
-  status: "IN PROGRESS" | "OPEN" | "RESOLVED";
+  status: string;
   studentName: string;
   studentId: string;
   dateSubmitted: string;
@@ -15,9 +15,11 @@ const ComplaintDetailHeader = ({
   studentId,
   dateSubmitted,
 }: ComplaintDetailHeaderProps) => {
-  const getStatusBadge = (status: "IN PROGRESS" | "OPEN" | "RESOLVED") => {
-    switch (status) {
+  const getStatusBadge = (status: string) => {
+    const s = status?.toUpperCase();
+    switch (s) {
       case "IN PROGRESS":
+      case "IN_PROGRESS":
         return "bg-amber-100 text-amber-700";
       case "OPEN":
         return "bg-red-100 text-red-700";
