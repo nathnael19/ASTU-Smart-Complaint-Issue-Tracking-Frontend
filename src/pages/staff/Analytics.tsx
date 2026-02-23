@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Calendar,
   Download,
@@ -7,6 +8,7 @@ import {
   Briefcase,
   FileText,
   FileSpreadsheet,
+  Loader2,
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import {
@@ -15,6 +17,7 @@ import {
   useDepartmentMonthlyTrends,
 } from "../../hooks/useAnalytics";
 import { useDepartmentReports } from "../../hooks/useReports";
+import { exportToCSV, todayString } from "../../lib/exportUtils";
 
 const Analytics = () => {
   const { data: summary, loading: summaryLoading } = useDepartmentSummary();
@@ -23,6 +26,8 @@ const Analytics = () => {
     useDepartmentCategoryDistribution();
   const { data: trendsData, loading: trendsLoading } =
     useDepartmentMonthlyTrends();
+
+  const [isExporting, setIsExporting] = useState(false);
 
   const loading =
     summaryLoading || reportsLoading || categoriesLoading || trendsLoading;
@@ -35,6 +40,69 @@ const Analytics = () => {
     (sum, cat) => sum + cat.count,
     0,
   );
+
+  const handleExport = () => {
+    setIsExporting(true);
+    try {
+      exportToCSV(`staff-analytics-report-${todayString()}`, [
+        {
+          title: "Department Summary",
+          rows: [
+            {
+              Metric: "Assigned Tickets",
+              Value: summary?.assigned_tickets ?? "N/A",
+            },
+            {
+              Metric: "Pending Dept Tasks",
+              Value: summary?.pending_dept_tasks ?? "N/A",
+            },
+            {
+              Metric: "Avg Response Time",
+              Value: summary?.avg_response_time ?? "N/A",
+            },
+            {
+              Metric: "Resolved This Week",
+              Value: summary?.resolved_this_week ?? "N/A",
+            },
+            {
+              Metric: "Avg Satisfaction Rating",
+              Value: summary?.avg_satisfaction_rating ?? "N/A",
+            },
+          ],
+        },
+        {
+          title: "Complaints by Category",
+          rows: categories.map((c) => ({
+            Category: c.category.replace(/_/g, " "),
+            Count: c.count,
+            Percentage:
+              totalComplaintsInCategories > 0
+                ? `${Math.round((c.count / totalComplaintsInCategories) * 100)}%`
+                : "0%",
+          })),
+        },
+        {
+          title: "Monthly Performance (Last 5 Months)",
+          rows: trends.map((t) => ({
+            Month: t.label,
+            Received: t.received,
+            Solved: t.solved,
+          })),
+        },
+        {
+          title: "Recent Department Reports",
+          rows: reports.map((r: any) => ({
+            Name: r.name,
+            Category: r.category,
+            Status: r.status,
+            "Generated Date": new Date(r.created_at).toLocaleDateString(),
+          })),
+        },
+      ]);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <StaffDashboardLayout>
@@ -53,9 +121,17 @@ const Analytics = () => {
               <Calendar size={16} className="text-gray-400" />
               <span>Last 30 Days</span>
             </button>
-            <button className="btn-primary px-5 py-2.5 rounded-xl text-[13px] shadow-sm">
-              <Download size={16} />
-              <span>Export All</span>
+            <button
+              onClick={handleExport}
+              disabled={isExporting || loading}
+              className="btn-primary px-5 py-2.5 rounded-xl text-[13px] shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isExporting ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Download size={16} />
+              )}
+              <span>{isExporting ? "Exporting..." : "Export All"}</span>
             </button>
           </div>
         </div>
@@ -68,11 +144,7 @@ const Analytics = () => {
               <span className="text-[13px] font-black text-gray-400 tracking-widest uppercase">
                 Total Reports
               </span>
-              <BarChart4
-                size={20}
-                className="text-primary"
-                strokeWidth={2.5}
-              />
+              <BarChart4 size={20} className="text-primary" strokeWidth={2.5} />
             </div>
             <div className="flex items-end gap-3">
               <h3 className="text-[32px] font-black text-gray-900 leading-none">
