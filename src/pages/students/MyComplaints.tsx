@@ -1,4 +1,11 @@
-import { useState } from "react";
+import {
+  useState,
+  type JSXElementConstructor,
+  type Key,
+  type ReactElement,
+  type ReactNode,
+  type ReactPortal,
+} from "react";
 import {
   Search,
   X,
@@ -24,6 +31,9 @@ const MyComplaints = () => {
     startDate: "",
     endDate: "",
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -274,95 +284,157 @@ const MyComplaints = () => {
                     </td>
                   </tr>
                 ) : (
-                  displayComplaints.map((complaint) => {
-                    const status = formatStatus(complaint.status);
-                    const priority = formatPriority(complaint.priority);
-                    const category = formatCategory(complaint.category);
-                    const date = new Date(
-                      complaint.created_at,
-                    ).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    });
+                  displayComplaints.map(
+                    (complaint: {
+                      status: string;
+                      priority: string;
+                      category: string;
+                      created_at: string | number | Date;
+                      id: Key | null | undefined;
+                      ticket_number:
+                        | string
+                        | number
+                        | bigint
+                        | boolean
+                        | ReactElement<
+                            unknown,
+                            string | JSXElementConstructor<any>
+                          >
+                        | Iterable<ReactNode>
+                        | ReactPortal
+                        | Promise<
+                            | string
+                            | number
+                            | bigint
+                            | boolean
+                            | ReactPortal
+                            | ReactElement<
+                                unknown,
+                                string | JSXElementConstructor<any>
+                              >
+                            | Iterable<ReactNode>
+                            | null
+                            | undefined
+                          >
+                        | null
+                        | undefined;
+                      title:
+                        | string
+                        | number
+                        | bigint
+                        | boolean
+                        | ReactElement<
+                            unknown,
+                            string | JSXElementConstructor<any>
+                          >
+                        | Iterable<ReactNode>
+                        | ReactPortal
+                        | Promise<
+                            | string
+                            | number
+                            | bigint
+                            | boolean
+                            | ReactPortal
+                            | ReactElement<
+                                unknown,
+                                string | JSXElementConstructor<any>
+                              >
+                            | Iterable<ReactNode>
+                            | null
+                            | undefined
+                          >
+                        | null
+                        | undefined;
+                    }) => {
+                      const status = formatStatus(complaint.status);
+                      const priority = formatPriority(complaint.priority);
+                      const category = formatCategory(complaint.category);
+                      const date = new Date(
+                        complaint.created_at,
+                      ).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      });
 
-                    return (
-                      <tr
-                        key={complaint.id}
-                        className="hover:bg-gray-50/50 transition-colors group"
-                      >
-                        <td className="px-8 py-6 text-sm font-bold text-gray-400">
-                          #{complaint.ticket_number}
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors">
-                              {complaint.title}
+                      return (
+                        <tr
+                          key={complaint.id}
+                          className="hover:bg-gray-50/50 transition-colors group"
+                        >
+                          <td className="px-8 py-6 text-sm font-bold text-gray-400">
+                            #{complaint.ticket_number}
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors">
+                                {complaint.title}
+                              </span>
+                              <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">
+                                {category}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span
+                              className={cn(
+                                "text-[10px] font-black uppercase px-2.5 py-1 rounded-md border",
+                                priority === "High" || priority === "Critical"
+                                  ? "bg-red-50 text-red-600 border-red-100"
+                                  : priority === "Medium"
+                                    ? "bg-yellow-50 text-yellow-600 border-yellow-100"
+                                    : "bg-gray-50 text-gray-500 border-gray-100",
+                              )}
+                            >
+                              {priority}
                             </span>
-                            <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">
-                              {category}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <span
-                            className={cn(
-                              "text-[10px] font-black uppercase px-2.5 py-1 rounded-md border",
-                              priority === "High" || priority === "Critical"
-                                ? "bg-red-50 text-red-600 border-red-100"
-                                : priority === "Medium"
-                                  ? "bg-yellow-50 text-yellow-600 border-yellow-100"
-                                  : "bg-gray-50 text-gray-500 border-gray-100",
-                            )}
-                          >
-                            {priority}
-                          </span>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div
-                            className={cn(
-                              "inline-flex items-center gap-2 px-3 py-1.5 rounded-full",
-                              status === "In Progress"
-                                ? "bg-blue-50 text-blue-600"
-                                : status === "Open"
-                                  ? "bg-yellow-50 text-yellow-600"
-                                  : "bg-green-50 text-green-600",
-                            )}
-                          >
+                          </td>
+                          <td className="px-8 py-6">
                             <div
                               className={cn(
-                                "w-1.5 h-1.5 rounded-full",
+                                "inline-flex items-center gap-2 px-3 py-1.5 rounded-full",
                                 status === "In Progress"
-                                  ? "bg-blue-500"
+                                  ? "bg-blue-50 text-blue-600"
                                   : status === "Open"
-                                    ? "bg-yellow-500"
-                                    : "bg-green-500",
+                                    ? "bg-yellow-50 text-yellow-600"
+                                    : "bg-green-50 text-green-600",
                               )}
-                            />
-                            <span className="text-[10px] font-black uppercase tracking-wide">
-                              {status}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6 text-sm font-bold text-gray-500">
-                          {date}
-                        </td>
-                        <td className="px-8 py-6 text-right">
-                          <button
-                            onClick={() =>
-                              navigate(`/student/complaints/${complaint.id}`)
-                            }
-                            className="bg-slate-50 hover:bg-[#1e3a8a] text-gray-400 hover:text-white p-2.5 rounded-xl transition-all flex items-center gap-2 ml-auto group/btn shadow-sm"
-                          >
-                            <Eye size={16} />
-                            <span className="text-xs font-black uppercase hidden lg:block px-1">
-                              View Details
-                            </span>
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
+                            >
+                              <div
+                                className={cn(
+                                  "w-1.5 h-1.5 rounded-full",
+                                  status === "In Progress"
+                                    ? "bg-blue-500"
+                                    : status === "Open"
+                                      ? "bg-yellow-500"
+                                      : "bg-green-500",
+                                )}
+                              />
+                              <span className="text-[10px] font-black uppercase tracking-wide">
+                                {status}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6 text-sm font-bold text-gray-500">
+                            {date}
+                          </td>
+                          <td className="px-8 py-6 text-right">
+                            <button
+                              onClick={() =>
+                                navigate(`/student/complaints/${complaint.id}`)
+                              }
+                              className="bg-slate-50 hover:bg-[#1e3a8a] text-gray-400 hover:text-white p-2.5 rounded-xl transition-all flex items-center gap-2 ml-auto group/btn shadow-sm"
+                            >
+                              <Eye size={16} />
+                              <span className="text-xs font-black uppercase hidden lg:block px-1">
+                                View Details
+                              </span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    },
+                  )
                 )}
               </tbody>
             </table>
