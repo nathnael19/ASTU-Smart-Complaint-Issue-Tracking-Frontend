@@ -22,7 +22,7 @@ export interface Notification {
 
 export const getNotifications = async (): Promise<Notification[]> => {
   const token = localStorage.getItem("access_token");
-  const response = await fetch(`${API_URL}/notifications/`, {
+  const response = await fetch(`${API_URL}/notifications`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
