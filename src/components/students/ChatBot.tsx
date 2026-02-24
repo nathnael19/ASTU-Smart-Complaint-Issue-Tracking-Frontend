@@ -1,17 +1,20 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Trash2 } from "lucide-react";
 import { sendChatMessage, type ChatMessage } from "../../api/chat";
+import { useCurrentProfile } from "../../hooks/useUsers";
 import { cn } from "../../lib/utils";
 
-const WELCOME = "Hi! I'm your ASTU complaint assistant. Ask me how to submit a complaint, track status, attach files, or about categories and campus issues.";
-
 export default function ChatBot() {
+  const { data: profile } = useCurrentProfile();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  const firstName = profile?.first_name || "Student";
+  const WELCOME = `Hi ${firstName}! I'm your ASTU assistant. Ask me how to submit a complaint, track status, or about campus services like the Library and ICT.`;
 
   useEffect(() => {
     if (open && listRef.current) {
@@ -43,12 +46,18 @@ export default function ChatBot() {
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, I couldn't process that. Please try again or check the Knowledge Base.",
+          content:
+            "Sorry, I couldn't process that. Please try again or check the Knowledge Base.",
         },
       ]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+    setError(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -78,17 +87,30 @@ export default function ChatBot() {
       {open && (
         <div
           className={cn(
-            "fixed bottom-24 right-6 z-50 flex w-[380px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
+            "fixed bottom-24 right-6 z-50 flex w-[380px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl",
           )}
         >
-          <div className="border-b border-gray-100 bg-primary px-4 py-3">
+          <div className="border-b border-gray-100 bg-primary px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-white">
               <MessageCircle size={20} />
-              <span className="font-bold text-sm">ASTU Assistant</span>
+              <div>
+                <span className="font-bold text-sm block leading-none">
+                  ASTU Assistant
+                </span>
+                <span className="text-[10px] font-medium text-blue-200">
+                  Online & Ready to Help
+                </span>
+              </div>
             </div>
-            <p className="mt-0.5 text-[10px] font-medium text-blue-200">
-              Ask about complaints, status, or campus issues
-            </p>
+            {messages.length > 0 && (
+              <button
+                onClick={clearChat}
+                className="p-1.5 text-blue-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                title="Clear Chat"
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
           </div>
 
           <div
@@ -107,7 +129,7 @@ export default function ChatBot() {
                   "max-w-[90%] rounded-2xl px-4 py-2.5 text-sm",
                   m.role === "user"
                     ? "ml-auto bg-primary text-white"
-                    : "bg-slate-50 text-gray-800"
+                    : "bg-slate-50 text-gray-800",
                 )}
               >
                 {m.content}
