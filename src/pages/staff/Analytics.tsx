@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Calendar,
   Download,
@@ -9,28 +10,51 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
-
-// Mock Data
-const reports = [
-  {
-    id: 1,
-    name: "Monthly_SLA_Performance_Nov23.pdf",
-    type: "pdf",
-    date: "Nov 28, 2023 10:45 AM",
-    category: "Performance",
-    status: "Ready",
-  },
-  {
-    id: 2,
-    name: "Student_Feedback_Aggregated_Q4.xlsx",
-    type: "excel",
-    date: "Nov 25, 2023 03:20 PM",
-    category: "Feedback",
-    status: "Ready",
-  },
-];
+import {
+  getDepartmentSummary,
+  getDepartmentCategoryDistribution,
+  getDepartmentMonthlyTrends,
+  type DepartmentSummary,
+  type CategoryStat,
+  type DepartmentMonthlyTrendStat,
+} from "../../api/analytics";
+import { getDepartmentReports, type Report } from "../../api/reports";
 
 const Analytics = () => {
+  const [summary, setSummary] = useState<DepartmentSummary | null>(null);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [categories, setCategories] = useState<CategoryStat[]>([]);
+  const [trends, setTrends] = useState<DepartmentMonthlyTrendStat[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        const [summaryData, reportsData, categoriesData, trendsData] =
+          await Promise.all([
+            getDepartmentSummary(),
+            getDepartmentReports(),
+            getDepartmentCategoryDistribution(),
+            getDepartmentMonthlyTrends(),
+          ]);
+        setSummary(summaryData);
+        setReports(reportsData);
+        setCategories(categoriesData);
+        setTrends(trendsData);
+      } catch (error) {
+        console.error("Failed to load analytics data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllData();
+  }, []);
+
+  const totalComplaintsInCategories = categories.reduce(
+    (sum, cat) => sum + cat.count,
+    0,
+  );
+
   return (
     <StaffDashboardLayout>
       <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50/30">
@@ -73,25 +97,8 @@ const Analytics = () => {
             </div>
             <div className="flex items-end gap-3">
               <h3 className="text-[32px] font-black text-gray-900 leading-none">
-                1,284
+                {loading ? "..." : reports.length}
               </h3>
-              <span className="text-[12px] font-black text-emerald-500 mb-1 flex items-center">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-0.5"
-                >
-                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                  <polyline points="16 7 22 7 22 13"></polyline>
-                </svg>
-                +12%
-              </span>
             </div>
           </div>
 
@@ -105,25 +112,8 @@ const Analytics = () => {
             </div>
             <div className="flex items-end gap-3">
               <h3 className="text-[32px] font-black text-gray-900 leading-none">
-                4.2h
+                {loading ? "..." : summary?.avg_response_time || "N/A"}
               </h3>
-              <span className="text-[12px] font-black text-emerald-500 mb-1 flex items-center">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-0.5"
-                >
-                  <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
-                  <polyline points="16 17 22 17 22 11"></polyline>
-                </svg>
-                -15m
-              </span>
             </div>
           </div>
 
@@ -137,10 +127,14 @@ const Analytics = () => {
             </div>
             <div className="flex items-end gap-3">
               <h3 className="text-[32px] font-black text-gray-900 leading-none">
-                94%
+                {loading
+                  ? "..."
+                  : summary?.avg_satisfaction_rating
+                    ? `${summary.avg_satisfaction_rating.toFixed(1)}/5.0`
+                    : "N/A"}
               </h3>
               <span className="text-[12px] font-bold text-gray-400 mb-1">
-                vs 92% LY
+                Out of 5.0
               </span>
             </div>
           </div>
@@ -159,11 +153,8 @@ const Analytics = () => {
             </div>
             <div className="flex items-end gap-3">
               <h3 className="text-[32px] font-black text-gray-900 leading-none">
-                42
+                {loading ? "..." : summary?.pending_dept_tasks || "0"}
               </h3>
-              <span className="text-[12px] font-black text-red-500 mb-1">
-                8 urgent
-              </span>
             </div>
           </div>
         </div>
@@ -177,7 +168,6 @@ const Analytics = () => {
             </h3>
             <div className="flex-1 flex items-center justify-center gap-12">
               <div className="relative w-48 h-48 bg-emerald-400 rounded-sm">
-                {/* This represents the large green square from the mockup */}
                 <div className="absolute inset-0 m-auto w-24 h-24 bg-white rounded-full flex flex-col items-center justify-center shadow-sm">
                   <span className="text-[22px] font-black text-gray-900 leading-none">
                     100%
@@ -189,50 +179,42 @@ const Analytics = () => {
               </div>
 
               <div className="space-y-5">
-                <div className="flex items-start gap-3">
-                  <div className="w-3 h-3 rounded-full bg-blue-600 mt-1 shrink-0"></div>
-                  <div>
-                    <p className="text-[13px] font-black text-gray-900 leading-tight">
-                      Network & IT (40%)
-                    </p>
-                    <p className="text-[11px] font-medium text-gray-400">
-                      514 Tickets
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-3 h-3 rounded-full bg-amber-400 mt-1 shrink-0"></div>
-                  <div>
-                    <p className="text-[13px] font-black text-gray-900 leading-tight">
-                      Facility/Maintenance (25%)
-                    </p>
-                    <p className="text-[11px] font-medium text-gray-400">
-                      321 Tickets
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-3 h-3 rounded-full bg-emerald-400 mt-1 shrink-0"></div>
-                  <div>
-                    <p className="text-[13px] font-black text-gray-900 leading-tight">
-                      Academic Affairs (10%)
-                    </p>
-                    <p className="text-[11px] font-medium text-gray-400">
-                      128 Tickets
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-3 h-3 rounded-full bg-slate-200 mt-1 shrink-0"></div>
-                  <div>
-                    <p className="text-[13px] font-black text-gray-900 leading-tight">
-                      Others (25%)
-                    </p>
-                    <p className="text-[11px] font-medium text-gray-400">
-                      321 Tickets
-                    </p>
-                  </div>
-                </div>
+                {categories.length === 0 && !loading && (
+                  <p className="text-gray-500 text-sm">No complaints found</p>
+                )}
+                {categories.map((cat, idx) => {
+                  const colors = [
+                    "bg-blue-600",
+                    "bg-amber-400",
+                    "bg-emerald-400",
+                    "bg-purple-500",
+                    "bg-pink-500",
+                    "bg-slate-200",
+                  ];
+                  const color = colors[idx % colors.length];
+                  const percentage =
+                    totalComplaintsInCategories > 0
+                      ? Math.round(
+                          (cat.count / totalComplaintsInCategories) * 100,
+                        )
+                      : 0;
+
+                  return (
+                    <div key={cat.category} className="flex items-start gap-3">
+                      <div
+                        className={`w-3 h-3 rounded-full ${color} mt-1 shrink-0`}
+                      ></div>
+                      <div>
+                        <p className="text-[13px] font-black text-gray-900 leading-tight">
+                          {cat.category.replace(/_/g, " ")} ({percentage}%)
+                        </p>
+                        <p className="text-[11px] font-medium text-gray-400">
+                          {cat.count} Tickets
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -261,25 +243,32 @@ const Analytics = () => {
               <div className="absolute left-0 right-0 bottom-8 border-b border-gray-100 w-full z-0"></div>
 
               {/* Bars */}
-              {[
-                { label: "JUL", received: 50, solved: 40 },
-                { label: "AUG", received: 60, solved: 55 },
-                { label: "SEP", received: 70, solved: 68 },
-                { label: "OCT", received: 65, solved: 62 },
-                { label: "NOV", received: 80, solved: 75 },
-              ].map((month) => (
+              {trends.length === 0 && !loading && (
+                <div className="absolute inset-0 flex items-center justify-center text-sm text-gray-400 z-20">
+                  No data available for the last 5 months
+                </div>
+              )}
+              {trends.map((month) => (
                 <div
                   key={month.label}
                   className="w-16 flex flex-col items-center gap-3 z-10"
                 >
                   <div className="flex items-end justify-center w-full gap-1 h-[200px]">
                     <div
-                      className="w-2.5 bg-slate-200 rounded-t-full"
-                      style={{ height: `${month.received}%` }}
+                      className="w-2.5 bg-slate-200 rounded-t-full transition-all duration-1000"
+                      style={{
+                        height: `${month.received}px`,
+                        minHeight: month.received > 0 ? "4px" : "0",
+                      }}
+                      title={`Received: ${month.received / 5}`} // Unscale for hover roughly
                     ></div>
                     <div
-                      className="w-2.5 bg-blue-600 rounded-t-full"
-                      style={{ height: `${month.solved}%` }}
+                      className="w-2.5 bg-blue-600 rounded-t-full transition-all duration-1000"
+                      style={{
+                        height: `${month.solved}px`,
+                        minHeight: month.solved > 0 ? "4px" : "0",
+                      }}
+                      title={`Solved: ${month.solved / 5}`} // Unscale for hover roughly
                     ></div>
                   </div>
                   <span className="text-[10px] font-black tracking-widest uppercase text-gray-400">
@@ -324,62 +313,87 @@ const Analytics = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {reports.map((report) => (
-                  <tr
-                    key={report.id}
-                    className="hover:bg-slate-50/50 transition-colors"
-                  >
-                    <td className="px-6 sm:px-8 py-5">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${report.type === "pdf" ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"}`}
-                        >
-                          {report.type === "pdf" ? (
-                            <FileText size={18} />
-                          ) : (
-                            <FileSpreadsheet size={18} />
-                          )}
-                        </div>
-                        <span className="text-[14px] font-black text-gray-900 hover:text-[#1e3a8a] cursor-pointer transition-colors max-w-[250px] truncate">
-                          {report.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="text-[13px] font-semibold text-gray-500">
-                        {report.date.split(" 2023 ")[0]},<br />
-                        <span className="text-gray-400 text-[12px]">
-                          2023 {report.date.split(" 2023 ")[1]}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-[12px] font-bold text-gray-600 bg-gray-100">
-                        {report.category}
-                      </span>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-1.5 text-[12px] font-black text-emerald-600">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                        Ready
-                      </div>
-                    </td>
-                    <td className="px-6 sm:px-8 py-5">
-                      <div className="flex items-center gap-2">
-                        <button className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[11px] font-black uppercase tracking-wider transition-colors flex items-center gap-1.5">
-                          <FileSpreadsheet
-                            size={12}
-                            className="text-gray-500"
-                          />
-                          CSV
-                        </button>
-                        <button className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
-                          <FileText size={14} className="text-gray-500" />
-                        </button>
-                      </div>
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="px-6 py-8 text-center text-sm text-gray-500"
+                    >
+                      Loading reports...
                     </td>
                   </tr>
-                ))}
+                ) : reports.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="px-6 py-8 text-center text-sm text-gray-500"
+                    >
+                      No reports generated recently.
+                    </td>
+                  </tr>
+                ) : (
+                  reports.map((report) => (
+                    <tr
+                      key={report.id}
+                      className="hover:bg-slate-50/50 transition-colors"
+                    >
+                      <td className="px-6 sm:px-8 py-5">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${report.file_type === "PDF" ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"}`}
+                          >
+                            {report.file_type === "PDF" ? (
+                              <FileText size={18} />
+                            ) : (
+                              <FileSpreadsheet size={18} />
+                            )}
+                          </div>
+                          <span className="text-[14px] font-black text-gray-900 hover:text-[#1e3a8a] cursor-pointer transition-colors max-w-[250px] truncate">
+                            {report.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="text-[13px] font-semibold text-gray-500">
+                          {new Date(report.created_at).toLocaleDateString()}
+                          <br />
+                          <span className="text-gray-400 text-[12px]">
+                            {new Date(report.created_at).toLocaleTimeString(
+                              [],
+                              { hour: "2-digit", minute: "2-digit" },
+                            )}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className="inline-flex items-center px-3 py-1 rounded-lg text-[12px] font-bold text-gray-600 bg-gray-100 uppercase tracking-widest">
+                          {report.category}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div
+                          className={`flex items-center gap-1.5 text-[12px] font-black ${report.status === "READY" ? "text-emerald-600" : report.status === "FAILED" ? "text-red-600" : "text-amber-600"}`}
+                        >
+                          <div
+                            className={`w-1.5 h-1.5 rounded-full ${report.status === "READY" ? "bg-emerald-500" : report.status === "FAILED" ? "bg-red-500" : "bg-amber-500"}`}
+                          ></div>
+                          {report.status}
+                        </div>
+                      </td>
+                      <td className="px-6 sm:px-8 py-5">
+                        <div className="flex items-center gap-2">
+                          <button
+                            disabled={report.status !== "READY"}
+                            className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[11px] font-black uppercase tracking-wider transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                          >
+                            <Download size={12} className="text-gray-500" />
+                            File
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

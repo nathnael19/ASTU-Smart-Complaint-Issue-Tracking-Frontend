@@ -113,3 +113,45 @@ export const getDepartmentTrends = async (): Promise<DepartmentTrendStat[]> => {
 
   return response.json();
 };
+export const getDepartmentCategoryDistribution = async (): Promise<
+  CategoryStat[]
+> => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}/analytics/department/categories`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+};
+
+export interface DepartmentMonthlyTrendStat {
+  label: string;
+  received: number;
+  solved: number;
+}
+
+export const getDepartmentMonthlyTrends = async (): Promise<
+  DepartmentMonthlyTrendStat[]
+> => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(
+    `${API_URL}/analytics/department/trends/monthly`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+};
