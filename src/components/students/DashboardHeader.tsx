@@ -17,10 +17,13 @@ const DashboardHeader = () => {
 
   const fetchNotifications = async () => {
     try {
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+
       const data = await getNotifications();
       setNotifications(data);
     } catch (err) {
-      console.error("Failed to fetch notifications:", err);
+      console.error("DashboardHeader: Failed to fetch notifications:", err);
     }
   };
 
