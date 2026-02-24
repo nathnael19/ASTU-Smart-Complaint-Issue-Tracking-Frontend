@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Camera,
   ShieldCheck,
@@ -21,8 +21,21 @@ const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
     last_name: profile?.last_name || "",
     phone: profile?.phone || "",
     program: profile?.program || "",
-    // bio is not in our schema but let's keep it for UI if we want to add later
+    bio: profile?.bio || "",
   });
+
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
+        phone: profile.phone || "",
+        program: profile.program || "",
+        bio: profile.bio || "",
+      });
+    }
+  }, [profile]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -223,8 +236,8 @@ const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
             </label>
             <input
               type="text"
-              defaultValue={profile?.student_id_number || "N/A"}
-              disabled
+              value={profile?.student_id_number || "N/A"}
+              readOnly
               className="w-full bg-slate-50/50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-400 cursor-not-allowed"
             />
           </div>
@@ -234,8 +247,8 @@ const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
             </label>
             <input
               type="email"
-              defaultValue={profile?.email}
-              disabled
+              value={profile?.email || ""}
+              readOnly
               className="w-full bg-slate-50/50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-400 cursor-not-allowed"
             />
           </div>
@@ -272,6 +285,10 @@ const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
             <textarea
               rows={4}
               placeholder="A short description about yourself..."
+              value={formData.bio}
+              onChange={(e) =>
+                setFormData({ ...formData, bio: e.target.value })
+              }
               className="w-full bg-slate-50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all resize-none"
             />
           </div>
