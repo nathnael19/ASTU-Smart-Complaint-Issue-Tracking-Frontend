@@ -53,9 +53,12 @@ const Navbar = () => {
           >
             Login
           </Link>
-          <button className="text-sm font-semibold bg-primary text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg hover:bg-primary/90 transition-all">
+          <Link
+            to="/register"
+            className="text-sm font-semibold bg-primary text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg hover:bg-primary/90 transition-all"
+          >
             Register
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -95,9 +98,13 @@ const Navbar = () => {
                 >
                   Login
                 </Link>
-                <button className="w-full text-center py-3 font-semibold bg-primary text-white rounded-xl shadow-lg">
+                <Link
+                  to="/register"
+                  className="w-full text-center py-3 font-semibold bg-primary text-white rounded-xl shadow-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   Register
-                </button>
+                </Link>
               </div>
             </div>
           </motion.div>

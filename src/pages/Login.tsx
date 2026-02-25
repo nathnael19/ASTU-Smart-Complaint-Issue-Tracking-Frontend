@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail, Lock, LogIn, ShieldCheck, Activity, Globe } from "lucide-react";
+import { Mail, Lock, LogIn, ShieldCheck, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { cn } from "../lib/utils";
@@ -236,9 +236,12 @@ const Login = () => {
               <div className="mt-12 pt-10 border-t border-gray-50 text-center">
                 <p className="text-sm font-semibold text-gray-500">
                   Don't have an account yet?{" "}
-                  <button className="text-primary font-bold hover:underline underline-offset-4">
+                  <Link
+                    to="/register"
+                    className="text-primary font-bold hover:underline underline-offset-4"
+                  >
                     Create an account
-                  </button>
+                  </Link>
                 </p>
               </div>
             </div>
