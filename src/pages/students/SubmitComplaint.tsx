@@ -234,9 +234,9 @@ const SubmitComplaint = () => {
               {/* Current Location (Map) */}
               <div className="relative rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden group shadow-xl border border-gray-100 aspect-[4/3] lg:aspect-auto h-56 sm:h-72">
                 <img
-                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=800&auto=format&fit=crop"
-                  alt="Location Map"
-                  className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105"
+                  src="https://static-maps.yandex.ru/1.x/?ll=39.2915,8.5636&z=16&l=sat"
+                  alt="ASTU Campus Satellite Map"
+                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-gray-950/20 to-transparent" />
                 <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-10 right-6 sm:right-10 space-y-2">
