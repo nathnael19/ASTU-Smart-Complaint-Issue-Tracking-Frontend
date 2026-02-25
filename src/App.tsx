@@ -6,6 +6,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import CheckEmail from "./pages/CheckEmail";
 import NewPassword from "./pages/NewPassword";
 import StudentDashboard from "./pages/StudentDashboard";
+import MyComplaints from "./pages/MyComplaints";
 
 const App = () => {
   return (
@@ -18,6 +19,10 @@ const App = () => {
         <Route path="/check-email" element={<CheckEmail />} />
         <Route path="/new-password" element={<NewPassword />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route
+          path="/student/dashboard/complaints"
+          element={<MyComplaints />}
+        />
       </Routes>
     </Router>
   );
