@@ -33,7 +33,7 @@ const Sidebar = () => {
       {/* Logo Section */}
       <div className="p-6">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#1e3a8a] rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-900/20">
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/20">
             <LayoutDashboard size={20} />
           </div>
           <div className="flex flex-col">
@@ -58,7 +58,7 @@ const Sidebar = () => {
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 group",
                 isActive
-                  ? "bg-[#1e3a8a]/5 text-[#1e3a8a]"
+                  ? "bg-blue-600/5 text-blue-600"
                   : "text-gray-500 hover:bg-gray-50 hover:text-gray-900",
               )}
             >
@@ -67,13 +67,13 @@ const Sidebar = () => {
                 className={cn(
                   "transition-colors",
                   isActive
-                    ? "text-[#1e3a8a]"
+                    ? "text-blue-600"
                     : "text-gray-400 group-hover:text-gray-600",
                 )}
               />
               {item.label}
               {isActive && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#1e3a8a]" />
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-600" />
               )}
             </Link>
           );
