@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import AuthHeader from "../components/auth/AuthHeader";
 import AuthFooter from "../components/auth/AuthFooter";
 import ForgotPasswordForm from "../components/auth/ForgotPasswordForm";
@@ -7,6 +8,7 @@ import ForgotPasswordForm from "../components/auth/ForgotPasswordForm";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +26,7 @@ const ForgotPassword = () => {
 
     // Proceed with reset logic...
     console.log("Requesting password reset for:", email);
-    alert("Password reset link has been sent to your email!");
+    navigate("/check-email");
   };
 
   return (
