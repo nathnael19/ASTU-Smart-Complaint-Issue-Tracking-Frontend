@@ -1,20 +1,16 @@
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import AuthHeader from "../components/auth/AuthHeader";
 import AuthFooter from "../components/auth/AuthFooter";
-import CheckEmailForm from "../components/auth/CheckEmailForm";
+import NewPasswordForm from "../components/auth/NewPasswordForm";
 
-const CheckEmail = () => {
-  const navigate = useNavigate();
-
-  const handleVerify = (code: string) => {
-    // Proceed with verification logic...
-    console.log("Verifying code:", code);
-    if (code.length === 6) {
-      navigate("/new-password");
-    } else {
-      alert("Please enter the full 6-digit code.");
-    }
+const NewPassword = () => {
+  const handleResetPassword = (password: string) => {
+    // Proceed with reset logic...
+    console.log("Setting new password:", password);
+    alert(
+      "Your password has been reset successfully! You can now log in with your new password.",
+    );
+    window.location.href = "/login";
   };
 
   return (
@@ -28,7 +24,7 @@ const CheckEmail = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-lg"
         >
-          <CheckEmailForm onVerify={handleVerify} />
+          <NewPasswordForm onSubmit={handleResetPassword} />
         </motion.div>
       </main>
 
@@ -37,4 +33,4 @@ const CheckEmail = () => {
   );
 };
 
-export default CheckEmail;
+export default NewPassword;
