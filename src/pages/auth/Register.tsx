@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import AuthHeader from "../components/auth/AuthHeader";
-import AuthFooter from "../components/auth/AuthFooter";
-import RegisterForm from "../components/auth/RegisterForm";
+import AuthHeader from "../../components/auth/AuthHeader";
+import AuthFooter from "../../components/auth/AuthFooter";
+import RegisterForm from "../../components/auth/RegisterForm";
 
 const Register = () => {
   const [formData, setFormData] = useState({

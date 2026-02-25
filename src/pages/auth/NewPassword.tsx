@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import AuthHeader from "../components/auth/AuthHeader";
-import AuthFooter from "../components/auth/AuthFooter";
-import NewPasswordForm from "../components/auth/NewPasswordForm";
+import AuthHeader from "../../components/auth/AuthHeader";
+import AuthFooter from "../../components/auth/AuthFooter";
+import NewPasswordForm from "../../components/auth/NewPasswordForm";
 
 const NewPassword = () => {
   const handleResetPassword = (password: string) => {

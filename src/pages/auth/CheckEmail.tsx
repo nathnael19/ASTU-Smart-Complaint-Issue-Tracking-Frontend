@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import AuthHeader from "../components/auth/AuthHeader";
-import AuthFooter from "../components/auth/AuthFooter";
-import CheckEmailForm from "../components/auth/CheckEmailForm";
+import AuthHeader from "../../components/auth/AuthHeader";
+import AuthFooter from "../../components/auth/AuthFooter";
+import CheckEmailForm from "../../components/auth/CheckEmailForm";
 
 const CheckEmail = () => {
   const navigate = useNavigate();

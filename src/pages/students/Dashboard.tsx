@@ -8,11 +8,11 @@ import {
   HelpCircle,
   Phone,
 } from "lucide-react";
-import DashboardLayout from "../components/dashboard/DashboardLayout";
-import StatCard from "../components/dashboard/StatCard";
-import RecentComplaints from "../components/dashboard/RecentComplaints";
+import DashboardLayout from "../../components/students/DashboardLayout";
+import StatCard from "../../components/students/StatCard";
+import RecentComplaints from "../../components/students/RecentComplaints";
 
-const StudentDashboard = () => {
+const Dashboard = () => {
   return (
     <DashboardLayout>
       <div className="p-8 space-y-10 max-w-[1600px] mx-auto">
@@ -124,4 +124,4 @@ const StudentDashboard = () => {
   );
 };
 
-export default StudentDashboard;
+export default Dashboard;

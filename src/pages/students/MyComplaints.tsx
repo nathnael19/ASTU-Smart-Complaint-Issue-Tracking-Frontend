@@ -9,8 +9,8 @@ import {
   Clock,
   RotateCcw,
 } from "lucide-react";
-import DashboardLayout from "../components/dashboard/DashboardLayout";
-import { cn } from "../lib/utils";
+import DashboardLayout from "../../components/students/DashboardLayout";
+import { cn } from "../../lib/utils";
 
 const complaints = [
   {

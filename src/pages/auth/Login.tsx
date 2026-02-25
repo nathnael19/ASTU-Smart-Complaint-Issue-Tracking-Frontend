@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import AuthHeader from "../components/auth/AuthHeader";
-import AuthFooter from "../components/auth/AuthFooter";
-import AuthInfoSide from "../components/auth/AuthInfoSide";
-import LoginForm from "../components/auth/LoginForm";
+import AuthHeader from "../../components/auth/AuthHeader";
+import AuthFooter from "../../components/auth/AuthFooter";
+import AuthInfoSide from "../../components/auth/AuthInfoSide";
+import LoginForm from "../../components/auth/LoginForm";
 
 const Login = () => {
   const [email, setEmail] = useState("");

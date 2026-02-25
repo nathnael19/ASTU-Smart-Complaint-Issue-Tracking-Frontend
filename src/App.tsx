@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import CheckEmail from "./pages/CheckEmail";
-import NewPassword from "./pages/NewPassword";
-import StudentDashboard from "./pages/StudentDashboard";
-import MyComplaints from "./pages/MyComplaints";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import CheckEmail from "./pages/auth/CheckEmail";
+import NewPassword from "./pages/auth/NewPassword";
+import StudentDashboard from "./pages/students/Dashboard";
+import MyComplaints from "./pages/students/MyComplaints";
 
 const App = () => {
   return (

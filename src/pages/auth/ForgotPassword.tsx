@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import AuthHeader from "../components/auth/AuthHeader";
-import AuthFooter from "../components/auth/AuthFooter";
-import ForgotPasswordForm from "../components/auth/ForgotPasswordForm";
+import AuthHeader from "../../components/auth/AuthHeader";
+import AuthFooter from "../../components/auth/AuthFooter";
+import ForgotPasswordForm from "../../components/auth/ForgotPasswordForm";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
