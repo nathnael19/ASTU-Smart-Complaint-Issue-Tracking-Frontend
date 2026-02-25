@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
 
-const AuthHeader = () => {
+interface AuthHeaderProps {
+  actionLabel?: string;
+  actionPath?: string;
+}
+
+const AuthHeader: React.FC<AuthHeaderProps> = ({
+  actionLabel = "Register",
+  actionPath = "/register",
+}) => {
   return (
     <header className="px-6 py-6 max-w-7xl mx-auto w-full flex items-center justify-between">
       <Link to="/" className="flex items-center gap-2">
@@ -39,10 +47,10 @@ const AuthHeader = () => {
         </Link>
         <div className="h-4 w-[1px] bg-gray-200 mx-2" />
         <Link
-          to="/register"
+          to={actionPath}
           className="bg-[#e2e8f0] text-[#1e3a8a] px-6 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors shadow-sm"
         >
-          Register
+          {actionLabel}
         </Link>
       </nav>
     </header>
