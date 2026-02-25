@@ -8,6 +8,7 @@ import NewPassword from "./pages/auth/NewPassword";
 import StudentDashboard from "./pages/students/Dashboard";
 import MyComplaints from "./pages/students/MyComplaints";
 import KnowledgeBase from "./pages/students/KnowledgeBase";
+import Settings from "./pages/students/Settings";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           element={<MyComplaints />}
         />
         <Route path="/student/dashboard/kb" element={<KnowledgeBase />} />
+        <Route path="/student/dashboard/settings" element={<Settings />} />
       </Routes>
     </Router>
   );
