@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import CheckEmail from "./pages/CheckEmail";
 import NewPassword from "./pages/NewPassword";
+import StudentDashboard from "./pages/StudentDashboard";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/check-email" element={<CheckEmail />} />
         <Route path="/new-password" element={<NewPassword />} />
+        <Route path="/student/dashboard" element={<StudentDashboard />} />
       </Routes>
     </Router>
   );

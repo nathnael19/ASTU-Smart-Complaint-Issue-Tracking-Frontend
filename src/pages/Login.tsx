@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import AuthHeader from "../components/auth/AuthHeader";
 import AuthFooter from "../components/auth/AuthFooter";
 import AuthInfoSide from "../components/auth/AuthInfoSide";
@@ -10,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +29,7 @@ const Login = () => {
 
     // Proceed with login logic...
     console.log("Logging in with:", { email, password });
+    navigate("/student/dashboard");
   };
 
   return (
