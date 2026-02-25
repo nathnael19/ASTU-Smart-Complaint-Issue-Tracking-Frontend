@@ -8,6 +8,25 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!email.trim()) {
+      setError("Please enter your university email.");
+      return;
+    }
+
+    if (!email.toLowerCase().endsWith("@astu.edu.et")) {
+      setError("Please use an official ASTU email ending with @astu.edu.et");
+      return;
+    }
+
+    // Proceed with login logic...
+    console.log("Logging in with:", { email, password });
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-primary/10 selection:text-primary">
@@ -35,18 +54,18 @@ const Login = () => {
           >
             Home
           </Link>
-          <a
-            href="#"
+          <Link
+            to="/login"
             className="text-sm font-semibold text-gray-500 hover:text-primary transition-colors"
           >
             Help Center
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/contact"
             className="text-sm font-semibold text-gray-500 hover:text-primary transition-colors"
           >
             Contact
-          </a>
+          </Link>
           <div className="h-4 w-[1px] bg-gray-200 mx-2" />
           <button className="bg-[#e2e8f0] text-[#1e3a8a] px-6 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors shadow-sm">
             Register
@@ -119,7 +138,16 @@ const Login = () => {
                 Please enter your university credentials to access the portal.
               </p>
 
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-4 rounded-xl"
+                  >
+                    {error}
+                  </motion.div>
+                )}
                 <div>
                   <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-3">
                     University Email
@@ -131,9 +159,17 @@ const Login = () => {
                     <input
                       type="email"
                       placeholder="e.g. student.name@astu.edu.et"
-                      className="w-full bg-[#f8fafc] border border-gray-200 text-sm rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-700 placeholder:text-gray-400"
+                      className={cn(
+                        "w-full bg-[#f8fafc] border text-sm rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 transition-all text-gray-700 placeholder:text-gray-400",
+                        error && error.includes("email")
+                          ? "border-red-200 focus:ring-red-500/10 focus:border-red-500"
+                          : "border-gray-200 focus:ring-primary/20 focus:border-primary",
+                      )}
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (error) setError(null);
+                      }}
                     />
                   </div>
                 </div>
