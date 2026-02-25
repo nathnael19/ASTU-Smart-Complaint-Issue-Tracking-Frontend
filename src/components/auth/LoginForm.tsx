@@ -116,12 +116,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
                 Remember me
               </span>
             </label>
-            <button
-              type="button"
+            <Link
+              to="/forgot-password"
               className="text-sm font-bold text-primary hover:underline underline-offset-4"
             >
               Forgot Password?
-            </button>
+            </Link>
           </div>
 
           <button className="w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0">
