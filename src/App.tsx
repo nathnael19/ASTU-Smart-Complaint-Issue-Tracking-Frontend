@@ -9,6 +9,7 @@ import StudentDashboard from "./pages/students/Dashboard";
 import MyComplaints from "./pages/students/MyComplaints";
 import KnowledgeBase from "./pages/students/KnowledgeBase";
 import Settings from "./pages/students/Settings";
+import SubmitComplaint from "./pages/students/SubmitComplaint";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           path="/student/dashboard/complaints"
           element={<MyComplaints />}
         />
+        <Route path="/student/dashboard/submit" element={<SubmitComplaint />} />
         <Route path="/student/dashboard/kb" element={<KnowledgeBase />} />
         <Route path="/student/dashboard/settings" element={<Settings />} />
       </Routes>
