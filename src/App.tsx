@@ -7,6 +7,7 @@ import CheckEmail from "./pages/auth/CheckEmail";
 import NewPassword from "./pages/auth/NewPassword";
 import StudentDashboard from "./pages/students/Dashboard";
 import MyComplaints from "./pages/students/MyComplaints";
+import KnowledgeBase from "./pages/students/KnowledgeBase";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           path="/student/dashboard/complaints"
           element={<MyComplaints />}
         />
+        <Route path="/student/dashboard/kb" element={<KnowledgeBase />} />
       </Routes>
     </Router>
   );
