@@ -5,11 +5,15 @@ import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import CheckEmail from "./pages/auth/CheckEmail";
 import NewPassword from "./pages/auth/NewPassword";
+
+// Student Pages
 import StudentDashboard from "./pages/students/Dashboard";
 import MyComplaints from "./pages/students/MyComplaints";
 import KnowledgeBase from "./pages/students/KnowledgeBase";
 import Settings from "./pages/students/Settings";
 import SubmitComplaint from "./pages/students/SubmitComplaint";
+
+// Staff Pages
 import StaffDashboard from "./pages/staff/Dashboard";
 import MyTickets from "./pages/staff/MyTickets";
 import TicketDetail from "./pages/staff/TicketDetail";
@@ -19,24 +23,32 @@ import Analytics from "./pages/staff/Analytics";
 import StaffSettings from "./pages/staff/Settings";
 import CreateTicket from "./pages/staff/CreateTicket";
 import StudentHistory from "./pages/staff/StudentHistory";
-import ScrollToTop from "./components/layout/ScrollToTop";
+
+// Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminComplaints from "./pages/admin/Complaints";
 import AdminComplaintDetail from "./pages/admin/ComplaintDetail";
 import AdminUsers from "./pages/admin/Users";
 import AdminCreateUser from "./pages/admin/CreateUser";
+import AdminReports from "./pages/admin/Reports";
+
+// Components
+import ScrollToTop from "./components/layout/ScrollToTop";
 
 const App = () => {
   return (
     <Router>
       <ScrollToTop />
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/check-email" element={<CheckEmail />} />
         <Route path="/new-password" element={<NewPassword />} />
+
+        {/* Student Routes */}
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route
           path="/student/dashboard/complaints"
@@ -45,6 +57,8 @@ const App = () => {
         <Route path="/student/dashboard/submit" element={<SubmitComplaint />} />
         <Route path="/student/dashboard/kb" element={<KnowledgeBase />} />
         <Route path="/student/dashboard/settings" element={<Settings />} />
+
+        {/* Staff Routes */}
         <Route path="/staff/dashboard" element={<StaffDashboard />} />
         <Route path="/staff/tasks" element={<DepartmentTasks />} />
         <Route path="/staff/tasks/create" element={<CreateTicket />} />
@@ -57,6 +71,8 @@ const App = () => {
           path="/staff/students/:studentId/history"
           element={<StudentHistory />}
         />
+
+        {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/complaints" element={<AdminComplaints />} />
         <Route
@@ -65,6 +81,7 @@ const App = () => {
         />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/create" element={<AdminCreateUser />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
       </Routes>
     </Router>
   );
