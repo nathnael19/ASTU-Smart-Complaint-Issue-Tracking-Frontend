@@ -13,6 +13,7 @@ import SubmitComplaint from "./pages/students/SubmitComplaint";
 import StaffDashboard from "./pages/staff/Dashboard";
 import MyTickets from "./pages/staff/MyTickets";
 import TicketDetail from "./pages/staff/TicketDetail";
+import StudentHistory from "./pages/staff/StudentHistory";
 import ScrollToTop from "./components/layout/ScrollToTop";
 
 const App = () => {
@@ -37,6 +38,10 @@ const App = () => {
         <Route path="/staff/dashboard" element={<StaffDashboard />} />
         <Route path="/staff/tickets" element={<MyTickets />} />
         <Route path="/staff/tickets/:id" element={<TicketDetail />} />
+        <Route
+          path="/staff/students/:studentId/history"
+          element={<StudentHistory />}
+        />
       </Routes>
     </Router>
   );

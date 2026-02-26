@@ -1,4 +1,5 @@
 import { IdCard, Mail, Phone } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface RequesterInfoCardProps {
   name: string;
@@ -17,6 +18,8 @@ const RequesterInfoCard = ({
   phone,
   avatar,
 }: RequesterInfoCardProps) => {
+  const navigate = useNavigate();
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -28,7 +31,9 @@ const RequesterInfoCard = ({
 
   return (
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-      <h3 className="text-xl font-black text-gray-900 mb-6">Requester Information</h3>
+      <h3 className="text-xl font-black text-gray-900 mb-6">
+        Requester Information
+      </h3>
 
       <div className="flex flex-col items-center mb-6">
         {avatar ? (
@@ -86,7 +91,12 @@ const RequesterInfoCard = ({
         </div>
       </div>
 
-      <button className="w-full mt-6 py-3 px-4 rounded-xl text-sm font-bold text-[#1e3a8a] bg-blue-50 hover:bg-blue-100 transition-colors border border-blue-200">
+      <button
+        onClick={() =>
+          navigate(`/staff/students/${encodeURIComponent(id)}/history`)
+        }
+        className="w-full mt-6 py-3 px-4 rounded-xl text-sm font-bold text-[#1e3a8a] bg-blue-50 hover:bg-blue-100 transition-colors border border-blue-200"
+      >
         View Student History
       </button>
     </div>
