@@ -16,6 +16,7 @@ import TicketDetail from "./pages/staff/TicketDetail";
 import DepartmentTasks from "./pages/staff/DepartmentTasks";
 import ResolvedIssues from "./pages/staff/ResolvedIssues";
 import Analytics from "./pages/staff/Analytics";
+import StaffSettings from "./pages/staff/Settings";
 import CreateTicket from "./pages/staff/CreateTicket";
 import StudentHistory from "./pages/staff/StudentHistory";
 import ScrollToTop from "./components/layout/ScrollToTop";
@@ -44,6 +45,7 @@ const App = () => {
         <Route path="/staff/tasks/create" element={<CreateTicket />} />
         <Route path="/staff/resolved" element={<ResolvedIssues />} />
         <Route path="/staff/reports" element={<Analytics />} />
+        <Route path="/staff/settings" element={<StaffSettings />} />
         <Route path="/staff/tickets" element={<MyTickets />} />
         <Route path="/staff/tickets/:id" element={<TicketDetail />} />
         <Route
