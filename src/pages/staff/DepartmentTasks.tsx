@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Plus, Filter, List, Info } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 
@@ -116,6 +117,7 @@ const getStatusStyles = (status: Task["status"]) => {
 };
 
 const DepartmentTasks = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("All Tasks");
 
   return (
@@ -144,7 +146,10 @@ const DepartmentTasks = () => {
               />
             </div>
 
-            <button className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-[0.85rem] font-bold text-[13px] shadow-sm transition-colors transform active:scale-95">
+            <button
+              onClick={() => navigate("/staff/tasks/create")}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-[0.85rem] font-bold text-[13px] shadow-sm transition-colors transform active:scale-95"
+            >
               <Plus size={16} strokeWidth={2.5} />
               <span>Create Ticket</span>
             </button>
