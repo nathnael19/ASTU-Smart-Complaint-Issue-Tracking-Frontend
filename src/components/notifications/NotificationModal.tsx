@@ -58,6 +58,7 @@ const NotificationModal = ({
       case "STATUS_CHANGE":
         return <AlertTriangle className="text-orange-500" size={18} />;
       case "NEW_COMMENT":
+      case "chat_message":
         return <Info className="text-blue-500" size={18} />;
       case "SYSTEM":
         return <AlertCircle className="text-purple-500" size={18} />;
