@@ -23,6 +23,7 @@ import ScrollToTop from "./components/layout/ScrollToTop";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminComplaints from "./pages/admin/Complaints";
 import AdminComplaintDetail from "./pages/admin/ComplaintDetail";
+import AdminUsers from "./pages/admin/Users";
 
 const App = () => {
   return (
@@ -61,6 +62,7 @@ const App = () => {
           path="/admin/complaints/:id"
           element={<AdminComplaintDetail />}
         />
+        <Route path="/admin/users" element={<AdminUsers />} />
       </Routes>
     </Router>
   );
