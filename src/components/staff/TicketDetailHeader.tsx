@@ -30,7 +30,10 @@ const TicketDetailHeader = ({
     }
   };
 
-  const displayStatus = status === "IN_PROGRESS" ? "In Progress" : (status || "Open").replace(/_/g, " ");
+  const displayStatus =
+    status === "IN_PROGRESS"
+      ? "In Progress"
+      : (status || "Open").replace(/_/g, " ");
 
   return (
     <div className="flex items-center justify-between pb-6 border-b border-gray-100">
@@ -59,10 +62,6 @@ const TicketDetailHeader = ({
         <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
           <Printer size={16} />
           Print PDF
-        </button>
-        <button className="btn-primary px-4 py-2 rounded-xl text-sm shadow-sm">
-          <CheckCircle2 size={16} />
-          Mark as Resolved
         </button>
       </div>
     </div>
