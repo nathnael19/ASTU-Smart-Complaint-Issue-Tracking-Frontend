@@ -8,6 +8,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
+import StaffNotificationsTab from "../../components/staff/settings/StaffNotificationsTab";
 
 const StaffSettings = () => {
   const [activeTab, setActiveTab] = useState("Profile Settings");
@@ -73,166 +74,174 @@ const StaffSettings = () => {
             })}
           </div>
 
-          {/* Form Areas Content (showing Profile Settings as default) */}
-          <div className="p-8 space-y-12">
-            {/* Personal Information */}
-            <section>
-              <h3 className="text-[16px] font-black text-gray-900 flex items-center mb-6">
-                Personal Information
-                <div className="flex-1 h-px bg-gray-100 ml-4"></div>
-              </h3>
+          {/* Form Areas Content */}
+          {activeTab === "Profile Settings" && (
+            <div className="p-8 space-y-12">
+              {/* Personal Information */}
+              <section>
+                <h3 className="text-[16px] font-black text-gray-900 flex items-center mb-6">
+                  Personal Information
+                  <div className="flex-1 h-px bg-gray-100 ml-4"></div>
+                </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                <div>
-                  <label className="block text-[11px] font-black tracking-widest uppercase text-gray-400 mb-2">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <div>
+                    <label className="block text-[11px] font-black tracking-widest uppercase text-gray-400 mb-2">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black tracking-widest uppercase text-gray-400 mb-2">
+                      Professional Title
+                    </label>
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black tracking-widest uppercase text-gray-400 mb-2">
+                      Department
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={department}
+                        onChange={(e) => setDepartment(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold appearance-none focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                      >
+                        <option value="Electrical & Computer Engineering">
+                          Electrical & Computer Engineering
+                        </option>
+                        <option value="Mechanical Engineering">
+                          Mechanical Engineering
+                        </option>
+                        <option value="Civil Engineering">
+                          Civil Engineering
+                        </option>
+                        <option value="Software Engineering">
+                          Software Engineering
+                        </option>
+                      </select>
+                      <ChevronDown
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                        size={16}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-black tracking-widest uppercase text-gray-400 mb-2">
+                      Office Location
+                    </label>
+                    <input
+                      type="text"
+                      value={officeLocation}
+                      onChange={(e) => setOfficeLocation(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-black tracking-widest uppercase text-gray-400 mb-2">
-                    Professional Title
-                  </label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-black tracking-widest uppercase text-gray-400 mb-2">
-                    Department
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={department}
-                      onChange={(e) => setDepartment(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold appearance-none focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
+              </section>
+
+              {/* Notification Preferences */}
+              <section>
+                <h3 className="text-[16px] font-black text-gray-900 flex items-center mb-6">
+                  Notification Preferences
+                  <div className="flex-1 h-px bg-gray-100 ml-4"></div>
+                </h3>
+
+                <div className="border border-gray-100 rounded-2xl bg-slate-50/30 overflow-hidden divide-y divide-gray-100">
+                  {/* Email Toggle */}
+                  <div className="p-6 flex items-start justify-between gap-4">
+                    <div>
+                      <h4 className="text-[14px] font-bold text-gray-900 mb-0.5">
+                        Email Notifications
+                      </h4>
+                      <p className="text-[12px] font-medium text-gray-500">
+                        Receive an email alert for every new ticket assigned to
+                        your department.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setEmailAlerts(!emailAlerts)}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        emailAlerts ? "bg-[#1e3a8a]" : "bg-gray-200"
+                      }`}
                     >
-                      <option value="Electrical & Computer Engineering">
-                        Electrical & Computer Engineering
-                      </option>
-                      <option value="Mechanical Engineering">
-                        Mechanical Engineering
-                      </option>
-                      <option value="Civil Engineering">
-                        Civil Engineering
-                      </option>
-                      <option value="Software Engineering">
-                        Software Engineering
-                      </option>
-                    </select>
-                    <ChevronDown
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                      size={16}
-                    />
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          emailAlerts ? "translate-x-5" : "translate-x-0"
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {/* SMS Toggle */}
+                  <div className="p-6 flex items-start justify-between gap-4">
+                    <div>
+                      <h4 className="text-[14px] font-bold text-gray-900 mb-0.5">
+                        SMS Alerts
+                      </h4>
+                      <p className="text-[12px] font-medium text-gray-500">
+                        Receive urgent mobile SMS for high-priority emergency
+                        complaints.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSmsAlerts(!smsAlerts)}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        smsAlerts ? "bg-[#1e3a8a]" : "bg-gray-200"
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          smsAlerts ? "translate-x-5" : "translate-x-0"
+                        }`}
+                      />
+                    </button>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-black tracking-widest uppercase text-gray-400 mb-2">
-                    Office Location
-                  </label>
-                  <input
-                    type="text"
-                    value={officeLocation}
-                    onChange={(e) => setOfficeLocation(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50/50 text-[#1e3a8a] text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all"
-                  />
-                </div>
-              </div>
-            </section>
+              </section>
 
-            {/* Notification Preferences */}
-            <section>
-              <h3 className="text-[16px] font-black text-gray-900 flex items-center mb-6">
-                Notification Preferences
-                <div className="flex-1 h-px bg-gray-100 ml-4"></div>
-              </h3>
+              {/* Security */}
+              <section>
+                <h3 className="text-[16px] font-black text-gray-900 flex items-center mb-6">
+                  Security
+                  <div className="flex-1 h-px bg-gray-100 ml-4"></div>
+                </h3>
 
-              <div className="border border-gray-100 rounded-2xl bg-slate-50/30 overflow-hidden divide-y divide-gray-100">
-                {/* Email Toggle */}
-                <div className="p-6 flex items-start justify-between gap-4">
+                <div className="border border-gray-100 rounded-2xl bg-white p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
                   <div>
                     <h4 className="text-[14px] font-bold text-gray-900 mb-0.5">
-                      Email Notifications
+                      Account Password
                     </h4>
                     <p className="text-[12px] font-medium text-gray-500">
-                      Receive an email alert for every new ticket assigned to
-                      your department.
+                      Last changed 3 months ago. We recommend updating it every
+                      6 months for better security.
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setEmailAlerts(!emailAlerts)}
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      emailAlerts ? "bg-[#1e3a8a]" : "bg-gray-200"
-                    }`}
-                  >
-                    <span
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                        emailAlerts ? "translate-x-5" : "translate-x-0"
-                      }`}
-                    />
+                  <button className="px-5 py-2 border-2 border-[#1e3a8a] text-[#1e3a8a] rounded-xl font-bold text-[13px] hover:bg-blue-50 transition-colors whitespace-nowrap">
+                    Change Password
                   </button>
                 </div>
+              </section>
+            </div>
+          )}
 
-                {/* SMS Toggle */}
-                <div className="p-6 flex items-start justify-between gap-4">
-                  <div>
-                    <h4 className="text-[14px] font-bold text-gray-900 mb-0.5">
-                      SMS Alerts
-                    </h4>
-                    <p className="text-[12px] font-medium text-gray-500">
-                      Receive urgent mobile SMS for high-priority emergency
-                      complaints.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSmsAlerts(!smsAlerts)}
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      smsAlerts ? "bg-[#1e3a8a]" : "bg-gray-200"
-                    }`}
-                  >
-                    <span
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                        smsAlerts ? "translate-x-5" : "translate-x-0"
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            {/* Security */}
-            <section>
-              <h3 className="text-[16px] font-black text-gray-900 flex items-center mb-6">
-                Security
-                <div className="flex-1 h-px bg-gray-100 ml-4"></div>
-              </h3>
-
-              <div className="border border-gray-100 rounded-2xl bg-white p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
-                <div>
-                  <h4 className="text-[14px] font-bold text-gray-900 mb-0.5">
-                    Account Password
-                  </h4>
-                  <p className="text-[12px] font-medium text-gray-500">
-                    Last changed 3 months ago. We recommend updating it every 6
-                    months for better security.
-                  </p>
-                </div>
-                <button className="px-5 py-2 border-2 border-[#1e3a8a] text-[#1e3a8a] rounded-xl font-bold text-[13px] hover:bg-blue-50 transition-colors whitespace-nowrap">
-                  Change Password
-                </button>
-              </div>
-            </section>
-          </div>
+          {activeTab === "Notifications" && (
+            <div className="p-8">
+              <StaffNotificationsTab />
+            </div>
+          )}
 
           {/* Footer Actions */}
           <div className="p-8 border-t border-gray-100 bg-slate-50/50 flex items-center justify-end gap-6">
