@@ -1,4 +1,4 @@
-import { Clock, Edit2, ChevronDown } from "lucide-react";
+import { Clock, Edit2, ChevronDown, CheckCircle } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 interface TicketActionsCardProps {
@@ -56,6 +56,22 @@ const TicketActionsCard = ({
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 space-y-6">
       <h3 className="text-xl font-black text-gray-900">Ticket Actions</h3>
 
+      {/* Resolution Action */}
+      {status !== "Resolved" && status !== "Closed" && (
+        <button
+          onClick={() => !isUpdating && onStatusChange?.("Resolved")}
+          disabled={isUpdating}
+          className="w-full bg-primary text-white py-4 px-6 rounded-2xl font-black flex items-center justify-center gap-3 shadow-xl shadow-blue-900/10 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+        >
+          {isUpdating ? (
+            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+          ) : (
+            <CheckCircle size={20} />
+          )}
+          Mark as Resolved
+        </button>
+      )}
+
       {/* Current Status */}
       <div>
         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
@@ -100,14 +116,6 @@ const TicketActionsCard = ({
           <span className="flex-1 text-sm font-black text-gray-900">
             {assignedName}
           </span>
-          <button
-            type="button"
-            disabled={isUpdating}
-            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Change assigned staff"
-          >
-            <Edit2 size={16} />
-          </button>
         </div>
       </div>
 
