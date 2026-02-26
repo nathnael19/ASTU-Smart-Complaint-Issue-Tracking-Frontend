@@ -2,10 +2,25 @@ import { Search, Bell, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCurrentProfile } from "../../api/users";
+import { getNotifications, type Notification } from "../../api/notifications";
+import NotificationModal from "../notifications/NotificationModal";
 
 const AdminHeader = () => {
   const location = useLocation();
   const [profile, setProfile] = useState<any>(null);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+      const data = await getNotifications();
+      setNotifications(data);
+    } catch (err) {
+      console.error("AdminHeader: Failed to fetch notifications:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -17,6 +32,11 @@ const AdminHeader = () => {
       }
     };
     fetchProfile();
+    fetchNotifications();
+
+    // Refresh notifications every minute
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const navLinks = [
@@ -85,7 +105,7 @@ const AdminHeader = () => {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex items-center gap-8 mr-12 hidden md:flex">
+      <nav className="hidden md:flex items-center gap-8 mr-12">
         {navLinks.map((link) => (
           <Link
             key={link.name}
@@ -106,10 +126,22 @@ const AdminHeader = () => {
 
       {/* Right Side Actions */}
       <div className="flex items-center gap-4 shrink-0">
-        <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all relative border border-gray-100 shadow-sm bg-white cursor-pointer">
+        <button
+          onClick={() => setIsNotificationOpen(true)}
+          className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all relative border border-gray-100 shadow-sm bg-white cursor-pointer"
+        >
           <Bell size={18} />
-          <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full border border-white" />
+          {notifications.some((n) => !n.is_read) && (
+            <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full border border-white" />
+          )}
         </button>
+
+        <NotificationModal
+          isOpen={isNotificationOpen}
+          notifications={notifications}
+          onClose={() => setIsNotificationOpen(false)}
+          onRefresh={fetchNotifications}
+        />
         <Link
           to="/admin/settings"
           className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all border border-gray-100 shadow-sm bg-white cursor-pointer"
