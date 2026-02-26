@@ -90,10 +90,6 @@ const ComplaintThread = ({
     fetchRemarks();
   }, [complaintId]);
 
-  useEffect(() => {
-    listEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [remarks]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const content = newContent.trim();
@@ -104,6 +100,10 @@ const ComplaintThread = ({
       const created = await postComplaintRemark(complaintId, content);
       setRemarks((prev) => [...prev, created]);
       setNewContent("");
+      // Scroll to bottom after posting
+      setTimeout(() => {
+        listEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     } catch (e: any) {
       setError(e?.message || "Failed to send message.");
     } finally {
@@ -173,7 +173,10 @@ const ComplaintThread = ({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-8 pt-8 border-t border-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="mt-8 pt-8 border-t border-gray-100"
+      >
         <p className="text-xs font-black text-gray-500 uppercase mb-3 tracking-widest">
           Add a message
         </p>
@@ -181,14 +184,14 @@ const ComplaintThread = ({
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
           placeholder={placeholder}
-        className="w-full min-h-[100px] bg-white border border-gray-200 rounded-xl p-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none mb-4"
+          className="w-full min-h-[100px] bg-white border border-gray-200 rounded-xl p-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none mb-4"
           disabled={posting}
         />
         <div className="flex justify-end">
           <button
             type="submit"
             disabled={posting || !newContent.trim()}
-          className="btn-primary px-6 py-2.5 rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="btn-primary px-6 py-2.5 rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {posting ? (
               <Loader2 className="w-4 h-4 animate-spin" />
