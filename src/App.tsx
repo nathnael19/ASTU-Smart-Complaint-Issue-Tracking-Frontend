@@ -13,6 +13,7 @@ import SubmitComplaint from "./pages/students/SubmitComplaint";
 import StaffDashboard from "./pages/staff/Dashboard";
 import MyTickets from "./pages/staff/MyTickets";
 import TicketDetail from "./pages/staff/TicketDetail";
+import DepartmentTasks from "./pages/staff/DepartmentTasks";
 import StudentHistory from "./pages/staff/StudentHistory";
 import ScrollToTop from "./components/layout/ScrollToTop";
 
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/student/dashboard/kb" element={<KnowledgeBase />} />
         <Route path="/student/dashboard/settings" element={<Settings />} />
         <Route path="/staff/dashboard" element={<StaffDashboard />} />
+        <Route path="/staff/tasks" element={<DepartmentTasks />} />
         <Route path="/staff/tickets" element={<MyTickets />} />
         <Route path="/staff/tickets/:id" element={<TicketDetail />} />
         <Route
