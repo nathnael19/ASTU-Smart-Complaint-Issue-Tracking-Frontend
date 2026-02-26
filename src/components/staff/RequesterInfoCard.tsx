@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 interface RequesterInfoCardProps {
   name: string;
   program?: string | null;
-  id: string;
+  id: string; // University ID for display
+  internalId: string; // Database UUID for navigation
   email: string;
   phone?: string | null;
   avatar?: string;
@@ -14,6 +15,7 @@ const RequesterInfoCard = ({
   name,
   program,
   id,
+  internalId,
   email,
   phone,
   avatar,
@@ -86,15 +88,15 @@ const RequesterInfoCard = ({
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">
               Phone
             </span>
-            <p className="text-sm font-bold text-gray-900 truncate">{phone || "—"}</p>
+            <p className="text-sm font-bold text-gray-900 truncate">
+              {phone || "—"}
+            </p>
           </div>
         </div>
       </div>
 
       <button
-        onClick={() =>
-          navigate(`/staff/students/${encodeURIComponent(id)}/history`)
-        }
+        onClick={() => navigate(`/staff/student-history/${internalId}`)}
         className="w-full mt-6 py-3 px-4 rounded-xl text-sm font-bold text-primary bg-primary/5 hover:bg-primary/10 transition-colors border border-primary/15"
       >
         View Student History
