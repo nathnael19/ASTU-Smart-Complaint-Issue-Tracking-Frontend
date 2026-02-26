@@ -1,9 +1,58 @@
 import { Search, Filter, Download, UserPlus } from "lucide-react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import UsersTable from "../../components/admin/users/UsersTable";
 import { Link } from "react-router-dom";
+import { getUsers, updateUserStatus } from "../../api/users";
 
 const AdminUsers = () => {
+  const [users, setUsers] = useState<any[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Pagination & Search State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const pageSize = 10;
+
+  const fetchUsersData = async () => {
+    try {
+      setIsLoading(true);
+      const res = await getUsers({
+        limit: pageSize,
+        offset: (currentPage - 1) * pageSize,
+        search: searchQuery || undefined,
+      });
+      setUsers(res.data || []);
+      setTotalCount(res.total || 0);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsersData();
+  }, [currentPage, searchQuery]);
+
+  // Derived state to quickly check loading
+  const handleStatusToggle = async (userId: string, currentStatus: string) => {
+    try {
+      const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+      // Optimistic update
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, status: newStatus } : u)),
+      );
+
+      await updateUserStatus(userId, newStatus as "Active" | "Inactive");
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      // Revert on error
+      fetchUsersData();
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-8 lg:p-12 max-w-[1600px] mx-auto min-h-[calc(100vh-5rem)] flex flex-col">
@@ -16,7 +65,12 @@ const AdminUsers = () => {
               </div>
               <input
                 type="text"
-                placeholder="Search users by name, email or department..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1); // Reset to page 1 on search
+                }}
+                placeholder="Search users by name or email..."
                 className="w-full bg-white border border-gray-200 shadow-sm rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-[#1e3a8a]/30 focus:ring-4 focus:ring-[#1e3a8a]/5 transition-all text-sm font-medium"
               />
             </div>
@@ -55,7 +109,15 @@ const AdminUsers = () => {
         </div>
 
         {/* Data Table */}
-        <UsersTable />
+        <UsersTable
+          users={users}
+          totalCount={totalCount}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          isLoading={isLoading}
+          onPageChange={setCurrentPage}
+          onStatusToggle={handleStatusToggle}
+        />
 
         {/* Footer */}
         <footer className="mt-auto pt-8 flex items-center justify-center">

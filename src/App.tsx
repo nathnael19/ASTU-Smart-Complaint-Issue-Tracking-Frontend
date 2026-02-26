@@ -101,7 +101,7 @@ const App = () => {
           }
         />
 
-        {/* Staff Routes */}
+        {/* Staff Routes*/}
         <Route
           path="/staff/dashboard"
           element={

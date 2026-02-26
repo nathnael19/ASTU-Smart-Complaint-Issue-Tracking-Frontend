@@ -47,6 +47,7 @@ export const getUsers = async (
     status?: string;
     limit?: number;
     offset?: number;
+    search?: string;
   } = {},
 ) => {
   const token = localStorage.getItem("access_token");
@@ -66,4 +67,11 @@ export const getUsers = async (
   }
 
   return response.json();
+};
+
+export const updateUserStatus = async (
+  userId: string,
+  status: "Active" | "Inactive",
+) => {
+  return updateUserProfile(userId, { status });
 };
