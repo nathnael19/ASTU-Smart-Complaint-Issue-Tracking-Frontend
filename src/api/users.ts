@@ -75,3 +75,31 @@ export const updateUserStatus = async (
 ) => {
   return updateUserProfile(userId, { status });
 };
+
+export const adminCreateUser = async (data: {
+  email: string;
+  full_name: string;
+  role: "STUDENT" | "STAFF" | "ADMIN";
+  department_id?: string;
+  student_id_number?: string;
+  program?: string;
+  phone?: string;
+  professional_title?: string;
+  office_location?: string;
+}) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}/users/admin-create`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+};
