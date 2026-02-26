@@ -6,6 +6,7 @@ import {
   ChevronDown,
   Filter,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import StatCard from "../../components/students/StatCard";
 
@@ -62,6 +63,14 @@ const getPriorityClasses = (priority: MyTicket["priority"]) => {
 };
 
 const MyTickets = () => {
+  const navigate = useNavigate();
+
+  const handleProcess = (ticketId: string) => {
+    // Remove # from ticket ID for URL
+    const id = ticketId.replace("#", "");
+    navigate(`/staff/tickets/${id}`);
+  };
+
   return (
     <StaffDashboardLayout>
       <div className="p-8 space-y-8 max-w-[1600px] mx-auto">
@@ -199,7 +208,10 @@ const MyTickets = () => {
                       {ticket.lastActivity}
                     </td>
                     <td className="px-6 sm:px-8 py-5 text-right">
-                      <button className="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-bold bg-[#1e3a8a] text-white shadow-sm hover:bg-blue-900 transition-colors">
+                      <button
+                        onClick={() => handleProcess(ticket.id)}
+                        className="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-bold bg-[#1e3a8a] text-white shadow-sm hover:bg-blue-900 transition-colors"
+                      >
                         Process
                       </button>
                     </td>
