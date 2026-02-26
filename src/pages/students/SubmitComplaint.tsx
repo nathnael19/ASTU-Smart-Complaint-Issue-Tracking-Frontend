@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 import {
   ChevronRight,
   Upload,
@@ -12,8 +12,14 @@ import DashboardLayout from "../../components/students/DashboardLayout";
 import { cn } from "../../lib/utils";
 
 const SubmitComplaint = () => {
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
   const [urgency, setUrgency] = useState("MEDIUM");
   const [dragActive, setDragActive] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+
+  const maxDescriptionLength = 1000;
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -25,50 +31,136 @@ const SubmitComplaint = () => {
     }
   };
 
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (!droppedFiles.length) return;
+
+    setFiles((prev) => [...prev, ...droppedFiles].slice(0, 5));
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const selected = Array.from(e.target.files);
+    setFiles((prev) => [...prev, ...selected].slice(0, 5));
+    e.target.value = "";
+  };
+
+  const handleRemoveFile = (name: string) => {
+    setFiles((prev) => prev.filter((file) => file.name !== name));
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    // Basic client-side validation (can be replaced with real form lib / API later)
+    if (!title.trim() || !category || !description.trim()) {
+      // For now we just prevent submission; hook into a toast system if available
+      return;
+    }
+
+    // TODO: Replace with actual submission logic (API call, success state, etc.)
+    console.log({
+      title,
+      category,
+      description,
+      urgency,
+      files,
+    });
+  };
+
   return (
     <DashboardLayout>
       <div className="flex flex-col min-h-full bg-[#fcfdfe]">
         <div className="p-4 sm:p-8 lg:p-10 max-w-[1400px] mx-auto w-full space-y-6 sm:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* Page Title & Intro */}
-          <div className="space-y-2 sm:space-y-3">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">
-              Submit New Complaint
-            </h1>
-            <p className="text-sm sm:text-base font-medium text-gray-400 max-w-2xl leading-relaxed">
-              Please provide comprehensive details about the issue. Accurate
-              information helps our staff resolve your concern more efficiently.
-            </p>
+          <div className="space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 border border-blue-100 text-[11px] font-medium text-blue-900">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+              New complaint
+            </div>
+            <div className="space-y-2 sm:space-y-3">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">
+                Submit New Complaint
+              </h1>
+              <p className="text-sm sm:text-base font-medium text-gray-500 max-w-2xl leading-relaxed">
+                Tell us what&apos;s going wrong and where it&apos;s happening.{" "}
+                <span className="text-gray-700 font-semibold">
+                  Clear details help us respond faster.
+                </span>
+              </p>
+            </div>
+
+            {/* Simple progress overview */}
+            <div className="flex flex-wrap items-center gap-3 text-[11px] sm:text-xs text-gray-500">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-1 rounded-full bg-blue-600" />
+                <span className="font-semibold text-gray-800">Details</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-1 rounded-full bg-blue-200" />
+                <span>Attachments</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-1 rounded-full bg-blue-200" />
+                <span>Review &amp; submit</span>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
             {/* Left Column: Form */}
             <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-              <div className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 shadow-sm p-6 sm:p-8 lg:p-12 space-y-8 sm:space-y-10">
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-gray-100 shadow-sm p-6 sm:p-8 lg:p-12 space-y-8 sm:space-y-10 overflow-hidden"
+              >
                 {/* Complaint Title */}
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest px-1">
-                    Complaint Title
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="flex items-center justify-between px-1">
+                    <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">
+                      Complaint title <span className="text-red-500">*</span>
+                    </span>
+                    <span className="text-[11px] text-gray-400 font-medium">
+                      3–8 words, be specific
+                    </span>
                   </label>
                   <input
                     type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Wi-Fi connection issue in Block 4"
-                    className="w-full bg-slate-50 border-none rounded-[1.25rem] py-5 px-7 text-sm font-bold text-gray-950 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all"
+                    className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 transition-all"
                   />
                 </div>
 
                 {/* Category & Urgency */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10">
-                  <div className="space-y-4">
-                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest px-1">
-                      Issue Category
+                  <div className="space-y-2 sm:space-y-3">
+                    <label className="flex items-center justify-between px-1">
+                      <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">
+                        Issue category <span className="text-red-500">*</span>
+                      </span>
+                      <span className="text-[11px] text-gray-400 font-medium">
+                        Choose the closest match
+                      </span>
                     </label>
                     <div className="relative group">
-                      <select className="w-full bg-slate-50 border-none rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-bold text-gray-950 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all appearance-none cursor-pointer">
-                        <option>Select a category</option>
-                        <option>IT & Network</option>
-                        <option>Facility & Maintenance</option>
-                        <option>Academic Affairs</option>
-                        <option>Student Services</option>
+                      <select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="">Select a category</option>
+                        <option value="IT & Network">IT &amp; Network</option>
+                        <option value="Facility & Maintenance">
+                          Facility &amp; Maintenance
+                        </option>
+                        <option value="Academic Affairs">Academic Affairs</option>
+                        <option value="Student Services">Student Services</option>
                       </select>
                       <ChevronRight
                         size={18}
@@ -77,23 +169,50 @@ const SubmitComplaint = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest px-1">
-                      Urgency Level
+                  <div className="space-y-2 sm:space-y-3">
+                    <label className="flex items-center justify-between px-1">
+                      <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">
+                        Urgency level
+                      </span>
+                      <span className="text-[11px] text-gray-400 font-medium">
+                        How quickly this needs attention
+                      </span>
                     </label>
                     <div className="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3">
-                      {["LOW", "MEDIUM", "HIGH"].map((level) => (
+                      {[
+                        {
+                          value: "LOW",
+                          title: "Low",
+                          hint: "Can wait a few days",
+                        },
+                        {
+                          value: "MEDIUM",
+                          title: "Normal",
+                          hint: "Within 24–48 hours",
+                        },
+                        {
+                          value: "HIGH",
+                          title: "Urgent",
+                          hint: "Safety or exam impact",
+                        },
+                      ].map((level) => (
                         <button
-                          key={level}
-                          onClick={() => setUrgency(level)}
+                          key={level.value}
+                          type="button"
+                          onClick={() => setUrgency(level.value)}
                           className={cn(
-                            "flex-1 min-w-[80px] py-3 sm:py-4 rounded-[1rem] sm:rounded-[1.25rem] font-black text-[10px] tracking-widest border-2 transition-all",
-                            urgency === level
-                              ? "border-blue-900 bg-white text-blue-900 shadow-sm"
-                              : "border-gray-100 bg-white text-gray-900 hover:border-gray-200",
+                            "flex-1 min-w-[90px] py-2.5 sm:py-3 rounded-[1rem] sm:rounded-[1.25rem] border text-left px-3 sm:px-4 transition-all",
+                            urgency === level.value
+                              ? "border-blue-900 bg-blue-50 text-blue-900 shadow-sm"
+                              : "border-gray-200 bg-white text-gray-900 hover:border-gray-300",
                           )}
                         >
-                          {level}
+                          <div className="text-[11px] font-semibold">
+                            {level.title}
+                          </div>
+                          <div className="text-[10px] text-gray-500">
+                            {level.hint}
+                          </div>
                         </button>
                       ))}
                     </div>
@@ -101,66 +220,148 @@ const SubmitComplaint = () => {
                 </div>
 
                 {/* Detailed Description */}
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest px-1">
-                    Detailed Description
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="flex items-center justify-between px-1">
+                    <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">
+                      Detailed description <span className="text-red-500">*</span>
+                    </span>
+                    <span className="text-[11px] text-gray-400 font-medium">
+                      Include dates, people involved, and location
+                    </span>
                   </label>
-                  <textarea
-                    rows={8}
-                    placeholder="Provide as much detail as possible, including dates, locations, and any specific identifiers..."
-                    className="w-full bg-slate-50 border-none rounded-[1.25rem] py-5 sm:py-6 px-6 sm:px-7 text-sm font-bold text-gray-950 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all resize-none leading-relaxed"
-                  />
+                  <div className="space-y-2">
+                    <textarea
+                      rows={7}
+                      value={description}
+                      onChange={(e) =>
+                        setDescription(
+                          e.target.value.slice(0, maxDescriptionLength),
+                        )
+                      }
+                      placeholder="Describe what happened, when it started, where it occurs, and any reference numbers (e.g. lab, room, course code)…"
+                      className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 transition-all resize-none leading-relaxed"
+                    />
+                    <div className="flex items-center justify-between text-[11px] text-gray-400 px-1">
+                      <span>Do not include passwords or highly sensitive data.</span>
+                      <span>
+                        {description.length}/{maxDescriptionLength} characters
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Supporting Documents */}
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest px-1">
-                    Supporting Documents (Optional)
+                <div className="space-y-3 sm:space-y-4">
+                  <label className="flex items-center justify-between px-1">
+                    <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">
+                      Supporting documents <span className="text-gray-400">(optional)</span>
+                    </span>
+                    <span className="text-[11px] text-gray-400 font-medium">
+                      Screenshots, photos, or PDFs
+                    </span>
                   </label>
                   <div
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
+                    onDrop={handleDrop}
                     className={cn(
-                      "relative border-2 border-dashed rounded-[1.5rem] sm:rounded-[2rem] p-8 sm:p-16 transition-all group flex flex-col items-center justify-center gap-4 sm:gap-5 text-center",
+                      "relative border-2 border-dashed rounded-[1.5rem] sm:rounded-[2rem] p-6 sm:p-8 transition-all group flex flex-col items-center justify-center gap-3 sm:gap-4 text-center cursor-pointer",
                       dragActive
-                        ? "border-blue-600 bg-blue-50/30"
-                        : "border-blue-100 bg-slate-50/50 hover:bg-slate-50 hover:border-blue-200",
+                        ? "border-blue-600 bg-blue-50/40"
+                        : "border-blue-100 bg-slate-50/60 hover:bg-slate-50 hover:border-blue-200",
                     )}
+                    onClick={() => {
+                      document.getElementById("complaint-file-input")?.click();
+                    }}
                   >
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-50/80 rounded-[1rem] sm:rounded-[1.25rem] flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform shadow-inner">
-                      <Upload size={24} className="sm:hidden" />
-                      <Upload size={28} className="hidden sm:block" />
+                    <input
+                      id="complaint-file-input"
+                      type="file"
+                      multiple
+                      accept=".png,.jpg,.jpeg,.pdf"
+                      className="hidden"
+                      onChange={handleFileInput}
+                    />
+                    <div className="w-11 h-11 sm:w-14 sm:h-14 bg-blue-50 rounded-[1rem] sm:rounded-[1.25rem] flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform shadow-inner border border-blue-100">
+                      <Upload size={22} className="sm:hidden" />
+                      <Upload size={24} className="hidden sm:block" />
                     </div>
                     <div className="space-y-1.5">
-                      <p className="text-xs sm:text-sm font-black text-gray-900">
-                        Click to upload or drag and drop
+                      <p className="text-xs sm:text-sm font-semibold text-gray-900">
+                        Click to upload or drag and drop files
                       </p>
-                      <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        PNG, JPG, PDF up to 10MB
+                      <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">
+                        PNG, JPG, PDF • up to 10MB each • max 5 files
                       </p>
                     </div>
                   </div>
+
+                  {files.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-[11px] font-medium text-gray-500 px-1">
+                        Attached files
+                      </p>
+                      <ul className="space-y-2">
+                        {files.map((file) => (
+                          <li
+                            key={file.name}
+                            className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-2.5 text-xs text-gray-700 border border-slate-100"
+                          >
+                            <span className="truncate max-w-[65%]">{file.name}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-[10px] text-gray-400">
+                                {(file.size / 1024 / 1024).toFixed(1)} MB
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveFile(file.name)}
+                                className="text-[10px] font-semibold text-gray-500 hover:text-red-500 transition-colors"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 {/* Action Bar */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8 pt-6 sm:pt-10 mt-6 border-t border-gray-50">
-                  <div className="flex items-center gap-3 text-gray-400">
-                    <Info size={16} className="sm:size-18" />
-                    <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">
-                      Submissions are reviewed within 24-48 hours.
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 lg:gap-8 pt-6 sm:pt-8 mt-2 border-t border-gray-100">
+                  <div className="flex items-start gap-3 text-gray-400 w-full lg:w-auto">
+                    <Info size={16} className="mt-[2px]" />
+                    <p className="text-[11px] sm:text-xs font-medium leading-relaxed text-gray-500 max-w-sm">
+                      Most complaints are reviewed within{" "}
+                      <span className="font-semibold text-gray-700">
+                        24–48 working hours
+                      </span>
+                      . You will receive updates in your dashboard and email.
                     </p>
                   </div>
-                  <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto">
-                    <button className="flex-1 sm:flex-none text-xs sm:text-sm font-black text-gray-950 hover:text-blue-600 px-4 sm:px-6 transition-colors">
-                      Cancel
+                  <div className="flex items-center justify-end gap-3 sm:gap-4 w-full lg:w-auto">
+                    <button
+                      type="button"
+                      className="text-[11px] sm:text-xs font-semibold text-gray-600 hover:text-blue-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl hover:bg-slate-50 transition-colors"
+                    >
+                      Save as draft
                     </button>
-                    <button className="flex-1 sm:flex-none bg-[#1e3a8a] text-white px-8 sm:px-14 py-4 sm:py-5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm shadow-xl shadow-blue-900/20 hover:bg-blue-900 transition-all hover:translate-y-[-2px] tracking-tight">
-                      Submit Complaint
+                    <button
+                      type="submit"
+                      disabled={!title.trim() || !category || !description.trim()}
+                      className={cn(
+                        "min-w-[130px] px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-[11px] sm:text-xs shadow-md transition-all tracking-tight inline-flex items-center justify-center gap-2",
+                        !title.trim() || !category || !description.trim()
+                          ? "bg-gray-300 text-gray-600 cursor-not-allowed shadow-none"
+                          : "bg-[#1e3a8a] text-white shadow-blue-900/20 hover:bg-blue-900 hover:translate-y-[-1px]",
+                      )}
+                    >
+                      Submit complaint
                     </button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
 
             {/* Right Column: Information & Sidebars */}
