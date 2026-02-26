@@ -10,6 +10,7 @@ import {
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import StaffNotificationsTab from "../../components/staff/settings/StaffNotificationsTab";
 import StaffSecurityTab from "../../components/staff/settings/StaffSecurityTab";
+import StaffPreferencesTab from "../../components/staff/settings/StaffPreferencesTab";
 
 const StaffSettings = () => {
   const [activeTab, setActiveTab] = useState("Profile Settings");
@@ -247,6 +248,12 @@ const StaffSettings = () => {
           {activeTab === "Security" && (
             <div className="p-8">
               <StaffSecurityTab />
+            </div>
+          )}
+
+          {activeTab === "Preferences" && (
+            <div className="p-8">
+              <StaffPreferencesTab />
             </div>
           )}
 
