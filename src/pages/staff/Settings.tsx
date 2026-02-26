@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+
 import {
   User,
   Bell,
@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import StaffNotificationsTab from "../../components/staff/settings/StaffNotificationsTab";
+import StaffSecurityTab from "../../components/staff/settings/StaffSecurityTab";
 
 const StaffSettings = () => {
   const [activeTab, setActiveTab] = useState("Profile Settings");
@@ -240,6 +241,12 @@ const StaffSettings = () => {
           {activeTab === "Notifications" && (
             <div className="p-8">
               <StaffNotificationsTab />
+            </div>
+          )}
+
+          {activeTab === "Security" && (
+            <div className="p-8">
+              <StaffSecurityTab />
             </div>
           )}
 
