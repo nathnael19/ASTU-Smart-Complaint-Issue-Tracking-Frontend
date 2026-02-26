@@ -20,6 +20,7 @@ import StaffSettings from "./pages/staff/Settings";
 import CreateTicket from "./pages/staff/CreateTicket";
 import StudentHistory from "./pages/staff/StudentHistory";
 import ScrollToTop from "./components/layout/ScrollToTop";
+import AdminDashboard from "./pages/admin/Dashboard";
 
 const App = () => {
   return (
@@ -52,6 +53,7 @@ const App = () => {
           path="/staff/students/:studentId/history"
           element={<StudentHistory />}
         />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
