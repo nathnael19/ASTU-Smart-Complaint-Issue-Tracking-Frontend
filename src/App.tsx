@@ -10,10 +10,12 @@ import MyComplaints from "./pages/students/MyComplaints";
 import KnowledgeBase from "./pages/students/KnowledgeBase";
 import Settings from "./pages/students/Settings";
 import SubmitComplaint from "./pages/students/SubmitComplaint";
+import ScrollToTop from "./components/layout/ScrollToTop";
 
 const App = () => {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
