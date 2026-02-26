@@ -10,6 +10,7 @@ import MyComplaints from "./pages/students/MyComplaints";
 import KnowledgeBase from "./pages/students/KnowledgeBase";
 import Settings from "./pages/students/Settings";
 import SubmitComplaint from "./pages/students/SubmitComplaint";
+import StaffDashboard from "./pages/staff/Dashboard";
 import ScrollToTop from "./components/layout/ScrollToTop";
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/student/dashboard/submit" element={<SubmitComplaint />} />
         <Route path="/student/dashboard/kb" element={<KnowledgeBase />} />
         <Route path="/student/dashboard/settings" element={<Settings />} />
+        <Route path="/staff/dashboard" element={<StaffDashboard />} />
       </Routes>
     </Router>
   );
