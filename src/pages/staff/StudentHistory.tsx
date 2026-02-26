@@ -11,11 +11,11 @@ import {
   Loader2,
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
-import { getUserByIdNumber } from "../../api/users";
+import { getUserById } from "../../api/users";
 import { getAllComplaints } from "../../api/complaints";
 
 const StudentHistory = () => {
-  const { studentId } = useParams<{ studentId: string }>();
+  const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
 
   const [student, setStudent] = useState<any>(null);
@@ -25,13 +25,13 @@ const StudentHistory = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!studentId) return;
+      if (!userId) return;
 
       setLoading(true);
       setError(null);
       try {
-        // 1. Fetch student by ID number
-        const studentData = await getUserByIdNumber(studentId);
+        // 1. Fetch student by UUID
+        const studentData = await getUserById(userId);
         setStudent(studentData);
 
         // 2. Fetch history (complaints submitted by this student)
@@ -47,7 +47,7 @@ const StudentHistory = () => {
     };
 
     fetchData();
-  }, [studentId]);
+  }, [userId]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
