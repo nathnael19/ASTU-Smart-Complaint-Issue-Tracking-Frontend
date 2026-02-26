@@ -9,6 +9,8 @@ interface User {
   role: "STUDENT" | "STAFF" | "ADMIN";
   department_id?: string;
   status: "Active" | "Inactive";
+  total_complaints?: number;
+  total_resolved_complaints?: number;
   avatar_url?: string;
   lastLogin?: string;
 }
@@ -20,7 +22,6 @@ interface UsersTableProps {
   pageSize: number;
   isLoading: boolean;
   onPageChange: (page: number) => void;
-  onStatusToggle: (userId: string, currentStatus: string) => void;
 }
 
 const UsersTable = ({
@@ -30,7 +31,6 @@ const UsersTable = ({
   pageSize,
   isLoading,
   onPageChange,
-  onStatusToggle,
 }: UsersTableProps) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
@@ -125,11 +125,11 @@ const UsersTable = ({
               <th className="py-5 px-4 text-xs font-black text-gray-400 uppercase tracking-widest">
                 ROLE
               </th>
-              <th className="py-5 px-4 text-xs font-black text-gray-400 uppercase tracking-widest">
+              <th className="py-5 px-4 text-xs font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">
                 DEPARTMENT
               </th>
-              <th className="py-5 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-right">
-                STATUS
+              <th className="py-5 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-right whitespace-nowrap">
+                COMPLAINTS STATS
               </th>
             </tr>
           </thead>
@@ -207,34 +207,30 @@ const UsersTable = ({
                     </span>
                   </td>
                   <td className="py-4 px-8 text-right">
-                    {/* Status Toggle */}
-                    <div className="flex items-center justify-end gap-3">
-                      <button
-                        disabled={isLoading}
-                        onClick={() => onStatusToggle(user.id, user.status)}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#1e3a8a] focus:ring-offset-2 disabled:opacity-50 ${
-                          user.status === "Active"
-                            ? "bg-emerald-500"
-                            : "bg-gray-300"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            user.status === "Active"
-                              ? "translate-x-6"
-                              : "translate-x-1"
-                          }`}
-                        />
-                      </button>
-                      <span
-                        className={`text-xs font-bold w-12 text-left ${
-                          user.status === "Active"
-                            ? "text-emerald-600"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        {user.status}
-                      </span>
+                    <div className="flex items-center justify-end">
+                      {user.role === "STUDENT" ? (
+                        <div className="flex flex-col items-end border border-blue-100 bg-blue-50 px-3 py-1.5 rounded-lg w-28">
+                          <span className="text-sm font-black text-blue-700">
+                            {user.total_complaints || 0}
+                          </span>
+                          <span className="text-[9px] uppercase font-bold text-blue-500 tracking-wider">
+                            Total Filed
+                          </span>
+                        </div>
+                      ) : user.role === "STAFF" ? (
+                        <div className="flex flex-col items-end border border-amber-100 bg-amber-50 px-3 py-1.5 rounded-lg w-28">
+                          <span className="text-sm font-black text-amber-700">
+                            {user.total_resolved_complaints || 0}
+                          </span>
+                          <span className="text-[9px] uppercase font-bold text-amber-500 tracking-wider">
+                            Total Resolved
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-xs font-medium text-gray-400 italic">
+                          N/A
+                        </span>
+                      )}
                     </div>
                   </td>
                 </tr>

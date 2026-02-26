@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import UsersTable from "../../components/admin/users/UsersTable";
 import { Link } from "react-router-dom";
-import { getUsers, updateUserStatus } from "../../api/users";
+import { getUsers } from "../../api/users";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -35,23 +35,6 @@ const AdminUsers = () => {
   useEffect(() => {
     fetchUsersData();
   }, [currentPage, searchQuery]);
-
-  // Derived state to quickly check loading
-  const handleStatusToggle = async (userId: string, currentStatus: string) => {
-    try {
-      const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
-      // Optimistic update
-      setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, status: newStatus } : u)),
-      );
-
-      await updateUserStatus(userId, newStatus as "Active" | "Inactive");
-    } catch (error) {
-      console.error("Failed to update status:", error);
-      // Revert on error
-      fetchUsersData();
-    }
-  };
 
   return (
     <AdminLayout>
@@ -116,7 +99,6 @@ const AdminUsers = () => {
           pageSize={pageSize}
           isLoading={isLoading}
           onPageChange={setCurrentPage}
-          onStatusToggle={handleStatusToggle}
         />
 
         {/* Footer */}
