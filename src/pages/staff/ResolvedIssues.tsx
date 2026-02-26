@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Search,
   Filter,
@@ -8,62 +9,56 @@ import {
   TrendingUp,
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
+import {
+  getDepartmentSummary,
+  type DepartmentSummary,
+} from "../../api/analytics";
+import { getMyComplaints } from "../../api/complaints";
 
-// Mock Data Interfaces
-interface ResolvedTicket {
+interface BackendResolvedTicket {
   id: string;
-  subject: string;
-  requester: string;
+  ticket_number?: string;
+  title: string;
   category: string;
-  resolvedDate: string;
-  resolutionOutcome: string;
+  status: string;
+  created_at?: string;
+  resolved_at?: string;
+  users?: {
+    full_name?: string;
+  };
 }
 
-// Mock Data
-const resolvedTickets: ResolvedTicket[] = [
-  {
-    id: "#ICT-8998",
-    subject: "Printer Repair - Registrar Office",
-    requester: "Sarah J.",
-    category: "Hardware",
-    resolvedDate: "Nov 22, 2023",
-    resolutionOutcome: "Replaced fuser unit and...",
-  },
-  {
-    id: "#ICT-8982",
-    subject: "Portal Password Reset Failure",
-    requester: "Ahmed K.",
-    category: "Software",
-    resolvedDate: "Nov 21, 2023",
-    resolutionOutcome: "Manual sync of LDAP...",
-  },
-  {
-    id: "#ICT-8975",
-    subject: "Lab 2 Switch Failure",
-    requester: "Lab Tech",
-    category: "Network",
-    resolvedDate: "Nov 20, 2023",
-    resolutionOutcome: "Configured redundant uplin...",
-  },
-  {
-    id: "#ICT-8970",
-    subject: "Bulk Student Email Update",
-    requester: "Admissions",
-    category: "Database",
-    resolvedDate: "Nov 19, 2023",
-    resolutionOutcome: "Batch script executed for...",
-  },
-  {
-    id: "#ICT-8962",
-    subject: "Smart Classroom Projector",
-    requester: "Prof. Dawit",
-    category: "AV Systems",
-    resolvedDate: "Nov 18, 2023",
-    resolutionOutcome: "Bulb replaced and HDMI po...",
-  },
-];
-
 const ResolvedIssues = () => {
+  const [summary, setSummary] = useState<DepartmentSummary | null>(null);
+  const [tickets, setTickets] = useState<BackendResolvedTicket[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [summaryData, ticketsData] = await Promise.all([
+          getDepartmentSummary(),
+          getMyComplaints({ status: "RESOLVED", limit: 50 }),
+        ]);
+        setSummary(summaryData);
+        setTickets(ticketsData.data || []);
+      } catch (error) {
+        console.error("Failed to fetch resolved tickets page data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const filteredTickets = tickets.filter(
+    (ticket) =>
+      ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ticket.ticket_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ticket.id.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   return (
     <StaffDashboardLayout>
       <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50/30">
@@ -88,6 +83,8 @@ const ResolvedIssues = () => {
               <input
                 type="text"
                 placeholder="Search by Ticket ID or keyword..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-72 bg-slate-100/80 border-transparent rounded-[0.85rem] py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:bg-white transition-all text-[13px] font-medium placeholder:text-gray-500"
               />
             </div>
@@ -113,10 +110,10 @@ const ResolvedIssues = () => {
             </div>
             <div className="flex flex-col">
               <h3 className="text-[32px] font-black text-gray-900 leading-none tracking-tight mb-2">
-                1,284
+                {loading ? "..." : summary?.resolved_this_week || "0"}
               </h3>
               <div className="flex items-center text-[12px] font-black text-emerald-600">
-                <span className="mr-1">+12 this week</span>
+                <span className="mr-1">Resolved this week</span>
               </div>
             </div>
           </div>
@@ -133,10 +130,10 @@ const ResolvedIssues = () => {
             </div>
             <div className="flex flex-col">
               <h3 className="text-[32px] font-black text-gray-900 leading-none tracking-tight mb-2">
-                1.4 Days
+                {loading ? "..." : summary?.avg_response_time || "N/A"}
               </h3>
               <div className="flex items-center text-[12px] font-bold text-gray-400">
-                <span className="mr-1">Within SLA target (2.0)</span>
+                <span className="mr-1">Average response time</span>
               </div>
             </div>
           </div>
@@ -153,11 +150,15 @@ const ResolvedIssues = () => {
             </div>
             <div className="flex flex-col">
               <h3 className="text-[32px] font-black text-gray-900 leading-none tracking-tight mb-2">
-                4.8/5.0
+                {loading
+                  ? "..."
+                  : summary?.avg_satisfaction_rating
+                    ? `${summary.avg_satisfaction_rating.toFixed(1)}/5.0`
+                    : "N/A"}
               </h3>
               <div className="flex items-center text-[12px] font-black text-emerald-600">
                 <TrendingUp size={14} className="mr-1" strokeWidth={3} />
-                <span>2% vs last month</span>
+                <span>Overall Dept Rating</span>
               </div>
             </div>
           </div>
@@ -190,58 +191,77 @@ const ResolvedIssues = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100/80">
-                {resolvedTickets.map((ticket, i) => (
-                  <tr
-                    key={i}
-                    className="hover:bg-slate-50/50 transition-colors group"
-                  >
-                    <td className="px-8 py-6">
-                      <span className="text-[14px] font-black text-[#8ca1c2] group-hover:text-blue-600 transition-colors">
-                        {ticket.id}
-                      </span>
-                    </td>
-                    <td className="px-6 py-6 min-w-[250px]">
-                      <p className="text-[15px] font-black text-gray-900 leading-tight mb-1">
-                        {ticket.subject}
-                      </p>
-                      <p className="text-[13px] font-semibold text-gray-400">
-                        Reported by{" "}
-                        <span className="text-gray-500">
-                          {ticket.requester}
-                        </span>
-                      </p>
-                    </td>
-                    <td className="px-6 py-6">
-                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-[12px] font-bold text-gray-600 bg-gray-100/80">
-                        {ticket.category}
-                      </span>
-                    </td>
-                    <td className="px-6 py-6">
-                      <div className="text-[14px] font-semibold text-gray-600">
-                        {ticket.resolvedDate.split(",")[0]}
-                        <br />
-                        <span className="text-gray-400 text-[13px]">
-                          {ticket.resolvedDate.split(",")[1]}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-6">
-                      <p className="text-[14px] font-medium text-gray-500 max-w-[250px] truncate">
-                        {ticket.resolutionOutcome}
-                      </p>
-                    </td>
-                    <td className="px-8 py-6 text-right">
-                      <button className="inline-flex items-center gap-1.5 text-[#1e3a8a] hover:text-blue-800 font-bold text-[13px] transition-colors bg-blue-50/50 hover:bg-blue-100 px-4 py-2 rounded-xl">
-                        <History size={14} strokeWidth={2.5} />
-                        <span className="text-left leading-tight">
-                          Re-open
-                          <br />
-                          Ticket
-                        </span>
-                      </button>
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-6 py-8 text-center text-sm text-gray-500"
+                    >
+                      Loading resolved tickets...
                     </td>
                   </tr>
-                ))}
+                ) : filteredTickets.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-6 py-8 text-center text-sm text-gray-500"
+                    >
+                      No resolved tickets found.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredTickets.map((ticket) => (
+                    <tr
+                      key={ticket.id}
+                      className="hover:bg-slate-50/50 transition-colors group"
+                    >
+                      <td className="px-8 py-6">
+                        <span className="text-[14px] font-black text-[#8ca1c2] group-hover:text-blue-600 transition-colors">
+                          {ticket.ticket_number || ticket.id.substring(0, 8)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-6 min-w-[250px]">
+                        <p className="text-[15px] font-black text-gray-900 leading-tight mb-1">
+                          {ticket.title}
+                        </p>
+                        <p className="text-[13px] font-semibold text-gray-400">
+                          Reported by{" "}
+                          <span className="text-gray-500">
+                            {ticket.users?.full_name || "Unknown"}
+                          </span>
+                        </p>
+                      </td>
+                      <td className="px-6 py-6">
+                        <span className="inline-flex items-center px-3 py-1 rounded-lg text-[12px] font-bold text-gray-600 bg-gray-100/80">
+                          {ticket.category.replace(/_/g, " ")}
+                        </span>
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="text-[14px] font-semibold text-gray-600">
+                          {ticket.resolved_at
+                            ? new Date(ticket.resolved_at).toLocaleDateString()
+                            : "N/A"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <p className="text-[14px] font-medium text-gray-500 max-w-[250px] truncate">
+                          Successfully resolved marked by staff.
+                        </p>
+                        
+                      </td>
+                      <td className="px-8 py-6 text-right">
+                        <button className="inline-flex items-center gap-1.5 text-[#1e3a8a] hover:text-blue-800 font-bold text-[13px] transition-colors bg-blue-50/50 hover:bg-blue-100 px-4 py-2 rounded-xl">
+                          <History size={14} strokeWidth={2.5} />
+                          <span className="text-left leading-tight">
+                            Re-open
+                            <br />
+                            Ticket
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -249,8 +269,13 @@ const ResolvedIssues = () => {
           {/* Pagination */}
           <div className="p-6 border-t border-gray-100 flex items-center justify-between text-[14px]">
             <span className="text-gray-500 font-medium">
-              Showing <span className="font-bold text-gray-900">1 to 5</span> of{" "}
-              <span className="font-bold text-gray-900">1,284</span> entries
+              Showing{" "}
+              <span className="font-bold text-gray-900">
+                {filteredTickets.length > 0 ? 1 : 0} to {filteredTickets.length}
+              </span>{" "}
+              of{" "}
+              <span className="font-bold text-gray-900">{tickets.length}</span>{" "}
+              entries
             </span>
             <div className="flex items-center gap-1.5 font-semibold">
               <button className="px-4 py-2 text-gray-500 hover:text-gray-900 border border-gray-200/60 rounded-xl mr-2 hover:bg-gray-50 transition-colors disabled:opacity-50">

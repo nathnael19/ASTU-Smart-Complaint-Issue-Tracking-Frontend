@@ -31,6 +31,7 @@ export interface DepartmentSummary {
   pending_dept_tasks: number;
   avg_response_time: string;
   resolved_this_week: number;
+  avg_satisfaction_rating: number;
 }
 
 export interface DepartmentTrendStat {
