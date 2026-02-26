@@ -85,9 +85,12 @@ const AdminHeader = () => {
           <Bell size={18} />
           <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full border border-white" />
         </button>
-        <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all border border-gray-100 shadow-sm bg-white cursor-pointer">
+        <Link
+          to="/admin/settings"
+          className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all border border-gray-100 shadow-sm bg-white cursor-pointer"
+        >
           <Settings size={18} />
-        </button>
+        </Link>
 
         <div className="w-px h-6 bg-gray-200 mx-2" />
 

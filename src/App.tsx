@@ -31,6 +31,7 @@ import AdminComplaintDetail from "./pages/admin/ComplaintDetail";
 import AdminUsers from "./pages/admin/Users";
 import AdminCreateUser from "./pages/admin/CreateUser";
 import AdminReports from "./pages/admin/Reports";
+import AdminSettings from "./pages/admin/Settings";
 
 // Components
 import ScrollToTop from "./components/layout/ScrollToTop";
@@ -82,6 +83,7 @@ const App = () => {
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/create" element={<AdminCreateUser />} />
         <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
       </Routes>
     </Router>
   );
