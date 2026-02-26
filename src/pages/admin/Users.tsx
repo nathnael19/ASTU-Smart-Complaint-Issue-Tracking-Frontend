@@ -1,6 +1,7 @@
 import { Search, Filter, Download, UserPlus } from "lucide-react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import UsersTable from "../../components/admin/users/UsersTable";
+import { Link } from "react-router-dom";
 
 const AdminUsers = () => {
   return (
@@ -21,10 +22,13 @@ const AdminUsers = () => {
             </div>
           </div>
 
-          <button className="bg-[#1e3a8a] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-900/20 hover:bg-blue-950 transition-colors text-sm shrink-0">
+          <Link
+            to="/admin/users/create"
+            className="bg-[#1e3a8a] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-900/20 hover:bg-blue-950 transition-colors text-sm shrink-0"
+          >
             <UserPlus size={18} />
             Add New User
-          </button>
+          </Link>
         </div>
 
         {/* Page Header */}

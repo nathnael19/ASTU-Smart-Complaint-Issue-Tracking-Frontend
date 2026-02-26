@@ -24,6 +24,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminComplaints from "./pages/admin/Complaints";
 import AdminComplaintDetail from "./pages/admin/ComplaintDetail";
 import AdminUsers from "./pages/admin/Users";
+import AdminCreateUser from "./pages/admin/CreateUser";
 
 const App = () => {
   return (
@@ -63,6 +64,7 @@ const App = () => {
           element={<AdminComplaintDetail />}
         />
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/users/create" element={<AdminCreateUser />} />
       </Routes>
     </Router>
   );
