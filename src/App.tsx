@@ -168,7 +168,7 @@ const App = () => {
           }
         />
         <Route
-          path="/staff/students/:studentId/history"
+          path="/staff/student-history/:userId"
           element={
             <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
               <StudentHistory />
