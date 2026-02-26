@@ -21,6 +21,7 @@ import CreateTicket from "./pages/staff/CreateTicket";
 import StudentHistory from "./pages/staff/StudentHistory";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminComplaints from "./pages/admin/Complaints";
 
 const App = () => {
   return (
@@ -54,6 +55,7 @@ const App = () => {
           element={<StudentHistory />}
         />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/complaints" element={<AdminComplaints />} />
       </Routes>
     </Router>
   );
