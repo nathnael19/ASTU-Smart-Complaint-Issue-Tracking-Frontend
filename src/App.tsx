@@ -22,6 +22,7 @@ import StudentHistory from "./pages/staff/StudentHistory";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminComplaints from "./pages/admin/Complaints";
+import AdminComplaintDetail from "./pages/admin/ComplaintDetail";
 
 const App = () => {
   return (
@@ -56,6 +57,10 @@ const App = () => {
         />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/complaints" element={<AdminComplaints />} />
+        <Route
+          path="/admin/complaints/:id"
+          element={<AdminComplaintDetail />}
+        />
       </Routes>
     </Router>
   );

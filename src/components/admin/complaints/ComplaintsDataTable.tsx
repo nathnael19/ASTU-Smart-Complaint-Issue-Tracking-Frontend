@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface Complaint {
   id: string;
@@ -168,10 +169,13 @@ const ComplaintsDataTable = () => {
                   </span>
                 </td>
                 <td className="py-4 px-6 text-right">
-                  <button className="inline-flex items-center gap-2 text-sm font-black text-[#1e3a8a] py-2 px-3 rounded-xl hover:bg-blue-50 transition-colors">
+                  <Link
+                    to={`/admin/complaints/${complaint.id}`}
+                    className="inline-flex items-center gap-2 text-sm font-black text-[#1e3a8a] py-2 px-3 rounded-xl hover:bg-blue-50 transition-colors"
+                  >
                     View
                     <ExternalLink size={16} />
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}
