@@ -161,6 +161,7 @@ const TicketDetail = () => {
               name={requesterName}
               program={complaint.users?.program ?? null}
               id={requesterId}
+              internalId={complaint.submitted_by}
               email={complaint.users?.email ?? "—"}
               phone={complaint.users?.phone ?? null}
             />
