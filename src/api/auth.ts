@@ -53,14 +53,17 @@ export const loginUser = async (credentials: any) => {
 };
 
 export const logoutUser = async () => {
-  const refreshToken = localStorage.getItem("refresh_token") || "";
+  const token = localStorage.getItem("access_token");
 
   try {
-    // Call backend to invalidate session on Supabase
-    // Note: We use query param since the current backend expects it as an argument
-    await fetch(`${API_URL}/auth/logout?refresh_token=${refreshToken}`, {
-      method: "POST",
-    });
+    if (token) {
+      await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
   } catch (err) {
     console.error("Backend logout failed:", err);
   } finally {
