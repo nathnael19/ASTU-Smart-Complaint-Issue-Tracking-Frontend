@@ -31,10 +31,25 @@ const CheckEmailForm: React.FC<CheckEmailFormProps> = ({ onVerify }) => {
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
-
     if (value && index < 5) {
       inputs.current[index + 1]?.focus();
     }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").trim().slice(0, 6);
+    if (!/^\d*$/.test(pastedData)) return;
+
+    const newCode = [...code];
+    pastedData.split("").forEach((char, i) => {
+      if (i < 6) newCode[i] = char;
+    });
+    setCode(newCode);
+
+    // Focus the last filled input or the first empty one
+    const nextIndex = Math.min(pastedData.length, 5);
+    inputs.current[nextIndex]?.focus();
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
@@ -82,6 +97,7 @@ const CheckEmailForm: React.FC<CheckEmailFormProps> = ({ onVerify }) => {
                 value={digit}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
+                onPaste={handlePaste}
                 className="w-full h-14 md:h-16 bg-[#f8fafc] border border-gray-200 text-2xl font-black text-center rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-800"
               />
             ))}
