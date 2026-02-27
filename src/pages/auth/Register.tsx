@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import AuthHeader from "../../components/auth/AuthHeader";
 import AuthFooter from "../../components/auth/AuthFooter";
 import RegisterForm from "../../components/auth/RegisterForm";
+import { registerUser, fetchDepartments } from "../../api/auth";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -15,8 +18,22 @@ const Register = () => {
     agreedToTerms: false,
   });
 
+  const [departments, setDepartments] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0); // 0-4
+
+  useEffect(() => {
+    const loadDepartments = async () => {
+      try {
+        const data = await fetchDepartments();
+        setDepartments(data);
+      } catch (err) {
+        console.error("Failed to load departments:", err);
+      }
+    };
+    loadDepartments();
+  }, []);
 
   useEffect(() => {
     // Basic password strength logic
@@ -44,8 +61,10 @@ const Register = () => {
     return "bg-gray-200";
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
+
     setError(null);
 
     if (!formData.fullName.trim()) {
@@ -78,8 +97,15 @@ const Register = () => {
       return;
     }
 
-    // Proceed with registration logic...
-    console.log("Registering with:", formData);
+    setIsLoading(true);
+    try {
+      await registerUser(formData);
+      navigate("/check-email");
+    } catch (err: any) {
+      setError(err.message || "Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -99,6 +125,8 @@ const Register = () => {
             getStrengthText={getStrengthText}
             getStrengthColor={getStrengthColor}
             onSubmit={handleSubmit}
+            departments={departments}
+            isLoading={isLoading}
           />
         </motion.div>
       </main>

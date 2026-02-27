@@ -21,6 +21,8 @@ interface RegisterFormProps {
   getStrengthText: () => string;
   getStrengthColor: (index: number) => string;
   onSubmit: (e: React.FormEvent) => void;
+  departments: any[];
+  isLoading: boolean;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
@@ -31,6 +33,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   getStrengthText,
   getStrengthColor,
   onSubmit,
+  departments,
+  isLoading,
 }) => {
   return (
     <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 w-full max-w-2xl overflow-hidden border border-gray-100 p-8 md:p-12">
@@ -136,12 +140,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                   onChange={(e) =>
                     setFormData({ ...formData, department: e.target.value })
                   }
+                  disabled={isLoading}
                 >
                   <option value="">Select Department</option>
-                  <option>School of Electrical-Engineering</option>
-                  <option>School of Civil Engineering</option>
-                  <option>School of Mechanical Engineering</option>
-                  <option>School of Applied Natural Sciences</option>
+                  {departments.map((dept) => (
+                    <option key={dept.id} value={dept.name}>
+                      {dept.name}
+                    </option>
+                  ))}
                 </select>
                 <ChevronDown
                   size={18}
@@ -168,6 +174,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
+                disabled={isLoading}
               />
             </div>
             {/* Strength Indicator */}
@@ -222,6 +229,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                     confirmPassword: e.target.value,
                   })
                 }
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -239,6 +247,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                     agreedToTerms: e.target.checked,
                   })
                 }
+                disabled={isLoading}
               />
               <div className="w-6 h-6 bg-slate-100 border border-gray-200 rounded-lg transition-all peer-checked:bg-primary peer-checked:border-primary" />
               <Check
@@ -262,9 +271,22 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 
         <button
           type="submit"
-          className="w-full bg-primary text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all hover:-translate-y-1 active:translate-y-0 mt-4"
+          disabled={isLoading}
+          className={cn(
+            "w-full bg-primary text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-primary/20 transition-all active:translate-y-0 mt-4",
+            isLoading
+              ? "opacity-70 cursor-not-allowed"
+              : "hover:bg-primary/90 hover:-translate-y-1",
+          )}
         >
-          Create Account
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Creating Account...
+            </div>
+          ) : (
+            "Create Account"
+          )}
         </button>
       </form>
 
