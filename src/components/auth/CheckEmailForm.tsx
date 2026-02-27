@@ -1,15 +1,26 @@
 import { Mail, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import React, { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CheckEmailFormProps {
   onVerify: (code: string) => void;
+  onResend?: () => Promise<boolean | undefined>;
+  error?: string;
 }
 
-const CheckEmailForm: React.FC<CheckEmailFormProps> = ({ onVerify }) => {
+const CheckEmailForm: React.FC<CheckEmailFormProps> = ({
+  onVerify,
+  onResend,
+  error: parentError,
+}) => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
   const [timer, setTimer] = useState(120); // 2 minutes
+  const [isResending, setIsResending] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const error = parentError || localError;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -63,6 +74,18 @@ const CheckEmailForm: React.FC<CheckEmailFormProps> = ({ onVerify }) => {
     onVerify(code.join(""));
   };
 
+  const handleResendClick = async () => {
+    if (onResend) {
+      setIsResending(true);
+      setLocalError(null);
+      const success = await onResend();
+      if (success) {
+        setTimer(120);
+      }
+      setIsResending(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 w-full max-w-lg overflow-hidden border border-gray-100 flex flex-col">
       {/* Top Illustration Area */}
@@ -85,6 +108,15 @@ const CheckEmailForm: React.FC<CheckEmailFormProps> = ({ onVerify }) => {
         </div>
 
         <form className="space-y-8" onSubmit={handleSubmit}>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-4 rounded-xl"
+            >
+              {error}
+            </motion.div>
+          )}
           <div className="flex justify-between gap-2 md:gap-4">
             {code.map((digit, i) => (
               <input
@@ -114,11 +146,12 @@ const CheckEmailForm: React.FC<CheckEmailFormProps> = ({ onVerify }) => {
           </p>
           <button
             className="text-primary font-bold hover:underline underline-offset-4 flex items-center justify-center gap-2 mx-auto disabled:text-gray-300 disabled:no-underline"
-            disabled={timer > 0}
+            disabled={timer > 0 || isResending}
+            onClick={handleResendClick}
           >
-            Resend Code{" "}
+            {isResending ? "Resending..." : "Resend Code"}{" "}
             <span className="text-gray-400 font-medium">
-              in {formatTime(timer)}
+              {timer > 0 && `in ${formatTime(timer)}`}
             </span>
           </button>
         </div>

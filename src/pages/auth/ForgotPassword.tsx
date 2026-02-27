@@ -26,8 +26,9 @@ const ForgotPassword = () => {
     try {
       await requestPasswordReset(email);
       setIsSuccess(true);
+      sessionStorage.setItem("reset_email", email);
       setTimeout(() => {
-        navigate("/check-email");
+        navigate("/check-email", { state: { email } });
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Failed to send reset link. Please try again.");

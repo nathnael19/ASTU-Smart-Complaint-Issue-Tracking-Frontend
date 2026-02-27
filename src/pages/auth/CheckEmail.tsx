@@ -1,11 +1,17 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import AuthHeader from "../../components/auth/AuthHeader";
 import AuthFooter from "../../components/auth/AuthFooter";
 import CheckEmailForm from "../../components/auth/CheckEmailForm";
+import { requestPasswordReset } from "../../api/auth";
+import { useState } from "react";
 
 const CheckEmail = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const email =
+    location.state?.email || sessionStorage.getItem("reset_email") || "";
+  const [resendError, setResendError] = useState<string | null>(null);
 
   const handleVerify = (code: string) => {
     // Proceed with verification logic...
@@ -14,6 +20,22 @@ const CheckEmail = () => {
       navigate("/new-password");
     } else {
       alert("Please enter the full 6-digit code.");
+    }
+  };
+
+  const handleResend = async () => {
+    if (!email) {
+      setResendError("Email not found. Please try starting the process again.");
+      return;
+    }
+
+    try {
+      await requestPasswordReset(email);
+      setResendError(null);
+      return true; // Indicate success to child
+    } catch (err: any) {
+      setResendError(err.message || "Failed to resend code.");
+      return false;
     }
   };
 
@@ -28,7 +50,11 @@ const CheckEmail = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-lg"
         >
-          <CheckEmailForm onVerify={handleVerify} />
+          <CheckEmailForm
+            onVerify={handleVerify}
+            onResend={handleResend}
+            error={resendError || undefined}
+          />
         </motion.div>
       </main>
 
