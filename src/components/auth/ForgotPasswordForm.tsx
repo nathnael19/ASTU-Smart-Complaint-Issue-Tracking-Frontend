@@ -21,14 +21,6 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
 }) => {
   return (
     <div className="bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 w-full max-w-lg overflow-hidden border border-gray-100 flex flex-col">
-      {/* Top Illustration Area */}
-      <div className="bg-blue-50/50 p-12 flex items-center justify-center relative">
-        <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 shadow-inner">
-          <RotateCcw size={40} className="animate-spin-slow" />
-        </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-blue-200/20 rounded-full blur-2xl" />
-      </div>
-
       <div className="p-10 md:p-12 flex flex-col">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-black text-gray-900 mb-4">
