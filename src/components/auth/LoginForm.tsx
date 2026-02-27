@@ -12,6 +12,8 @@ interface LoginFormProps {
   setRememberMe: (val: boolean) => void;
   error: string | null;
   setError: (val: string | null) => void;
+  successMessage?: string | null;
+  setSuccessMessage?: (val: string | null) => void;
   onSubmit: (e: React.FormEvent) => void;
   isLoading?: boolean;
 }
@@ -25,6 +27,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
   setRememberMe,
   error,
   setError,
+  successMessage,
+  setSuccessMessage,
   onSubmit,
   isLoading,
 }) => {
@@ -44,6 +48,16 @@ const LoginForm: React.FC<LoginFormProps> = ({
               className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-4 rounded-xl"
             >
               {error}
+            </motion.div>
+          )}
+
+          {successMessage && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="bg-green-50 border border-green-100 text-green-600 text-xs font-bold p-4 rounded-xl"
+            >
+              {successMessage}
             </motion.div>
           )}
           <div>
@@ -67,6 +81,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
                 onChange={(e) => {
                   setEmail(e.target.value);
                   if (error) setError(null);
+                  if (successMessage && setSuccessMessage)
+                    setSuccessMessage(null);
                 }}
               />
             </div>
@@ -85,7 +101,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
                 placeholder="••••••••"
                 className="w-full bg-[#f8fafc] border border-gray-200 text-sm rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-700 placeholder:text-gray-400"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError(null);
+                  if (successMessage && setSuccessMessage)
+                    setSuccessMessage(null);
+                }}
               />
             </div>
           </div>

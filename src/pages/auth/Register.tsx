@@ -102,7 +102,10 @@ const Register = () => {
     setIsLoading(true);
     try {
       await registerUser(formData);
-      navigate("/check-email");
+      sessionStorage.setItem("reset_email", formData.email); // Reuse same key for consistency
+      navigate("/check-email", {
+        state: { email: formData.email, type: "signup" },
+      });
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {

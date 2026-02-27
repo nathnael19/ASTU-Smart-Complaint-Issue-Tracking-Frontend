@@ -11,6 +11,7 @@ const CheckEmail = () => {
   const location = useLocation();
   const email =
     location.state?.email || sessionStorage.getItem("reset_email") || "";
+  const type = location.state?.type || "recovery"; // "signup" or "recovery"
   const [resendError, setResendError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,16 +24,26 @@ const CheckEmail = () => {
     setIsLoading(true);
     setResendError(null);
     try {
-      const data = await verifyOTP(email, code);
-      // Store tokens for the reset-password request
-      if (data.access_token) {
-        localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("refresh_token", data.refresh_token);
+      const data = await verifyOTP(email, code, type);
 
-        // Clear persistence
-        sessionStorage.removeItem("reset_email");
+      // Clear persistence
+      sessionStorage.removeItem("reset_email");
 
-        navigate("/new-password");
+      if (type === "signup") {
+        // For signup, registration is complete, go to login
+        navigate("/login", {
+          state: {
+            message: "Account verified successfully! You can now log in.",
+          },
+          replace: true,
+        });
+      } else {
+        // For recovery, store tokens for the reset-password request
+        if (data.access_token) {
+          localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("refresh_token", data.refresh_token);
+          navigate("/new-password");
+        }
       }
     } catch (err: any) {
       setResendError(err.message || "Invalid or expired verification code.");

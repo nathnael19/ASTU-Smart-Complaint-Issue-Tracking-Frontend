@@ -112,13 +112,17 @@ export const resetPassword = async (password: string) => {
   return data;
 };
 
-export const verifyOTP = async (email: string, token: string) => {
+export const verifyOTP = async (
+  email: string,
+  token: string,
+  type: string = "recovery",
+) => {
   const response = await fetch(`${API_URL}/auth/verify-otp`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, token }),
+    body: JSON.stringify({ email, token, type }),
   });
 
   if (!response.ok) {
