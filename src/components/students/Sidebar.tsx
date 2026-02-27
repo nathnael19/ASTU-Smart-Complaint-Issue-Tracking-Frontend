@@ -9,15 +9,22 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import { logoutUser } from "../../api/auth";
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
     return saved ? JSON.parse(saved) : false;
   });
+
+  const handleLogout = async () => {
+    await logoutUser();
+    navigate("/login");
+  };
 
   useEffect(() => {
     localStorage.setItem("sidebar-collapsed", JSON.stringify(isCollapsed));
@@ -79,11 +86,7 @@ const Sidebar = () => {
         )}
         title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
-        {isCollapsed ? (
-          <ChevronRight size={16} />
-        ) : (
-          <ChevronLeft size={16} />
-        )}
+        {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
 
       {/* Navigation */}
@@ -139,6 +142,7 @@ const Sidebar = () => {
         )}
 
         <button
+          onClick={handleLogout}
           title={isCollapsed ? "Sign Out" : ""}
           className={cn(
             "flex items-center w-full rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-colors",

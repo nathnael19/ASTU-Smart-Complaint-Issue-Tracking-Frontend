@@ -51,3 +51,22 @@ export const loginUser = async (credentials: any) => {
 
   return data;
 };
+
+export const logoutUser = async () => {
+  const refreshToken = localStorage.getItem("refresh_token") || "";
+
+  try {
+    // Call backend to invalidate session on Supabase
+    // Note: We use query param since the current backend expects it as an argument
+    await fetch(`${API_URL}/auth/logout?refresh_token=${refreshToken}`, {
+      method: "POST",
+    });
+  } catch (err) {
+    console.error("Backend logout failed:", err);
+  } finally {
+    // Always clear local storage regardless of backend success
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
+  }
+};

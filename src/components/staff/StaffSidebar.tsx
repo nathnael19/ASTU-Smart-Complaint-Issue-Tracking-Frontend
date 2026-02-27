@@ -11,18 +11,28 @@ import {
   ChevronRight,
   GraduationCap,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import { logoutUser } from "../../api/auth";
 
 const StaffSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const saved = localStorage.getItem("staff-sidebar-collapsed");
     return saved ? JSON.parse(saved) : false;
   });
 
+  const handleLogout = async () => {
+    await logoutUser();
+    navigate("/login");
+  };
+
   useEffect(() => {
-    localStorage.setItem("staff-sidebar-collapsed", JSON.stringify(isCollapsed));
+    localStorage.setItem(
+      "staff-sidebar-collapsed",
+      JSON.stringify(isCollapsed),
+    );
   }, [isCollapsed]);
 
   const menuItems = [
@@ -73,11 +83,7 @@ const StaffSidebar = () => {
         )}
         title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
-        {isCollapsed ? (
-          <ChevronRight size={16} />
-        ) : (
-          <ChevronLeft size={16} />
-        )}
+        {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
 
       {/* Navigation */}
@@ -127,7 +133,8 @@ const StaffSidebar = () => {
           className={cn(
             "flex items-center rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors",
             isCollapsed ? "justify-center p-3" : "gap-3 px-4 py-3",
-            location.pathname === "/staff/settings" && "bg-blue-600/5 text-blue-600",
+            location.pathname === "/staff/settings" &&
+              "bg-blue-600/5 text-blue-600",
           )}
         >
           <Settings size={20} className="shrink-0" />
@@ -135,6 +142,7 @@ const StaffSidebar = () => {
         </Link>
 
         <button
+          onClick={handleLogout}
           title={isCollapsed ? "Sign Out" : ""}
           className={cn(
             "flex items-center w-full rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-colors",
