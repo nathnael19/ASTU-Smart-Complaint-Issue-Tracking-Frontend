@@ -35,6 +35,7 @@ import AdminSettings from "./pages/admin/Settings";
 
 // Components
 import ScrollToTop from "./components/layout/ScrollToTop";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const App = () => {
   return (
@@ -50,40 +51,178 @@ const App = () => {
         <Route path="/new-password" element={<NewPassword />} />
 
         {/* Student Routes */}
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route
+          path="/student/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/student/dashboard/complaints"
-          element={<MyComplaints />}
+          element={
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
+              <MyComplaints />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/student/dashboard/submit" element={<SubmitComplaint />} />
-        <Route path="/student/dashboard/kb" element={<KnowledgeBase />} />
-        <Route path="/student/dashboard/settings" element={<Settings />} />
+        <Route
+          path="/student/dashboard/submit"
+          element={
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
+              <SubmitComplaint />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/dashboard/kb"
+          element={
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
+              <KnowledgeBase />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/dashboard/settings"
+          element={
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Staff Routes */}
-        <Route path="/staff/dashboard" element={<StaffDashboard />} />
-        <Route path="/staff/tasks" element={<DepartmentTasks />} />
-        <Route path="/staff/tasks/create" element={<CreateTicket />} />
-        <Route path="/staff/resolved" element={<ResolvedIssues />} />
-        <Route path="/staff/reports" element={<Analytics />} />
-        <Route path="/staff/settings" element={<StaffSettings />} />
-        <Route path="/staff/tickets" element={<MyTickets />} />
-        <Route path="/staff/tickets/:id" element={<TicketDetail />} />
+        <Route
+          path="/staff/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <StaffDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/tasks"
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <DepartmentTasks />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/tasks/create"
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <CreateTicket />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/resolved"
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <ResolvedIssues />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/reports"
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <Analytics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/settings"
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <StaffSettings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/tickets"
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <MyTickets />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/tickets/:id"
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <TicketDetail />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/staff/students/:studentId/history"
-          element={<StudentHistory />}
+          element={
+            <ProtectedRoute allowedRoles={["STAFF", "ADMIN"]}>
+              <StudentHistory />
+            </ProtectedRoute>
+          }
         />
 
         {/* Admin Routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/complaints" element={<AdminComplaints />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/complaints"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminComplaints />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/complaints/:id"
-          element={<AdminComplaintDetail />}
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminComplaintDetail />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/users/create" element={<AdminCreateUser />} />
-        <Route path="/admin/reports" element={<AdminReports />} />
-        <Route path="/admin/settings" element={<AdminSettings />} />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users/create"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminCreateUser />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reports"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminReports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminSettings />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
