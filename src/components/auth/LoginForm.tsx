@@ -13,6 +13,7 @@ interface LoginFormProps {
   error: string | null;
   setError: (val: string | null) => void;
   onSubmit: (e: React.FormEvent) => void;
+  isLoading?: boolean;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({
@@ -25,6 +26,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   error,
   setError,
   onSubmit,
+  isLoading,
 }) => {
   return (
     <div className="flex-1 p-10 md:p-16 flex flex-col justify-center bg-white">
@@ -124,8 +126,25 @@ const LoginForm: React.FC<LoginFormProps> = ({
             </Link>
           </div>
 
-          <button className="w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0">
-            Sign In <LogIn size={18} />
+          <button
+            disabled={isLoading}
+            className={cn(
+              "w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 transition-all",
+              isLoading
+                ? "opacity-70 cursor-not-allowed"
+                : "hover:bg-blue-950 hover:translate-y-[-2px] active:translate-y-0",
+            )}
+          >
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                Signing In...
+              </div>
+            ) : (
+              <>
+                Sign In <LogIn size={18} />
+              </>
+            )}
           </button>
         </form>
 

@@ -34,3 +34,20 @@ export const fetchDepartments = async () => {
 
   return data;
 };
+export const loginUser = async (credentials: any) => {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Login failed");
+  }
+
+  return data;
+};

@@ -5,20 +5,22 @@ import AuthHeader from "../../components/auth/AuthHeader";
 import AuthFooter from "../../components/auth/AuthFooter";
 import AuthInfoSide from "../../components/auth/AuthInfoSide";
 import LoginForm from "../../components/auth/LoginForm";
+import { loginUser } from "../../api/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!email.trim()) {
-      setError("Please enter your university email.");
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter your email and password.");
       return;
     }
 
@@ -27,9 +29,32 @@ const Login = () => {
       return;
     }
 
-    // Proceed with login logic...
-    console.log("Logging in with:", { email, password });
-    navigate("/student/dashboard");
+    setIsLoading(true);
+
+    try {
+      const response = await loginUser({ email: email.trim(), password });
+
+      // Store token and user data
+      localStorage.setItem("access_token", response.access_token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+
+      // Role-based redirection
+      const role = response.user.role;
+      if (role === "STUDENT") {
+        navigate("/student/dashboard");
+      } else if (role === "STAFF") {
+        navigate("/staff/dashboard");
+      } else if (role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else {
+        // Default fallback
+        navigate("/student/dashboard");
+      }
+    } catch (err: any) {
+      setError(err.message || "Invalid credentials. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -53,6 +78,7 @@ const Login = () => {
             error={error}
             setError={setError}
             onSubmit={handleSubmit}
+            isLoading={isLoading}
           />
         </motion.div>
       </main>
