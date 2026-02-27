@@ -24,10 +24,12 @@ const Login = () => {
       return;
     }
 
+    /* 
     if (!email.toLowerCase().endsWith("@astu.edu.et")) {
       setError("Please use an official ASTU email ending with @astu.edu.et");
       return;
     }
+    */
 
     setIsLoading(true);
 

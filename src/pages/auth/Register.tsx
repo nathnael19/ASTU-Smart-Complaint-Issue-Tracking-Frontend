@@ -72,10 +72,12 @@ const Register = () => {
       return;
     }
 
+    /*
     if (!formData.email.toLowerCase().endsWith("@astu.edu.et")) {
       setError("Please use an official ASTU email ending with @astu.edu.et");
       return;
     }
+    */
 
     if (!formData.department) {
       setError("Please select your department.");
