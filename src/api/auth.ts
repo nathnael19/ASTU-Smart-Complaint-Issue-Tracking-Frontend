@@ -111,3 +111,20 @@ export const resetPassword = async (password: string) => {
 
   return data;
 };
+
+export const verifyOTP = async (email: string, token: string) => {
+  const response = await fetch(`${API_URL}/auth/verify-otp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, token }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || "Verification failed");
+  }
+
+  return response.json();
+};

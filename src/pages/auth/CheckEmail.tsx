@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import AuthHeader from "../../components/auth/AuthHeader";
 import AuthFooter from "../../components/auth/AuthFooter";
 import CheckEmailForm from "../../components/auth/CheckEmailForm";
-import { requestPasswordReset } from "../../api/auth";
+import { requestPasswordReset, verifyOTP } from "../../api/auth";
 import { useState } from "react";
 
 const CheckEmail = () => {
@@ -12,14 +12,32 @@ const CheckEmail = () => {
   const email =
     location.state?.email || sessionStorage.getItem("reset_email") || "";
   const [resendError, setResendError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleVerify = (code: string) => {
-    // Proceed with verification logic...
-    console.log("Verifying code:", code);
-    if (code.length === 6) {
-      navigate("/new-password");
-    } else {
+  const handleVerify = async (code: string) => {
+    if (code.length !== 6) {
       alert("Please enter the full 6-digit code.");
+      return;
+    }
+
+    setIsLoading(true);
+    setResendError(null);
+    try {
+      const data = await verifyOTP(email, code);
+      // Store tokens for the reset-password request
+      if (data.access_token) {
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("refresh_token", data.refresh_token);
+
+        // Clear persistence
+        sessionStorage.removeItem("reset_email");
+
+        navigate("/new-password");
+      }
+    } catch (err: any) {
+      setResendError(err.message || "Invalid or expired verification code.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -54,6 +72,7 @@ const CheckEmail = () => {
             onVerify={handleVerify}
             onResend={handleResend}
             error={resendError || undefined}
+            isLoading={isLoading}
           />
         </motion.div>
       </main>
