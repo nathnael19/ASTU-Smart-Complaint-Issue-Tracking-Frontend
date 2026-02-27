@@ -1,16 +1,54 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import AuthHeader from "../../components/auth/AuthHeader";
 import AuthFooter from "../../components/auth/AuthFooter";
 import NewPasswordForm from "../../components/auth/NewPasswordForm";
+import { resetPassword } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
 
 const NewPassword = () => {
-  const handleResetPassword = (password: string) => {
-    // Proceed with reset logic...
-    console.log("Setting new password:", password);
-    alert(
-      "Your password has been reset successfully! You can now log in with your new password.",
-    );
-    window.location.href = "/login";
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Extract tokens from URL hash (Supabase redirect format)
+    const hash = window.location.hash;
+    if (hash) {
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+
+      if (accessToken) {
+        localStorage.setItem("access_token", accessToken);
+      }
+      if (refreshToken) {
+        localStorage.setItem("refresh_token", refreshToken);
+      }
+
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  const handleResetPassword = async (password: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await resetPassword(password);
+      setIsSuccess(true);
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
+    } catch (err: any) {
+      setError(
+        err.message || "Failed to reset password. The link may have expired.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -24,7 +62,26 @@ const NewPassword = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-lg"
         >
-          <NewPasswordForm onSubmit={handleResetPassword} />
+          {isSuccess ? (
+            <div className="bg-white rounded-[2rem] shadow-2xl p-12 text-center border border-gray-100">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 mx-auto mb-6">
+                <ShieldCheck size={40} />
+              </div>
+              <h2 className="text-2xl font-black text-gray-900 mb-4">
+                Password Reset!
+              </h2>
+              <p className="text-gray-500 mb-8 font-medium">
+                Your password has been successfully updated. Redirecting you to
+                login...
+              </p>
+            </div>
+          ) : (
+            <NewPasswordForm
+              onSubmit={handleResetPassword}
+              isLoading={isLoading}
+              error={error || undefined}
+            />
+          )}
         </motion.div>
       </main>
 

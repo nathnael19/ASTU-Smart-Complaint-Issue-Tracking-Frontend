@@ -13,14 +13,22 @@ import { cn } from "../../lib/utils";
 
 interface NewPasswordFormProps {
   onSubmit: (password: string) => void;
+  isLoading?: boolean;
+  error?: string;
 }
 
-const NewPasswordForm: React.FC<NewPasswordFormProps> = ({ onSubmit }) => {
+const NewPasswordForm: React.FC<NewPasswordFormProps> = ({
+  onSubmit,
+  isLoading,
+  error: parentError,
+}) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const error = parentError || localError;
 
   const requirements = [
     { label: "Min. 8 characters", met: password.length >= 8 },
@@ -40,15 +48,15 @@ const NewPasswordForm: React.FC<NewPasswordFormProps> = ({ onSubmit }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setLocalError(null);
 
     if (strength < 4) {
-      setError("Please meet all password requirements.");
+      setLocalError("Please meet all password requirements.");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setLocalError("Passwords do not match.");
       return;
     }
 
@@ -105,6 +113,7 @@ const NewPasswordForm: React.FC<NewPasswordFormProps> = ({ onSubmit }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -162,6 +171,7 @@ const NewPasswordForm: React.FC<NewPasswordFormProps> = ({ onSubmit }) => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -178,8 +188,11 @@ const NewPasswordForm: React.FC<NewPasswordFormProps> = ({ onSubmit }) => {
             </div>
           </div>
 
-          <button className="w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0 text-base mt-4">
-            Reset Password <Lock size={18} />
+          <button
+            disabled={isLoading}
+            className="w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0 text-base mt-4 disabled:opacity-50"
+          >
+            {isLoading ? "Resetting..." : "Reset Password"} <Lock size={18} />
           </button>
         </form>
 

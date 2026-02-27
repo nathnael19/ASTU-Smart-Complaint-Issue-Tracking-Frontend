@@ -73,3 +73,41 @@ export const logoutUser = async () => {
     localStorage.removeItem("user");
   }
 };
+export const requestPasswordReset = async (email: string) => {
+  const response = await fetch(`${API_URL}/auth/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Failed to request password reset");
+  }
+
+  return data;
+};
+
+export const resetPassword = async (password: string) => {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${API_URL}/auth/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ password }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Failed to reset password");
+  }
+
+  return data;
+};

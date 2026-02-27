@@ -4,13 +4,16 @@ import { useNavigate } from "react-router-dom";
 import AuthHeader from "../../components/auth/AuthHeader";
 import AuthFooter from "../../components/auth/AuthFooter";
 import ForgotPasswordForm from "../../components/auth/ForgotPasswordForm";
+import { requestPasswordReset } from "../../api/auth";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -19,14 +22,18 @@ const ForgotPassword = () => {
       return;
     }
 
-    if (!email.toLowerCase().endsWith("@astu.edu.et")) {
-      setError("Please use an official ASTU email ending with @astu.edu.et");
-      return;
+    setIsLoading(true);
+    try {
+      await requestPasswordReset(email);
+      setIsSuccess(true);
+      setTimeout(() => {
+        navigate("/check-email");
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || "Failed to send reset link. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-
-    // Proceed with reset logic...
-    console.log("Requesting password reset for:", email);
-    navigate("/check-email");
   };
 
   return (
@@ -45,6 +52,8 @@ const ForgotPassword = () => {
             setEmail={setEmail}
             onSubmit={handleSubmit}
             error={error}
+            isLoading={isLoading}
+            isSuccess={isSuccess}
           />
         </motion.div>
       </main>

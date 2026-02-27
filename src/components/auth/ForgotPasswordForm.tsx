@@ -7,6 +7,8 @@ interface ForgotPasswordFormProps {
   setEmail: (val: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   error: string | null;
+  isLoading?: boolean;
+  isSuccess?: boolean;
 }
 
 const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
@@ -14,6 +16,8 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   setEmail,
   onSubmit,
   error,
+  isLoading,
+  isSuccess,
 }) => {
   return (
     <div className="bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 w-full max-w-lg overflow-hidden border border-gray-100 flex flex-col">
@@ -47,6 +51,16 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
             </motion.div>
           )}
 
+          {isSuccess && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="bg-green-50 border border-green-100 text-green-600 text-xs font-bold p-4 rounded-xl"
+            >
+              Reset link sent! Redirecting...
+            </motion.div>
+          )}
+
           <div className="space-y-3">
             <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest pl-1">
               University Email Address
@@ -62,12 +76,17 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading || isSuccess}
               />
             </div>
           </div>
 
-          <button className="w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0 text-base">
-            Send Reset Link <ArrowRight size={18} />
+          <button
+            disabled={isLoading || isSuccess}
+            className="w-full bg-[#1e3a8a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Sending..." : "Send Reset Link"}{" "}
+            <ArrowRight size={18} />
           </button>
         </form>
 
