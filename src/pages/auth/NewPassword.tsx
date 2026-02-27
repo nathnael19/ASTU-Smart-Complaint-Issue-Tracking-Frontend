@@ -14,7 +14,7 @@ const NewPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Extract tokens from URL hash (Supabase redirect format)
+    // 1. Extract tokens from URL hash (Supabase redirect format)
     const hash = window.location.hash;
     if (hash) {
       const params = new URLSearchParams(hash.substring(1));
@@ -31,20 +31,33 @@ const NewPassword = () => {
       // Clean up the URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, []);
+
+    // 2. Continuous Check: If no access token is found (either from URL or previously stored),
+    // redirect to forgot-password page as they shouldn't be here.
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      navigate("/forgot-password", { replace: true });
+    }
+  }, [navigate]);
 
   const handleResetPassword = async (password: string) => {
     setIsLoading(true);
     setError(null);
     try {
       await resetPassword(password);
+
+      // Successfully updated! Clear the session tokens so they can't be used again
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+
       setIsSuccess(true);
       setTimeout(() => {
-        navigate("/login");
+        navigate("/login", { replace: true });
       }, 3000);
     } catch (err: any) {
       setError(
-        err.message || "Failed to reset password. The link may have expired.",
+        err.message ||
+          "Failed to reset password. The link or session may have expired.",
       );
     } finally {
       setIsLoading(false);
