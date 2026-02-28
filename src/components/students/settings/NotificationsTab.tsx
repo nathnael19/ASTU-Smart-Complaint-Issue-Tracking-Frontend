@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Mail, BellRing, Smartphone, Moon } from "lucide-react";
 import SettingsToggle from "./SettingsToggle";
 
-const NotificationsTab = () => {
+interface NotificationsTabProps {
+  profile: any;
+}
+
+const NotificationsTab = ({ profile }: NotificationsTabProps) => {
   const [notifs, setNotifs] = useState({
     statusUpdates: true,
     newComments: true,
