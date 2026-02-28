@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Ticket as TicketIcon,
   MessageSquare,
@@ -10,11 +10,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import StatCard from "../../components/students/StatCard";
-import {
-  getDepartmentSummary,
-  type DepartmentSummary,
-} from "../../api/analytics";
-import { getMyComplaints } from "../../api/complaints";
+import { useDepartmentSummary } from "../../hooks/useAnalytics";
+import { useComplaints } from "../../hooks/useComplaints";
 
 interface BackendTicket {
   id: string;
@@ -45,28 +42,15 @@ const getPriorityClasses = (priority: string) => {
 
 const MyTickets = () => {
   const navigate = useNavigate();
-  const [summary, setSummary] = useState<DepartmentSummary | null>(null);
-  const [tickets, setTickets] = useState<BackendTicket[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [summaryData, ticketsData] = await Promise.all([
-          getDepartmentSummary(),
-          getMyComplaints({ limit: 50 }),
-        ]);
-        setSummary(summaryData);
-        setTickets(ticketsData.data || []);
-      } catch (error) {
-        console.error("Failed to fetch tickets page data", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const { data: summary, loading: summaryLoading } = useDepartmentSummary();
+  const { data: ticketsData, loading: ticketsLoading } = useComplaints({
+    limit: 50,
+  });
+
+  const loading = summaryLoading || ticketsLoading;
+  const tickets: BackendTicket[] = ticketsData?.data || [];
 
   const handleProcess = (ticketId: string) => {
     const id = ticketId.replace("#", "");
