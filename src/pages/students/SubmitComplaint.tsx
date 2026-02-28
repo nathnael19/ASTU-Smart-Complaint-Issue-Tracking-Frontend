@@ -10,14 +10,21 @@ import {
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
 import { cn } from "../../lib/utils";
+import { supabase } from "../../lib/supabase";
+import { createComplaint, addAttachmentMetadata } from "../../api/complaints";
+import { useNavigate } from "react-router-dom";
 
 const SubmitComplaint = () => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [urgency, setUrgency] = useState("MEDIUM");
+  const [urgency, setUrgency] = useState<"LOW" | "MEDIUM" | "HIGH">("MEDIUM");
   const [dragActive, setDragActive] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const maxDescriptionLength = 1000;
 
@@ -53,23 +60,64 @@ const SubmitComplaint = () => {
     setFiles((prev) => prev.filter((file) => file.name !== name));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
 
-    // Basic client-side validation (can be replaced with real form lib / API later)
     if (!title.trim() || !category || !description.trim()) {
-      // For now we just prevent submission; hook into a toast system if available
+      setError("Please fill in all required fields.");
+      setIsSubmitting(false);
       return;
     }
 
-    // TODO: Replace with actual submission logic (API call, success state, etc.)
-    console.log({
-      title,
-      category,
-      description,
-      urgency,
-      files,
-    });
+    try {
+      // 1. Create the complaint
+      const complaint = await createComplaint({
+        title,
+        category,
+        description,
+        priority: urgency,
+      });
+
+      const complaintId = complaint.id;
+
+      // 2. Upload attachments if any
+      if (files.length > 0) {
+        for (const file of files) {
+          const fileExt = file.name.split(".").pop();
+          const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+          const filePath = `${complaintId}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from("complaint-attachments")
+            .upload(filePath, file);
+
+          if (uploadError) {
+            console.error(`Upload failed for ${file.name}:`, uploadError);
+            continue; // Or handle error
+          }
+
+          // 3. Record metadata in DB
+          await addAttachmentMetadata(complaintId, {
+            file_name: file.name,
+            file_size_bytes: file.size,
+            mime_type: file.type,
+            storage_path: filePath,
+          });
+        }
+      }
+
+      setIsSuccess(true);
+      // Wait a bit then redirect
+      setTimeout(() => {
+        navigate("/student/dashboard");
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || "Failed to submit complaint. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -110,6 +158,24 @@ const SubmitComplaint = () => {
               </div>
             </div>
           </div>
+
+          {isSuccess && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-[1.5rem] p-6 text-center animate-in zoom-in-95 duration-300">
+              <div className="flex items-center justify-center gap-3 text-emerald-800 font-bold">
+                <CheckCircle2 size={24} />
+                <span>Complaint submitted successfully! Redirecting...</span>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-[1.5rem] p-6 text-center animate-in shake duration-500">
+              <div className="flex items-center justify-center gap-3 text-red-800 font-bold">
+                <Info size={24} />
+                <span>{error}</span>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
             {/* Left Column: Form */}
@@ -159,8 +225,12 @@ const SubmitComplaint = () => {
                         <option value="Facility & Maintenance">
                           Facility &amp; Maintenance
                         </option>
-                        <option value="Academic Affairs">Academic Affairs</option>
-                        <option value="Student Services">Student Services</option>
+                        <option value="Academic Affairs">
+                          Academic Affairs
+                        </option>
+                        <option value="Student Services">
+                          Student Services
+                        </option>
                       </select>
                       <ChevronRight
                         size={18}
@@ -199,7 +269,9 @@ const SubmitComplaint = () => {
                         <button
                           key={level.value}
                           type="button"
-                          onClick={() => setUrgency(level.value)}
+                          onClick={() =>
+                            setUrgency(level.value as "LOW" | "MEDIUM" | "HIGH")
+                          }
                           className={cn(
                             "flex-1 min-w-[90px] py-2.5 sm:py-3 rounded-[1rem] sm:rounded-[1.25rem] border text-left px-3 sm:px-4 transition-all",
                             urgency === level.value
@@ -223,7 +295,8 @@ const SubmitComplaint = () => {
                 <div className="space-y-2 sm:space-y-3">
                   <label className="flex items-center justify-between px-1">
                     <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">
-                      Detailed description <span className="text-red-500">*</span>
+                      Detailed description{" "}
+                      <span className="text-red-500">*</span>
                     </span>
                     <span className="text-[11px] text-gray-400 font-medium">
                       Include dates, people involved, and location
@@ -242,7 +315,9 @@ const SubmitComplaint = () => {
                       className="w-full bg-slate-50 border border-transparent rounded-[1.25rem] py-4 sm:py-5 px-6 sm:px-7 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 transition-all resize-none leading-relaxed"
                     />
                     <div className="flex items-center justify-between text-[11px] text-gray-400 px-1">
-                      <span>Do not include passwords or highly sensitive data.</span>
+                      <span>
+                        Do not include passwords or highly sensitive data.
+                      </span>
                       <span>
                         {description.length}/{maxDescriptionLength} characters
                       </span>
@@ -254,7 +329,8 @@ const SubmitComplaint = () => {
                 <div className="space-y-3 sm:space-y-4">
                   <label className="flex items-center justify-between px-1">
                     <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">
-                      Supporting documents <span className="text-gray-400">(optional)</span>
+                      Supporting documents{" "}
+                      <span className="text-gray-400">(optional)</span>
                     </span>
                     <span className="text-[11px] text-gray-400 font-medium">
                       Screenshots, photos, or PDFs
@@ -308,7 +384,9 @@ const SubmitComplaint = () => {
                             key={file.name}
                             className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-2.5 text-xs text-gray-700 border border-slate-100"
                           >
-                            <span className="truncate max-w-[65%]">{file.name}</span>
+                            <span className="truncate max-w-[65%]">
+                              {file.name}
+                            </span>
                             <div className="flex items-center gap-3">
                               <span className="text-[10px] text-gray-400">
                                 {(file.size / 1024 / 1024).toFixed(1)} MB
@@ -349,15 +427,25 @@ const SubmitComplaint = () => {
                     </button>
                     <button
                       type="submit"
-                      disabled={!title.trim() || !category || !description.trim()}
+                      disabled={
+                        isSubmitting ||
+                        isSuccess ||
+                        !title.trim() ||
+                        !category ||
+                        !description.trim()
+                      }
                       className={cn(
                         "min-w-[130px] px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-[11px] sm:text-xs shadow-md transition-all tracking-tight inline-flex items-center justify-center gap-2",
-                        !title.trim() || !category || !description.trim()
+                        isSubmitting ||
+                          isSuccess ||
+                          !title.trim() ||
+                          !category ||
+                          !description.trim()
                           ? "bg-gray-300 text-gray-600 cursor-not-allowed shadow-none"
                           : "bg-[#1e3a8a] text-white shadow-blue-900/20 hover:bg-blue-900 hover:translate-y-[-1px]",
                       )}
                     >
-                      Submit complaint
+                      {isSubmitting ? "Submitting..." : "Submit complaint"}
                     </button>
                   </div>
                 </div>
