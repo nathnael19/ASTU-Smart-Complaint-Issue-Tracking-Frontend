@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Search,
   X,
@@ -11,43 +12,66 @@ import {
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
 import { cn } from "../../lib/utils";
-
-const complaints = [
-  {
-    id: "#CMP-82194",
-    subject: "Wi-Fi Disconnection in Library",
-    category: "ICT & Infrastructure",
-    priority: "High",
-    status: "In Progress",
-    statusDate: "Oct 24, 2023",
-  },
-  {
-    id: "#CMP-82156",
-    subject: "Missing Grade - CS302",
-    category: "Registrar Office",
-    priority: "Medium",
-    status: "Open",
-    statusDate: "Oct 22, 2023",
-  },
-  {
-    id: "#CMP-82088",
-    subject: "Dormitory Maintenance Required",
-    category: "Facility Management",
-    priority: "Low",
-    status: "Resolved",
-    statusDate: "Oct 18, 2023",
-  },
-  {
-    id: "#CMP-81921",
-    subject: "Library Books Availability",
-    category: "Academic Resources",
-    priority: "Low",
-    status: "Resolved",
-    statusDate: "Oct 12, 2023",
-  },
-];
+import { getMyComplaints } from "../../api/complaints";
+import { useNavigate } from "react-router-dom";
 
 const MyComplaints = () => {
+  const navigate = useNavigate();
+  const [complaints, setComplaints] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getMyComplaints();
+        // Assuming response matches { data: any[], total: number } or is just the array
+        const data = Array.isArray(response) ? response : response.data || [];
+        setComplaints(data);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch complaints.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchComplaints();
+  }, []);
+
+  const formatPriority = (p: string) => {
+    const map: any = {
+      LOW: "Low",
+      MEDIUM: "Medium",
+      HIGH: "High",
+      CRITICAL: "Critical",
+    };
+    return map[p] || p;
+  };
+
+  const formatStatus = (s: string) => {
+    const map: any = {
+      OPEN: "Open",
+      IN_PROGRESS: "In Progress",
+      RESOLVED: "Resolved",
+      CLOSED: "Closed",
+    };
+    return map[s] || s;
+  };
+
+  const formatCategory = (c: string) => {
+    const map: any = {
+      IT_AND_NETWORK: "IT & Network",
+      FACILITY_AND_MAINTENANCE: "Facility & Maintenance",
+      ACADEMIC_AFFAIRS: "Academic Affairs",
+      STUDENT_SERVICES: "Student Services",
+      REGISTRAR_OFFICE: "Registrar Office",
+      ACADEMIC_RESOURCES: "Academic Resources",
+      OTHER: "Other",
+    };
+    return map[c] || c;
+  };
+
   return (
     <DashboardLayout>
       <div className="p-8 space-y-8 max-w-[1600px] mx-auto pb-20">
@@ -61,7 +85,10 @@ const MyComplaints = () => {
               Manage and track the status of all your submitted issues.
             </p>
           </div>
-          <button className="bg-[#1e3a8a] text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0">
+          <button
+            onClick={() => navigate("/student/submit")}
+            className="bg-[#1e3a8a] text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0"
+          >
             <Plus size={20} />
             Submit New Complaint
           </button>
@@ -156,77 +183,120 @@ const MyComplaints = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {complaints.map((complaint) => (
-                  <tr
-                    key={complaint.id}
-                    className="hover:bg-gray-50/50 transition-colors group"
-                  >
-                    <td className="px-8 py-6 text-sm font-bold text-gray-400">
-                      {complaint.id}
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors">
-                          {complaint.subject}
-                        </span>
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">
-                          {complaint.category}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <span
-                        className={cn(
-                          "text-[10px] font-black uppercase px-2.5 py-1 rounded-md border",
-                          complaint.priority === "High"
-                            ? "bg-red-50 text-red-600 border-red-100"
-                            : complaint.priority === "Medium"
-                              ? "bg-yellow-50 text-yellow-600 border-yellow-100"
-                              : "bg-gray-50 text-gray-500 border-gray-100",
-                        )}
-                      >
-                        {complaint.priority}
-                      </span>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div
-                        className={cn(
-                          "inline-flex items-center gap-2 px-3 py-1.5 rounded-full",
-                          complaint.status === "In Progress"
-                            ? "bg-blue-50 text-blue-600"
-                            : complaint.status === "Open"
-                              ? "bg-yellow-50 text-yellow-600"
-                              : "bg-green-50 text-green-600",
-                        )}
-                      >
-                        <div
-                          className={cn(
-                            "w-1.5 h-1.5 rounded-full",
-                            complaint.status === "In Progress"
-                              ? "bg-blue-500"
-                              : complaint.status === "Open"
-                                ? "bg-yellow-500"
-                                : "bg-green-500",
-                          )}
-                        />
-                        <span className="text-[10px] font-black uppercase tracking-wide">
-                          {complaint.status}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6 text-sm font-bold text-gray-500">
-                      {complaint.statusDate}
-                    </td>
-                    <td className="px-8 py-6 text-right">
-                      <button className="bg-slate-50 hover:bg-[#1e3a8a] text-gray-400 hover:text-white p-2.5 rounded-xl transition-all flex items-center gap-2 ml-auto group/btn shadow-sm">
-                        <Eye size={16} />
-                        <span className="text-xs font-black uppercase hidden lg:block px-1">
-                          View Details
-                        </span>
-                      </button>
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td colSpan={6} className="px-8 py-6">
+                        <div className="h-4 bg-gray-100 rounded w-full"></div>
+                      </td>
+                    </tr>
+                  ))
+                ) : error ? (
+                  <tr>
+                    <td colSpan={6} className="px-8 py-10 text-center">
+                      <p className="text-red-500 font-bold">{error}</p>
                     </td>
                   </tr>
-                ))}
+                ) : complaints.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-8 py-20 text-center">
+                      <div className="flex flex-col items-center gap-4 text-gray-400">
+                        <Info size={40} />
+                        <p className="text-lg font-black tracking-tight text-gray-500">
+                          No complaints found
+                        </p>
+                        <p className="text-sm font-medium">
+                          You haven't submitted any complaints yet.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  complaints.map((complaint) => {
+                    const status = formatStatus(complaint.status);
+                    const priority = formatPriority(complaint.priority);
+                    const category = formatCategory(complaint.category);
+                    const date = new Date(
+                      complaint.created_at,
+                    ).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+
+                    return (
+                      <tr
+                        key={complaint.id}
+                        className="hover:bg-gray-50/50 transition-colors group"
+                      >
+                        <td className="px-8 py-6 text-sm font-bold text-gray-400">
+                          #{complaint.ticket_number}
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors">
+                              {complaint.title}
+                            </span>
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">
+                              {category}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <span
+                            className={cn(
+                              "text-[10px] font-black uppercase px-2.5 py-1 rounded-md border",
+                              priority === "High" || priority === "Critical"
+                                ? "bg-red-50 text-red-600 border-red-100"
+                                : priority === "Medium"
+                                  ? "bg-yellow-50 text-yellow-600 border-yellow-100"
+                                  : "bg-gray-50 text-gray-500 border-gray-100",
+                            )}
+                          >
+                            {priority}
+                          </span>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div
+                            className={cn(
+                              "inline-flex items-center gap-2 px-3 py-1.5 rounded-full",
+                              status === "In Progress"
+                                ? "bg-blue-50 text-blue-600"
+                                : status === "Open"
+                                  ? "bg-yellow-50 text-yellow-600"
+                                  : "bg-green-50 text-green-600",
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                "w-1.5 h-1.5 rounded-full",
+                                status === "In Progress"
+                                  ? "bg-blue-500"
+                                  : status === "Open"
+                                    ? "bg-yellow-500"
+                                    : "bg-green-500",
+                              )}
+                            />
+                            <span className="text-[10px] font-black uppercase tracking-wide">
+                              {status}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6 text-sm font-bold text-gray-500">
+                          {date}
+                        </td>
+                        <td className="px-8 py-6 text-right">
+                          <button className="bg-slate-50 hover:bg-[#1e3a8a] text-gray-400 hover:text-white p-2.5 rounded-xl transition-all flex items-center gap-2 ml-auto group/btn shadow-sm">
+                            <Eye size={16} />
+                            <span className="text-xs font-black uppercase hidden lg:block px-1">
+                              View Details
+                            </span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
@@ -234,8 +304,12 @@ const MyComplaints = () => {
           {/* Pagination */}
           <div className="px-8 py-6 border-t border-gray-50 flex items-center justify-between">
             <span className="text-sm font-bold text-gray-400">
-              Showing <span className="text-gray-900">1 to 4</span> of{" "}
-              <span className="text-gray-900">12</span> results
+              Showing{" "}
+              <span className="text-gray-900">
+                {complaints.length > 0 ? 1 : 0} to {complaints.length}
+              </span>{" "}
+              of <span className="text-gray-900">{complaints.length}</span>{" "}
+              results
             </span>
             <div className="flex items-center gap-2">
               <button
