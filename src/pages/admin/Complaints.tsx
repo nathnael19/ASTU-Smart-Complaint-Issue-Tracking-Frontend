@@ -1,22 +1,14 @@
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import ComplaintSummaryCards from "../../components/admin/complaints/ComplaintSummaryCards";
 import ComplaintsFilterBar from "../../components/admin/complaints/ComplaintsFilterBar";
 import ComplaintsDataTable from "../../components/admin/complaints/ComplaintsDataTable";
-import { getAllComplaints, type ComplaintFilters } from "../../api/complaints";
-import {
-  getDashboardSummary,
-  type DashboardSummary,
-} from "../../api/analytics";
+import { type ComplaintFilters } from "../../api/complaints";
+import { useComplaints } from "../../hooks/useComplaints";
+import { useDashboardSummary } from "../../hooks/useAnalytics";
 
 const Complaints = () => {
-  const [complaints, setComplaints] = useState<any[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
-
-  // Filters and Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const [filters, setFilters] = useState<ComplaintFilters>({
@@ -26,39 +18,23 @@ const Complaints = () => {
     search: "",
   });
 
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-
-      const apiFilters: ComplaintFilters = {
-        limit: pageSize,
-        offset: (currentPage - 1) * pageSize,
-      };
-
-      if (filters.status) apiFilters.status = filters.status.toUpperCase();
-      if (filters.priority)
-        apiFilters.priority = filters.priority.toUpperCase();
-      if (filters.category) apiFilters.category = filters.category;
-      if (filters.search) apiFilters.search = filters.search;
-
-      const [complaintsRes, summaryRes] = await Promise.all([
-        getAllComplaints(apiFilters),
-        getDashboardSummary().catch(() => null), // Failsafe if summary fails
-      ]);
-
-      setComplaints(complaintsRes.data || []);
-      setTotalCount(complaintsRes.total || 0);
-      if (summaryRes) setSummary(summaryRes);
-    } catch (error) {
-      console.error("Failed to fetch complaints data:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const apiFilters: ComplaintFilters = {
+    limit: pageSize,
+    offset: (currentPage - 1) * pageSize,
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [currentPage, filters]);
+  if (filters.status) apiFilters.status = filters.status.toUpperCase();
+  if (filters.priority) apiFilters.priority = filters.priority.toUpperCase();
+  if (filters.category) apiFilters.category = filters.category;
+  if (filters.search) apiFilters.search = filters.search;
+
+  const { data: complaintsData, loading: isLoadingComplaints } =
+    useComplaints(apiFilters);
+  const { data: summary, loading: isLoadingSummary } = useDashboardSummary();
+
+  const complaints = complaintsData?.data || [];
+  const totalCount = complaintsData?.total || 0;
+  const isLoading = isLoadingComplaints || isLoadingSummary;
 
   const handleFilterChange = (key: keyof ComplaintFilters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
