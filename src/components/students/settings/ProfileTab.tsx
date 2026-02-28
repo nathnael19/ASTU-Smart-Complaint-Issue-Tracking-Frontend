@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Camera,
   ShieldCheck,
@@ -8,6 +8,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { updateUserProfile } from "../../../api/users";
+import { supabase } from "../../../lib/supabase";
 
 interface ProfileTabProps {
   profile: any;
@@ -23,8 +24,56 @@ const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
     // bio is not in our schema but let's keep it for UI if we want to add later
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 800K as per UI text)
+    if (file.size > 800 * 1024) {
+      setError("File size exceeds 800KB limit.");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      setError(null);
+
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${profile.id}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      // Upload to supabase storage
+      const { error: uploadError } = await supabase.storage
+        .from("complaint-attachments")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("complaint-attachments").getPublicUrl(filePath);
+
+      // Update user profile with new avatar_url
+      const updated = await updateUserProfile(profile.id, {
+        avatar_url: publicUrl,
+      });
+
+      onUpdate(updated);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err: any) {
+      setError(err.message || "Failed to upload image.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const handleSave = async () => {
     try {
@@ -60,14 +109,33 @@ const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
         {/* Profile Photo Section */}
         <div className="flex flex-col sm:flex-row items-center gap-8 pb-4">
           <div className="relative group">
-            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-slate-50 shadow-inner">
+            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-slate-50 shadow-inner relative">
+              {isUploading && (
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center z-10">
+                  <Loader2 className="text-white animate-spin" size={24} />
+                </div>
+              )}
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+                src={
+                  profile?.avatar_url ||
+                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+                }
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
             </div>
-            <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2.5 rounded-full shadow-lg border-2 border-white hover:scale-110 transition-transform">
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="absolute bottom-0 right-0 bg-blue-600 text-white p-2.5 rounded-full shadow-lg border-2 border-white hover:scale-110 transition-transform disabled:opacity-50"
+            >
               <Camera size={16} />
             </button>
           </div>
@@ -81,10 +149,27 @@ const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
               </p>
             </div>
             <div className="flex items-center gap-3 justify-center sm:justify-start">
-              <button className="bg-slate-50 hover:bg-slate-100 text-gray-700 px-6 py-2.5 rounded-xl font-bold text-xs transition-colors border border-gray-100">
-                Upload New
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="bg-slate-50 hover:bg-slate-100 text-gray-700 px-6 py-2.5 rounded-xl font-bold text-xs transition-colors border border-gray-100 disabled:opacity-50"
+              >
+                {isUploading ? "Uploading..." : "Upload New"}
               </button>
-              <button className="text-gray-400 hover:text-red-500 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors">
+              <button
+                onClick={async () => {
+                  try {
+                    setError(null);
+                    const updated = await updateUserProfile(profile.id, {
+                      avatar_url: null,
+                    });
+                    onUpdate(updated);
+                  } catch (err: any) {
+                    setError(err.message || "Failed to remove photo.");
+                  }
+                }}
+                className="text-gray-400 hover:text-red-500 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors"
+              >
                 Remove
               </button>
             </div>
