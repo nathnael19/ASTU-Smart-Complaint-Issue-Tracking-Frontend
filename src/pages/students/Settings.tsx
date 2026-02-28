@@ -12,7 +12,7 @@ import ProfileTab from "../../components/students/settings/ProfileTab";
 import NotificationsTab from "../../components/students/settings/NotificationsTab";
 import SecurityTab from "../../components/students/settings/SecurityTab";
 import AccountTab from "../../components/students/settings/AccountTab";
-import { getCurrentProfile } from "../../api/users";
+import { useCurrentProfile } from "../../hooks/useUsers";
 
 const tabs = [
   { id: "profile", label: "Profile Information", icon: User },
@@ -24,24 +24,20 @@ const tabs = [
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [profile, setProfile] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const {
+    data: fetchProfile,
+    loading: isLoading,
+    error: fetchError,
+  } = useCurrentProfile();
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getCurrentProfile();
-        setProfile(data);
-      } catch (err: any) {
-        setError(err.message || "Failed to load profile settings.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (fetchProfile) {
+      setProfile(fetchProfile);
+    }
+  }, [fetchProfile]);
 
-    fetchProfile();
-  }, []);
+  // Error explicitly handled in UI render
 
   return (
     <DashboardLayout>
@@ -101,9 +97,13 @@ const Settings = () => {
                   Loading your settings...
                 </p>
               </div>
-            ) : error ? (
+            ) : fetchError ? (
               <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10 text-center">
-                <p className="text-red-500 font-bold">{error}</p>
+                <p className="text-red-500 font-bold">
+                  {typeof fetchError === "string"
+                    ? fetchError
+                    : (fetchError as any).message}
+                </p>
                 <button
                   onClick={() => window.location.reload()}
                   className="mt-4 text-blue-600 font-black text-sm"
