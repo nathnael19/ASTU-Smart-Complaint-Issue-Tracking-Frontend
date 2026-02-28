@@ -11,9 +11,17 @@ import {
   History,
   Shield,
   ExternalLink,
+  Edit2,
+  Trash2,
+  Save,
+  XCircle,
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
-import { getComplaintDetails } from "../../api/complaints";
+import {
+  getComplaintDetails,
+  updateComplaint,
+  deleteComplaint,
+} from "../../api/complaints";
 import { cn } from "../../lib/utils";
 
 const ComplaintDetail = () => {
@@ -21,7 +29,23 @@ const ComplaintDetail = () => {
   const navigate = useNavigate();
   const [complaint, setComplaint] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [editFormData, setEditFormData] = useState<{
+    title: string;
+    description: string;
+    category: string;
+    priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" | "";
+  }>({
+    title: "",
+    description: "",
+    category: "",
+    priority: "",
+  });
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -30,6 +54,12 @@ const ComplaintDetail = () => {
         setIsLoading(true);
         const data = await getComplaintDetails(id);
         setComplaint(data);
+        setEditFormData({
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          priority: data.priority,
+        });
       } catch (err: any) {
         setError(err.message || "Failed to load complaint details.");
       } finally {
@@ -39,6 +69,36 @@ const ComplaintDetail = () => {
 
     fetchDetails();
   }, [id]);
+
+  const handleUpdate = async () => {
+    if (!id) return;
+    try {
+      setIsUpdating(true);
+      setError(null);
+      const updated = await updateComplaint(id, editFormData);
+      setComplaint(updated);
+      setIsEditMode(false);
+    } catch (err: any) {
+      setError(err.message || "Failed to update complaint.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    try {
+      setIsDeleting(true);
+      setError(null);
+      await deleteComplaint(id);
+      navigate("/student/complaints");
+    } catch (err: any) {
+      setError(err.message || "Failed to delete complaint.");
+      setShowDeleteConfirm(false);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const formatStatus = (s: string) => {
     const map: any = {
@@ -180,8 +240,67 @@ const ComplaintDetail = () => {
               </p>
               <p className="text-sm font-bold text-gray-900">{dateSubmitted}</p>
             </div>
+
+            {complaint.status === "OPEN" && !isEditMode && (
+              <div className="flex items-center gap-2 ml-4">
+                <button
+                  onClick={() => setIsEditMode(true)}
+                  className="p-3 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
+                  title="Edit Complaint"
+                >
+                  <Edit2 size={18} />
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="p-3 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-red-500 hover:border-red-100 transition-all shadow-sm"
+                  title="Delete Complaint"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
+
+        {showDeleteConfirm && (
+          <div className="bg-red-50 border border-red-100 rounded-[2rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 animate-in fade-in zoom-in duration-300">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 shrink-0">
+                <AlertCircle size={24} />
+              </div>
+              <div>
+                <h4 className="text-lg font-black text-red-900">
+                  Delete this complaint?
+                </h4>
+                <p className="text-sm font-medium text-red-700/70">
+                  This action cannot be undone. All data will be permanently
+                  removed.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="px-6 py-3 rounded-xl font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="bg-red-600 text-white px-8 py-3 rounded-xl font-black shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all flex items-center gap-2"
+              >
+                {isDeleting ? (
+                  <Clock className="animate-spin" size={18} />
+                ) : (
+                  <Trash2 size={18} />
+                )}
+                {isDeleting ? "Deleting..." : "Confirm Delete"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -189,13 +308,141 @@ const ComplaintDetail = () => {
           <div className="lg:col-span-2 space-y-8">
             {/* Description Card */}
             <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10 space-y-6">
-              <div className="flex items-center gap-3 text-[#1e3a8a]">
-                <FileText size={20} />
-                <h2 className="text-xl font-black">Complaint Description</h2>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-[#1e3a8a]">
+                  <FileText size={20} />
+                  <h2 className="text-xl font-black">
+                    {isEditMode ? "Edit Complaint" : "Complaint Description"}
+                  </h2>
+                </div>
+                {isEditMode && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setIsEditMode(false)}
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <XCircle size={20} />
+                    </button>
+                  </div>
+                )}
               </div>
-              <p className="text-gray-600 font-medium leading-[1.8] whitespace-pre-wrap text-lg">
-                {complaint.description}
-              </p>
+
+              {isEditMode ? (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.title}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          title: e.target.value,
+                        })
+                      }
+                      className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-lg font-black text-gray-900 focus:ring-2 focus:ring-blue-600/10 transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                      Description
+                    </label>
+                    <textarea
+                      rows={6}
+                      value={editFormData.description}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          description: e.target.value,
+                        })
+                      }
+                      className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-base font-medium text-gray-600 focus:ring-2 focus:ring-blue-600/10 transition-all resize-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                        Category
+                      </label>
+                      <select
+                        value={editFormData.category}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            category: e.target.value,
+                          })
+                        }
+                        className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-blue-600/10 transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="IT_AND_NETWORK">IT & Network</option>
+                        <option value="FACILITY_AND_MAINTENANCE">
+                          Facility & Maintenance
+                        </option>
+                        <option value="ACADEMIC_AFFAIRS">
+                          Academic Affairs
+                        </option>
+                        <option value="STUDENT_SERVICES">
+                          Student Services
+                        </option>
+                        <option value="REGISTRAR_OFFICE">
+                          Registrar Office
+                        </option>
+                        <option value="ACADEMIC_RESOURCES">
+                          Academic Resources
+                        </option>
+                        <option value="OTHER">Other</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                        Priority
+                      </label>
+                      <select
+                        value={editFormData.priority}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            priority: e.target.value as any,
+                          })
+                        }
+                        className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-blue-600/10 transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="HIGH">High</option>
+                        <option value="CRITICAL">Critical</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4">
+                    <button
+                      onClick={() => setIsEditMode(false)}
+                      className="px-8 py-4 rounded-2xl font-black text-sm text-gray-400 hover:text-gray-900 transition-colors"
+                    >
+                      Discard Changes
+                    </button>
+                    <button
+                      onClick={handleUpdate}
+                      disabled={isUpdating}
+                      className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center gap-2"
+                    >
+                      {isUpdating ? (
+                        <Clock className="animate-spin" size={18} />
+                      ) : (
+                        <Save size={18} />
+                      )}
+                      {isUpdating ? "Saving..." : "Save Changes"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-600 font-medium leading-[1.8] whitespace-pre-wrap text-lg">
+                  {complaint.description}
+                </p>
+              )}
 
               {complaint.attachment_url && (
                 <div className="pt-6 border-t border-gray-50">

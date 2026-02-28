@@ -103,3 +103,40 @@ export const getComplaintDetails = async (id: string) => {
 
   return response.json();
 };
+
+export const updateComplaint = async (
+  id: string,
+  data: Partial<ComplaintCreate> & { status?: string },
+) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}/complaints/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+};
+
+export const deleteComplaint = async (id: string) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}/complaints/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+};
