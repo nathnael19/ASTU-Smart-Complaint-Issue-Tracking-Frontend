@@ -1,9 +1,37 @@
+import { useState, useEffect } from "react";
 import { Search, Bell, HelpCircle, ChevronDown } from "lucide-react";
+import { getCurrentProfile } from "../../api/users";
 
 const DashboardHeader = () => {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const [user, setUser] = useState<any>(() =>
+    JSON.parse(localStorage.getItem("user") || "{}"),
+  );
+
   const fullName = user.full_name || "Student User";
   const studentId = user.student_id || "ID Pending";
+
+  useEffect(() => {
+    const refreshProfile = async () => {
+      if (!user.student_id || user.student_id === "ID Pending") {
+        try {
+          const profile = await getCurrentProfile();
+          if (profile) {
+            const updatedUser = {
+              ...user,
+              full_name: `${profile.first_name} ${profile.last_name}`.trim(),
+              student_id: profile.student_id_number,
+            };
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            setUser(updatedUser);
+          }
+        } catch (err) {
+          console.error("Header profile refresh failed:", err);
+        }
+      }
+    };
+
+    refreshProfile();
+  }, [user.student_id]);
 
   return (
     <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10">
