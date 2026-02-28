@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   User,
   Bell,
   Lock,
   Settings as SettingsIcon,
+  Loader2,
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
 import { cn } from "../../lib/utils";
@@ -11,6 +12,7 @@ import ProfileTab from "../../components/students/settings/ProfileTab";
 import NotificationsTab from "../../components/students/settings/NotificationsTab";
 import SecurityTab from "../../components/students/settings/SecurityTab";
 import AccountTab from "../../components/students/settings/AccountTab";
+import { getCurrentProfile } from "../../api/users";
 
 const tabs = [
   { id: "profile", label: "Profile Information", icon: User },
@@ -21,6 +23,25 @@ const tabs = [
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
+  const [profile, setProfile] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getCurrentProfile();
+        setProfile(data);
+      } catch (err: any) {
+        setError(err.message || "Failed to load profile settings.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -73,10 +94,35 @@ const Settings = () => {
 
           {/* Main Content Area - Scrollable */}
           <div className="flex-1 min-w-0">
-            {activeTab === "profile" && <ProfileTab />}
-            {activeTab === "notifications" && <NotificationsTab />}
-            {activeTab === "security" && <SecurityTab />}
-            {activeTab === "account" && <AccountTab />}
+            {isLoading ? (
+              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-20 flex flex-col items-center justify-center gap-4">
+                <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+                <p className="text-gray-400 font-bold">
+                  Loading your settings...
+                </p>
+              </div>
+            ) : error ? (
+              <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10 text-center">
+                <p className="text-red-500 font-bold">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="mt-4 text-blue-600 font-black text-sm"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : (
+              <>
+                {activeTab === "profile" && (
+                  <ProfileTab profile={profile} onUpdate={setProfile} />
+                )}
+                {activeTab === "notifications" && (
+                  <NotificationsTab profile={profile} />
+                )}
+                {activeTab === "security" && <SecurityTab profile={profile} />}
+                {activeTab === "account" && <AccountTab profile={profile} />}
+              </>
+            )}
           </div>
         </div>
       </div>
