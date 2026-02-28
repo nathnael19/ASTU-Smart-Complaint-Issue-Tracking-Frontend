@@ -93,55 +93,31 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             </div>
           </div>
 
-          {/* Role & Department */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
-                Role
-              </label>
-              <div className="relative">
-                <select
-                  className="w-full bg-slate-50/50 border border-gray-100 rounded-2xl py-4 px-4 pr-10 appearance-none focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
-                  value={formData.role}
-                  onChange={(e) =>
-                    setFormData({ ...formData, role: e.target.value })
-                  }
-                >
-                  <option>Student</option>
-                  <option>Staff</option>
-                  <option>Admin</option>
-                </select>
-                <ChevronDown
-                  size={18}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
-                Department
-              </label>
-              <div className="relative">
-                <select
-                  className="w-full bg-slate-50/50 border border-gray-100 rounded-2xl py-4 px-4 pr-10 appearance-none focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
-                  value={formData.department}
-                  onChange={(e) =>
-                    setFormData({ ...formData, department: e.target.value })
-                  }
-                  disabled={isLoading}
-                >
-                  <option value="">Select Department</option>
-                  {departments.map((dept) => (
-                    <option key={dept.id} value={dept.name}>
-                      {dept.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={18}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                />
-              </div>
+          {/* Department Selection (Role removed to restrict registration to students) */}
+          <div className="space-y-2">
+            <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
+              Department
+            </label>
+            <div className="relative">
+              <select
+                className="w-full bg-slate-50/50 border border-gray-100 rounded-2xl py-4 px-4 pr-10 appearance-none focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
+                value={formData.department}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
+                disabled={isLoading}
+              >
+                <option value="">Select Department</option>
+                {departments.map((dept) => (
+                  <option key={dept.id} value={dept.name}>
+                    {dept.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                size={18}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+              />
             </div>
           </div>
 
