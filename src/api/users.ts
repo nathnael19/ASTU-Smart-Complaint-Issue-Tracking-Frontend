@@ -103,3 +103,19 @@ export const adminCreateUser = async (data: {
 
   return response.json();
 };
+
+export const deleteUser = async (userId: string) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(`${API_URL}/users/${userId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+};

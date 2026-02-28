@@ -22,6 +22,7 @@ interface UsersTableProps {
   pageSize: number;
   isLoading: boolean;
   onPageChange: (page: number) => void;
+  onDeleteUser: (userId: string) => void;
 }
 
 const UsersTable = ({
@@ -31,6 +32,7 @@ const UsersTable = ({
   pageSize,
   isLoading,
   onPageChange,
+  onDeleteUser,
 }: UsersTableProps) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
@@ -131,13 +133,16 @@ const UsersTable = ({
               <th className="py-5 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-right whitespace-nowrap">
                 COMPLAINTS STATS
               </th>
+              <th className="py-5 px-8 text-xs font-black text-gray-400 uppercase tracking-widest text-right whitespace-nowrap">
+                ACTIONS
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="py-12 text-center text-gray-500 font-medium"
                 >
                   Loading users...
@@ -146,7 +151,7 @@ const UsersTable = ({
             ) : users.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="py-12 text-center text-gray-500 font-medium"
                 >
                   No users found.
@@ -232,6 +237,24 @@ const UsersTable = ({
                         </span>
                       )}
                     </div>
+                  </td>
+                  <td className="py-4 px-8 text-right">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (
+                          window.confirm(
+                            "Are you sure you want to permanently delete this user? This action cannot be undone.",
+                          )
+                        ) {
+                          onDeleteUser(user.id);
+                        }
+                      }}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors ml-auto"
+                      title="Delete User"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </td>
                 </tr>
               ))

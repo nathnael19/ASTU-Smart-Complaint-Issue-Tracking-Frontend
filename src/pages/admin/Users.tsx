@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import UsersTable from "../../components/admin/users/UsersTable";
 import { Link } from "react-router-dom";
-import { getUsers } from "../../api/users";
+import { getUsers, deleteUser } from "../../api/users";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Pagination & Search State
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +19,7 @@ const AdminUsers = () => {
   const fetchUsersData = async () => {
     try {
       setIsLoading(true);
+      setError(null);
       const res = await getUsers({
         limit: pageSize,
         offset: (currentPage - 1) * pageSize,
@@ -25,8 +27,18 @@ const AdminUsers = () => {
       });
       setUsers(res.data || []);
       setTotalCount(res.total || 0);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
+    } catch (err: any) {
+      console.error("Failed to fetch users:", err);
+      const message = err?.message || "Failed to load users.";
+      setError(
+        message.includes("Invalid or expired token") || message.includes("401")
+          ? "Please log in again."
+          : message.includes("403") || message.includes("Access denied")
+            ? "Access denied. Admin only."
+            : message
+      );
+      setUsers([]);
+      setTotalCount(0);
     } finally {
       setIsLoading(false);
     }
@@ -35,6 +47,21 @@ const AdminUsers = () => {
   useEffect(() => {
     fetchUsersData();
   }, [currentPage, searchQuery]);
+
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      await deleteUser(userId);
+      // Refresh the current page, or go back a page if it's the last item
+      if (users.length === 1 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        fetchUsersData();
+      }
+    } catch (error: any) {
+      alert(error.message || "Failed to delete user.");
+      console.error("Failed to delete user:", error);
+    }
+  };
 
   return (
     <AdminLayout>
@@ -91,6 +118,16 @@ const AdminUsers = () => {
           </div>
         </div>
 
+        {/* Error message when API fails */}
+        {error && (
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-6 py-4 text-amber-800">
+            <p className="font-semibold">{error}</p>
+            <p className="mt-1 text-sm text-amber-700">
+              If you are an admin, try logging out and back in, or check that the backend is running at the API URL.
+            </p>
+          </div>
+        )}
+
         {/* Data Table */}
         <UsersTable
           users={users}
@@ -99,6 +136,7 @@ const AdminUsers = () => {
           pageSize={pageSize}
           isLoading={isLoading}
           onPageChange={setCurrentPage}
+          onDeleteUser={handleDeleteUser}
         />
 
         {/* Footer */}
