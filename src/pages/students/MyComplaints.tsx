@@ -339,7 +339,12 @@ const MyComplaints = () => {
                           {date}
                         </td>
                         <td className="px-8 py-6 text-right">
-                          <button className="bg-slate-50 hover:bg-[#1e3a8a] text-gray-400 hover:text-white p-2.5 rounded-xl transition-all flex items-center gap-2 ml-auto group/btn shadow-sm">
+                          <button
+                            onClick={() =>
+                              navigate(`/student/complaints/${complaint.id}`)
+                            }
+                            className="bg-slate-50 hover:bg-[#1e3a8a] text-gray-400 hover:text-white p-2.5 rounded-xl transition-all flex items-center gap-2 ml-auto group/btn shadow-sm"
+                          >
                             <Eye size={16} />
                             <span className="text-xs font-black uppercase hidden lg:block px-1">
                               View Details

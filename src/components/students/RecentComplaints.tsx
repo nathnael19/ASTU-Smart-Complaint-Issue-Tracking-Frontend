@@ -1,5 +1,6 @@
 import { Eye } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface Complaint {
   id: string;
@@ -17,6 +18,7 @@ interface RecentComplaintsProps {
 }
 
 const RecentComplaints = ({ complaints, loading }: RecentComplaintsProps) => {
+  const navigate = useNavigate();
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
@@ -131,7 +133,12 @@ const RecentComplaints = ({ complaints, loading }: RecentComplaintsProps) => {
                     {formatDate(complaint.created_at)}
                   </td>
                   <td className="px-8 py-6 text-right">
-                    <button className="p-2 text-gray-400 hover:text-[#1e3a8a] hover:bg-blue-50 rounded-xl transition-all">
+                    <button
+                      onClick={() =>
+                        navigate(`/student/complaints/${complaint.id}`)
+                      }
+                      className="p-2 text-gray-400 hover:text-[#1e3a8a] hover:bg-blue-50 rounded-xl transition-all"
+                    >
                       <Eye size={18} />
                     </button>
                   </td>

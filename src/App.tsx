@@ -12,6 +12,7 @@ import MyComplaints from "./pages/students/MyComplaints";
 import KnowledgeBase from "./pages/students/KnowledgeBase";
 import Settings from "./pages/students/Settings";
 import SubmitComplaint from "./pages/students/SubmitComplaint";
+import ComplaintDetail from "./pages/students/ComplaintDetail";
 
 // Staff Pages
 import StaffDashboard from "./pages/staff/Dashboard";
@@ -64,6 +65,14 @@ const App = () => {
           element={
             <ProtectedRoute allowedRoles={["STUDENT"]}>
               <MyComplaints />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/complaints/:id"
+          element={
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
+              <ComplaintDetail />
             </ProtectedRoute>
           }
         />
