@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Info, Monitor, Smartphone } from "lucide-react";
 import SettingsToggle from "./SettingsToggle";
 
-const SecurityTab = () => {
+interface SecurityTabProps {
+  profile: any;
+}
+
+const SecurityTab = ({ profile }: SecurityTabProps) => {
   const [twoFactor, setTwoFactor] = useState(false);
 
   return (
