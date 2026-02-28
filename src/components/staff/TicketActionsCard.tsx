@@ -1,4 +1,4 @@
-import { Clock, Edit2, ChevronDown, CheckCircle } from "lucide-react";
+import { Clock, ChevronDown, CheckCircle } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 interface TicketActionsCardProps {

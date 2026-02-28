@@ -1,4 +1,4 @@
-import { ArrowLeft, Printer, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 
@@ -40,6 +40,7 @@ const TicketDetailHeader = ({
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate("/staff/tickets")}
+          aria-label="Back to tickets"
           className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all"
         >
           <ArrowLeft size={20} />
