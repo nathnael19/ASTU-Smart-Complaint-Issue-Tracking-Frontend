@@ -5,13 +5,35 @@ import {
   Clock,
   Users,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminStatCard from "../../components/admin/AdminStatCard";
 import ComplaintsCategoryChart from "../../components/admin/ComplaintsCategoryChart";
 import TrendsTimeChart from "../../components/admin/TrendsTimeChart";
 import UserManagementTable from "../../components/admin/UserManagementTable";
+import {
+  getDashboardSummary,
+  type DashboardSummary,
+} from "../../api/analytics";
 
 const Dashboard = () => {
+  const [stats, setStats] = useState<DashboardSummary | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getDashboardSummary();
+        setStats(data);
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
   return (
     <AdminLayout>
       <div className="p-8 lg:p-12 space-y-8 max-w-[1600px] mx-auto pb-24">
@@ -42,38 +64,38 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <AdminStatCard
             label="Total Complaints"
-            value="1,284"
+            value={stats?.total_complaints.toLocaleString() || "..."}
             icon={MessageSquare}
             color="text-[#1e3a8a]"
             bgColor="bg-blue-100"
-            trendText="~+12% vs last month"
+            trendText="Live from system"
             trendColor="text-emerald-500"
           />
           <AdminStatCard
             label="Resolution Rate"
-            value="89.2%"
+            value={stats?.resolution_rate || "..."}
             icon={CheckCircle}
             color="text-[#1e3a8a]"
             bgColor="bg-blue-100"
-            trendText="~+5.4% system efficiency"
+            trendText="Target: 95%+"
             trendColor="text-emerald-500"
           />
           <AdminStatCard
             label="Avg. Resolution Time"
-            value="4.5 days"
+            value={stats?.avg_resolution_time || "..."}
             icon={Clock}
             color="text-[#1e3a8a]"
             bgColor="bg-blue-100"
-            trendText="~-1.2 days faster response"
-            trendColor="text-red-500"
+            trendText="System performance"
+            trendColor="text-emerald-500"
           />
           <AdminStatCard
             label="Active Users"
-            value="3,420"
+            value={stats?.active_users.toLocaleString() || "..."}
             icon={Users}
             color="text-gray-600"
             bgColor="bg-slate-100"
-            trendText="~+8% student adoption"
+            trendText="Total verified profiles"
             trendColor="text-emerald-500"
           />
         </div>
