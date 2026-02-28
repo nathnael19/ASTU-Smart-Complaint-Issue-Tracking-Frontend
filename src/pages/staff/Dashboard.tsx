@@ -5,15 +5,13 @@ import WeeklyTicketVolumeChart from "../../components/staff/WeeklyTicketVolumeCh
 import UrgentComplaintsList from "../../components/staff/UrgentComplaintsList";
 import RecentDepartmentTicketsTable from "../../components/staff/RecentDepartmentTicketsTable";
 
-import React, { useEffect, useState } from "react";
-import { getCurrentProfile } from "../../api/users";
+import React from "react";
+import { useCurrentProfile } from "../../hooks/useUsers";
 import {
-  getDepartmentSummary,
-  type DepartmentSummary,
-  getDepartmentTrends,
-  type DepartmentTrendStat,
-} from "../../api/analytics";
-import { getMyComplaints } from "../../api/complaints";
+  useDepartmentSummary,
+  useDepartmentTrends,
+} from "../../hooks/useAnalytics";
+import { useComplaints } from "../../hooks/useComplaints";
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -46,46 +44,22 @@ class ErrorBoundary extends React.Component<
 }
 
 const StaffDashboard = () => {
-  const [user, setUser] = useState<{ first_name?: string; last_name?: string } | null>(null);
-  const [summary, setSummary] = useState<DepartmentSummary | null>(null);
-  const [trends, setTrends] = useState<DepartmentTrendStat[]>([]);
-  const [urgentComplaints, setUrgentComplaints] = useState<any[]>([]);
-  const [recentTickets, setRecentTickets] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: user } = useCurrentProfile();
+  const { data: summary, loading: summaryLoading } = useDepartmentSummary();
+  const { data: trends, loading: trendsLoading } = useDepartmentTrends();
+  const { data: urgentData, loading: urgentLoading } = useComplaints({
+    limit: 5,
+    priority: "CRITICAL",
+  });
+  const { data: recentData, loading: recentLoading } = useComplaints({
+    limit: 5,
+  });
 
-  useEffect(() => {
-    getCurrentProfile().then(setUser).catch(() => setUser(null));
-  }, []);
+  const loading =
+    summaryLoading || trendsLoading || urgentLoading || recentLoading;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [summaryData, trendsData, urgentData, recentData] =
-          await Promise.all([
-            getDepartmentSummary(),
-            getDepartmentTrends(),
-            getMyComplaints({ limit: 5, priority: "CRITICAL" }), // Or filter by urgent priorities manually later
-            getMyComplaints({ limit: 5 }),
-          ]);
-        setSummary(summaryData);
-        setTrends(trendsData);
-
-        // The API returns { data: [...], total: ... }
-        // For urgent, we might want to fetch HIGH/URGENT/CRITICAL, but for now we fetch recent and filter/sort if needed
-        // Since we can't easily query multiple priorities via the current API query params precisely,
-        // Let's fetch the most recent ones and filter for urgent ones, Or just fetch CRITICAL
-        setUrgentComplaints(urgentData.data || []);
-
-        // Recent department tickets
-        setRecentTickets(recentData.data || []);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const urgentComplaints = urgentData?.data || [];
+  const recentTickets = recentData?.data || [];
 
   return (
     <ErrorBoundary>
@@ -97,8 +71,8 @@ const StaffDashboard = () => {
               Staff Dashboard
             </h1>
             <p className="text-gray-500 font-medium">
-              Welcome back, {user?.first_name || "Staff"}.
-              Here&apos;s your department overview.
+              Welcome back, {user?.first_name || "Staff"}. Here&apos;s your
+              department overview.
             </p>
           </div>
 
@@ -145,7 +119,7 @@ const StaffDashboard = () => {
           {/* Chart and Urgent Complaints Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <WeeklyTicketVolumeChart chartData={trends} />
+              <WeeklyTicketVolumeChart chartData={trends || []} />
             </div>
             <div>
               <UrgentComplaintsList complaints={urgentComplaints} />
