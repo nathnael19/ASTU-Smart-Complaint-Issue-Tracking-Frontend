@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   ClipboardList,
   MessageSquare,
@@ -11,8 +12,53 @@ import {
 import DashboardLayout from "../../components/students/DashboardLayout";
 import StatCard from "../../components/students/StatCard";
 import RecentComplaints from "../../components/students/RecentComplaints";
+import { getMyComplaints } from "../../api/complaints";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const [complaints, setComplaints] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [stats, setStats] = useState({
+    total: 0,
+    open: 0,
+    inProgress: 0,
+    resolved: 0,
+  });
+
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        setLoading(true);
+        const response = await getMyComplaints();
+        const data = response.data || [];
+        setComplaints(data);
+
+        // Calculate stats
+        const newStats = {
+          total: data.length,
+          open: data.filter((c: any) => c.status === "OPEN").length,
+          inProgress: data.filter((c: any) => c.status === "IN_PROGRESS")
+            .length,
+          resolved: data.filter((c: any) => c.status === "RESOLVED").length,
+        };
+        setStats(newStats);
+      } catch (err: any) {
+        console.error("Dashboard fetch error:", err);
+        setError("Failed to load dashboard data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComplaints();
+  }, []);
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const firstName = user.full_name?.split(" ")[0] || "Student";
+
   return (
     <DashboardLayout>
       <div className="p-8 space-y-10 max-w-[1600px] mx-auto">
@@ -20,44 +66,54 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h1 className="text-4xl font-black text-gray-900 tracking-tight">
-              Student Dashboard
+              Dashboard
             </h1>
             <p className="text-gray-400 font-medium">
-              Welcome back, track your academic and campus issues.
+              Welcome back, {firstName}. Track your academic and campus issues.
             </p>
           </div>
-          <button className="bg-[#1e3a8a] text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0">
+          <button
+            onClick={() => navigate("/student/submit")}
+            className="bg-[#1e3a8a] text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-blue-900/20 hover:bg-blue-950 transition-all hover:translate-y-[-2px] active:translate-y-0"
+          >
             <Plus size={20} />
             Submit New Complaint
           </button>
         </div>
 
+        {error && (
+          <div className="bg-red-50 border border-red-100 p-4 rounded-2xl flex items-center gap-3 text-red-800 font-bold animate-in shake duration-500">
+            <Info size={20} />
+            <span>{error}</span>
+          </div>
+        )}
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             label="Total Complaints"
-            value="12"
+            value={stats.total.toString().padStart(2, "0")}
             icon={ClipboardList}
             color="text-blue-600"
             bgColor="bg-blue-50"
           />
           <StatCard
             label="Open Tickets"
-            value="03"
+            value={stats.open.toString().padStart(2, "0")}
             icon={MessageSquare}
             color="text-yellow-600"
             bgColor="bg-yellow-50"
           />
           <StatCard
             label="In Progress"
-            value="02"
+            value={stats.inProgress.toString().padStart(2, "0")}
             icon={Clock}
             color="text-[#1e3a8a]"
             bgColor="bg-blue-50"
           />
           <StatCard
             label="Resolved"
-            value="07"
+            value={stats.resolved.toString().padStart(2, "0")}
             icon={CheckCircle}
             color="text-green-600"
             bgColor="bg-green-50"
@@ -65,7 +121,7 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Complaints Table */}
-        <RecentComplaints />
+        <RecentComplaints complaints={complaints} loading={loading} />
 
         {/* Help & FAQ Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-12">
