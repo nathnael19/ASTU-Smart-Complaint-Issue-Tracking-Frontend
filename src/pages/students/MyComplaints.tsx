@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Search,
   X,
@@ -12,69 +12,54 @@ import {
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
 import { cn } from "../../lib/utils";
-import { getMyComplaints } from "../../api/complaints";
+import { useComplaints } from "../../hooks/useComplaints";
+import { type ComplaintFilters } from "../../api/complaints";
 import { useNavigate } from "react-router-dom";
 
 const MyComplaints = () => {
   const navigate = useNavigate();
-  const [complaints, setComplaints] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    statusFilter: "All Statuses",
+    searchQuery: "",
+    startDate: "",
+    endDate: "",
+  });
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-  const pageSize = 10;
-
-  // Filter states
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Statuses");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
-  const fetchComplaints = async () => {
-    try {
-      setIsLoading(true);
-
-      // Map status label back to enum
-      let statusParam = undefined;
-      if (statusFilter === "Open") statusParam = "OPEN";
-      else if (statusFilter === "In Progress") statusParam = "IN_PROGRESS";
-      else if (statusFilter === "Resolved") statusParam = "RESOLVED";
-
-      const response = await getMyComplaints({
-        search: searchQuery,
-        status: statusParam,
-        start_date: startDate || undefined,
-        end_date: endDate || undefined,
-        limit: pageSize,
-        offset: (currentPage - 1) * pageSize,
-      });
-
-      setComplaints(response.data || []);
-      setTotalCount(response.total || 0);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch complaints.");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
   };
 
-  useEffect(() => {
-    fetchComplaints();
-  }, [currentPage, statusFilter, startDate, endDate]);
+  let statusParam: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED" | undefined =
+    undefined;
+  if (filters.statusFilter === "Open") statusParam = "OPEN";
+  else if (filters.statusFilter === "In Progress") statusParam = "IN_PROGRESS";
+  else if (filters.statusFilter === "Resolved") statusParam = "RESOLVED";
 
-  // Handle search with a slight delay or on enter
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (currentPage !== 1) {
-        setCurrentPage(1);
-      } else {
-        fetchComplaints();
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  const apiFilters: ComplaintFilters = {
+    limit: pageSize,
+    offset: (currentPage - 1) * pageSize,
+    search: filters.searchQuery || undefined,
+    status: statusParam,
+    start_date: filters.startDate || undefined,
+    end_date: filters.endDate || undefined,
+  };
+
+  const {
+    data: complaintsData,
+    loading: isLoading,
+    error: errObj,
+  } = useComplaints(apiFilters);
+
+  const complaints = complaintsData?.data || [];
+  const totalCount = complaintsData?.total || 0;
+  // useComplaints hook returns the unwrapped error or a string, depending on implementation
+  // Let's coerce it to string if it exists for the rest of the file
+  const error = errObj
+    ? typeof errObj === "string"
+      ? errObj
+      : (errObj as any).message || "Failed to fetch complaints."
+    : null;
 
   const formatPriority = (p: string) => {
     const map: any = {
@@ -110,10 +95,12 @@ const MyComplaints = () => {
   };
 
   const handleClearFilters = () => {
-    setSearchQuery("");
-    setStatusFilter("All Statuses");
-    setStartDate("");
-    setEndDate("");
+    setFilters({
+      searchQuery: "",
+      statusFilter: "All Statuses",
+      startDate: "",
+      endDate: "",
+    });
     setCurrentPage(1);
   };
 
@@ -159,8 +146,10 @@ const MyComplaints = () => {
                 <input
                   type="text"
                   placeholder="Filter by Ticket ID or Subject"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={filters.searchQuery}
+                  onChange={(e) =>
+                    handleFilterChange("searchQuery", e.target.value)
+                  }
                   className="w-full bg-slate-50 border-none rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all"
                 />
               </div>
@@ -172,8 +161,10 @@ const MyComplaints = () => {
                 Status
               </label>
               <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                value={filters.statusFilter}
+                onChange={(e) =>
+                  handleFilterChange("statusFilter", e.target.value)
+                }
                 className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all appearance-none cursor-pointer"
               >
                 <option>All Statuses</option>
@@ -191,25 +182,29 @@ const MyComplaints = () => {
               <div className="flex items-center gap-3">
                 <input
                   type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  value={filters.startDate}
+                  onChange={(e) =>
+                    handleFilterChange("startDate", e.target.value)
+                  }
                   className="flex-1 bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all uppercase"
                 />
                 <span className="text-gray-400 font-bold">to</span>
                 <input
                   type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  value={filters.endDate}
+                  onChange={(e) =>
+                    handleFilterChange("endDate", e.target.value)
+                  }
                   className="flex-1 bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all uppercase"
                 />
               </div>
             </div>
           </div>
 
-          {(searchQuery ||
-            statusFilter !== "All Statuses" ||
-            startDate ||
-            endDate) && (
+          {(filters.searchQuery ||
+            filters.statusFilter !== "All Statuses" ||
+            filters.startDate ||
+            filters.endDate) && (
             <button
               onClick={handleClearFilters}
               className="flex items-center gap-2 text-xs font-black text-gray-500 hover:text-[#1e3a8a] transition-colors bg-gray-50 px-4 py-2 rounded-lg group animate-in fade-in slide-in-from-top-1 duration-300"
