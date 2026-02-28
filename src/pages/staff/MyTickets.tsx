@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import {
-  Ticket,
+  Ticket as TicketIcon,
   MessageSquare,
   CheckCircle2,
   Search,
@@ -9,50 +10,30 @@ import {
 import { useNavigate } from "react-router-dom";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import StatCard from "../../components/students/StatCard";
+import {
+  getDepartmentSummary,
+  type DepartmentSummary,
+} from "../../api/analytics";
+import { getMyComplaints } from "../../api/complaints";
 
-interface MyTicket {
+interface BackendTicket {
   id: string;
-  priority: "HIGH" | "MEDIUM" | "LOW";
-  subject: string;
-  studentName: string;
-  lastActivity: string;
+  ticket_number?: string;
+  title: string;
+  priority: string;
+  status: string;
+  created_at?: string;
+  users?: {
+    full_name?: string;
+  };
 }
 
-const tickets: MyTicket[] = [
-  {
-    id: "#TIC-8455",
-    priority: "HIGH",
-    subject: "Lab PC #14 Component Failure",
-    studentName: "Abebe Bikila",
-    lastActivity: "25 mins ago",
-  },
-  {
-    id: "#TIC-8452",
-    priority: "MEDIUM",
-    subject: "Dormitory Wi‑Fi Weak Signal",
-    studentName: "Selam Tesfaye",
-    lastActivity: "2 hours ago",
-  },
-  {
-    id: "#TIC-8449",
-    priority: "LOW",
-    subject: "Transcript Request Delay",
-    studentName: "Kebede G/Mariam",
-    lastActivity: "5 hours ago",
-  },
-  {
-    id: "#TIC-8448",
-    priority: "HIGH",
-    subject: "Portal Login Authentication Error",
-    studentName: "Hanna Mengistu",
-    lastActivity: "Yesterday",
-  },
-];
-
-const getPriorityClasses = (priority: MyTicket["priority"]) => {
+const getPriorityClasses = (priority: string) => {
   switch (priority) {
-    case "HIGH":
+    case "CRITICAL":
       return "bg-red-50 text-red-700 border-red-200";
+    case "HIGH":
+      return "bg-orange-50 text-orange-700 border-orange-200";
     case "MEDIUM":
       return "bg-yellow-50 text-yellow-700 border-yellow-200";
     case "LOW":
@@ -64,12 +45,40 @@ const getPriorityClasses = (priority: MyTicket["priority"]) => {
 
 const MyTickets = () => {
   const navigate = useNavigate();
+  const [summary, setSummary] = useState<DepartmentSummary | null>(null);
+  const [tickets, setTickets] = useState<BackendTicket[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [summaryData, ticketsData] = await Promise.all([
+          getDepartmentSummary(),
+          getMyComplaints({ limit: 50 }),
+        ]);
+        setSummary(summaryData);
+        setTickets(ticketsData.data || []);
+      } catch (error) {
+        console.error("Failed to fetch tickets page data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleProcess = (ticketId: string) => {
-    // Remove # from ticket ID for URL
     const id = ticketId.replace("#", "");
     navigate(`/staff/tickets/${id}`);
   };
+
+  const filteredTickets = tickets.filter(
+    (ticket) =>
+      ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ticket.ticket_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ticket.id.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <StaffDashboardLayout>
@@ -87,22 +96,28 @@ const MyTickets = () => {
         {/* Stats Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard
-            label="My Open Tickets"
-            value="12"
-            icon={Ticket}
+            label="My Assigned Tickets"
+            value={
+              loading ? "..." : summary?.assigned_tickets.toString() || "0"
+            }
+            icon={TicketIcon}
             color="text-blue-600"
             bgColor="bg-blue-50"
           />
           <StatCard
-            label="Pending Feedback"
-            value="4"
+            label="Pending Dept Tasks"
+            value={
+              loading ? "..." : summary?.pending_dept_tasks.toString() || "0"
+            }
             icon={MessageSquare}
             color="text-amber-600"
             bgColor="bg-amber-50"
           />
           <StatCard
-            label="Completed Today"
-            value="7"
+            label="Resolved this week"
+            value={
+              loading ? "..." : summary?.resolved_this_week.toString() || "0"
+            }
             icon={CheckCircle2}
             color="text-emerald-600"
             bgColor="bg-emerald-50"
@@ -122,6 +137,8 @@ const MyTickets = () => {
                   <input
                     type="text"
                     placeholder="Search by Ticket ID or Subject..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-slate-50 border border-gray-100 rounded-2xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 focus:border-[#1e3a8a]/20 transition-all text-sm font-medium"
                   />
                 </div>
@@ -170,53 +187,78 @@ const MyTickets = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {tickets.map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 sm:px-8 py-5 text-xs font-black text-[#1e3a8a]">
-                      {ticket.id}
-                    </td>
-                    <td className="px-6 sm:px-8 py-5">
-                      <span
-                        className={`inline-flex items-center text-[10px] font-black uppercase px-2.5 py-1 rounded-full border ${getPriorityClasses(ticket.priority)}`}
-                      >
-                        {ticket.priority}
-                      </span>
-                    </td>
-                    <td className="px-6 sm:px-8 py-5">
-                      <p className="text-sm font-black text-gray-900">
-                        {ticket.subject}
-                      </p>
-                    </td>
-                    <td className="px-6 sm:px-8 py-5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white shadow-sm">
-                          <span className="text-blue-600 text-xs font-black">
-                            {ticket.studentName
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()
-                              .slice(0, 2)}
-                          </span>
-                        </div>
-                        <span className="text-sm font-black text-gray-900">
-                          {ticket.studentName}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 sm:px-8 py-5 text-sm font-medium text-gray-500 whitespace-nowrap">
-                      {ticket.lastActivity}
-                    </td>
-                    <td className="px-6 sm:px-8 py-5 text-right">
-                      <button
-                        onClick={() => handleProcess(ticket.id)}
-                        className="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-bold bg-[#1e3a8a] text-white shadow-sm hover:bg-blue-900 transition-colors"
-                      >
-                        Process
-                      </button>
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-6 py-8 text-center text-sm text-gray-500"
+                    >
+                      Loading tickets...
                     </td>
                   </tr>
-                ))}
+                ) : filteredTickets.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-6 py-8 text-center text-sm text-gray-500"
+                    >
+                      No tickets found.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredTickets.map((ticket) => (
+                    <tr
+                      key={ticket.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-6 sm:px-8 py-5 text-xs font-black text-[#1e3a8a]">
+                        {ticket.ticket_number || ticket.id.substring(0, 8)}
+                      </td>
+                      <td className="px-6 sm:px-8 py-5">
+                        <span
+                          className={`inline-flex items-center text-[10px] font-black uppercase px-2.5 py-1 rounded-full border ${getPriorityClasses(ticket.priority)}`}
+                        >
+                          {ticket.priority}
+                        </span>
+                      </td>
+                      <td className="px-6 sm:px-8 py-5">
+                        <p className="text-sm font-black text-gray-900">
+                          {ticket.title}
+                        </p>
+                      </td>
+                      <td className="px-6 sm:px-8 py-5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white shadow-sm">
+                            <span className="text-blue-600 text-xs font-black">
+                              {(ticket.users?.full_name || "Unknown")
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()
+                                .slice(0, 2)}
+                            </span>
+                          </div>
+                          <span className="text-sm font-black text-gray-900">
+                            {ticket.users?.full_name || "Unknown"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 sm:px-8 py-5 text-sm font-medium text-gray-500 whitespace-nowrap">
+                        {ticket.created_at
+                          ? new Date(ticket.created_at).toLocaleDateString()
+                          : "N/A"}
+                      </td>
+                      <td className="px-6 sm:px-8 py-5 text-right">
+                        <button
+                          onClick={() => handleProcess(ticket.id)}
+                          className="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-bold bg-[#1e3a8a] text-white shadow-sm hover:bg-blue-900 transition-colors"
+                        >
+                          Process
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -224,7 +266,8 @@ const MyTickets = () => {
           {/* Footer / Pagination */}
           <div className="px-6 sm:px-8 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-t border-gray-50">
             <p className="text-xs font-medium text-gray-400">
-              Showing 1–4 of 12 assigned tickets
+              Showing {filteredTickets.length > 0 ? 1 : 0}–
+              {filteredTickets.length} of {tickets.length} assigned tickets
             </p>
             <div className="flex items-center gap-2 self-end sm:self-auto">
               <button className="w-8 h-8 rounded-full border border-gray-200 text-xs font-semibold text-gray-500 hover:bg-gray-50">
@@ -251,4 +294,3 @@ const MyTickets = () => {
 };
 
 export default MyTickets;
-
