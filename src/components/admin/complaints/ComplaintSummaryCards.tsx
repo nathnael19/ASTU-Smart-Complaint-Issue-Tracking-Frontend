@@ -1,6 +1,15 @@
 import { FileText, ClipboardList, CheckCircle } from "lucide-react";
+import type { DashboardSummary } from "../../../api/analytics";
 
-const ComplaintSummaryCards = () => {
+interface ComplaintSummaryCardsProps {
+  summary: DashboardSummary | null;
+  isLoading: boolean;
+}
+
+const ComplaintSummaryCards = ({
+  summary,
+  isLoading,
+}: ComplaintSummaryCardsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Total Complaints */}
@@ -13,7 +22,9 @@ const ComplaintSummaryCards = () => {
             Total Complaints
           </p>
           <h3 className="text-4xl font-black text-gray-900 tracking-tight">
-            1,284
+            {isLoading
+              ? "..."
+              : summary?.total_complaints.toLocaleString() || "0"}
           </h3>
         </div>
       </div>
@@ -28,7 +39,17 @@ const ComplaintSummaryCards = () => {
             Pending/Active
           </p>
           <h3 className="text-4xl font-black text-gray-900 tracking-tight">
-            42
+            {isLoading
+              ? "..."
+              : summary?.total_complaints
+                ? (
+                    summary.total_complaints -
+                    Math.floor(
+                      summary.total_complaints *
+                        (parseFloat(summary.resolution_rate) / 100),
+                    )
+                  ).toLocaleString()
+                : "0"}
           </h3>
         </div>
       </div>
@@ -43,7 +64,14 @@ const ComplaintSummaryCards = () => {
             Resolved Cases
           </p>
           <h3 className="text-4xl font-black text-gray-900 tracking-tight">
-            1,242
+            {isLoading
+              ? "..."
+              : summary?.total_complaints
+                ? Math.floor(
+                    summary.total_complaints *
+                      (parseFloat(summary.resolution_rate) / 100),
+                  ).toLocaleString()
+                : "0"}
           </h3>
         </div>
       </div>
