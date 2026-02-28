@@ -1,6 +1,10 @@
 import { Search, Bell, HelpCircle, ChevronDown } from "lucide-react";
 
 const DashboardHeader = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const fullName = user.full_name || "Student User";
+  const studentId = user.student_id || "ID Pending";
+
   return (
     <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10">
       {/* Search Bar */}
@@ -35,16 +39,16 @@ const DashboardHeader = () => {
         <button className="flex items-center gap-4 hover:bg-gray-50 p-2 rounded-2xl transition-all group border border-transparent hover:border-gray-100">
           <div className="flex flex-col text-right">
             <span className="text-sm font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors">
-              Abebe Kebede
+              {fullName}
             </span>
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
-              UG/2021/4582
+              {studentId}
             </span>
           </div>
           <div className="relative">
             <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-gray-100">
               <img
-                src="https://ui-avatars.com/api/?name=Abebe+Kebede&background=1e3a8a&color=fff"
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=1e3a8a&color=fff`}
                 alt="User Profile"
                 className="w-full h-full object-cover"
               />

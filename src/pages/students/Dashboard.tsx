@@ -13,6 +13,7 @@ import DashboardLayout from "../../components/students/DashboardLayout";
 import StatCard from "../../components/students/StatCard";
 import RecentComplaints from "../../components/students/RecentComplaints";
 import { getMyComplaints } from "../../api/complaints";
+import { getCurrentProfile } from "../../api/users";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -20,6 +21,9 @@ const Dashboard = () => {
   const [complaints, setComplaints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(
+    JSON.parse(localStorage.getItem("user") || "{}"),
+  );
 
   const [stats, setStats] = useState({
     total: 0,
@@ -29,12 +33,30 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    const fetchComplaints = async () => {
+    const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const response = await getMyComplaints();
-        const data = response.data || [];
+
+        // Parallel fetch for complaints and potential profile refresh
+        const [complaintsRes, profileRes] = await Promise.all([
+          getMyComplaints(),
+          !userProfile.student_id ? getCurrentProfile() : Promise.resolve(null),
+        ]);
+
+        const data = complaintsRes.data || [];
         setComplaints(data);
+
+        // Update profile if refreshed
+        if (profileRes) {
+          const updatedUser = {
+            ...userProfile,
+            full_name:
+              `${profileRes.first_name} ${profileRes.last_name}`.trim(),
+            student_id: profileRes.student_id_number,
+          };
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          setUserProfile(updatedUser);
+        }
 
         // Calculate stats
         const newStats = {
@@ -53,11 +75,10 @@ const Dashboard = () => {
       }
     };
 
-    fetchComplaints();
+    fetchDashboardData();
   }, []);
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const firstName = user.full_name?.split(" ")[0] || "Student";
+  const firstName = userProfile.full_name?.split(" ")[0] || "Student";
 
   return (
     <DashboardLayout>
