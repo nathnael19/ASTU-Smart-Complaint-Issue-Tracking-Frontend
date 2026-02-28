@@ -6,7 +6,7 @@ interface NotificationsTabProps {
   profile: any;
 }
 
-const NotificationsTab = ({ profile }: NotificationsTabProps) => {
+const NotificationsTab = ({ profile: _profile }: NotificationsTabProps) => {
   const [notifs, setNotifs] = useState({
     statusUpdates: true,
     newComments: true,

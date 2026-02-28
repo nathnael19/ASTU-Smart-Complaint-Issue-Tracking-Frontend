@@ -5,7 +5,7 @@ interface AccountTabProps {
   profile: any;
 }
 
-const AccountTab = ({ profile }: AccountTabProps) => {
+const AccountTab = ({ profile: _profile }: AccountTabProps) => {
   const [accountSettings, setAccountSettings] = useState({
     shareData: true,
     publicProfile: false,

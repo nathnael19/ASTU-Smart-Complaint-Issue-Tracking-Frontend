@@ -6,7 +6,7 @@ interface SecurityTabProps {
   profile: any;
 }
 
-const SecurityTab = ({ profile }: SecurityTabProps) => {
+const SecurityTab = ({ profile: _profile }: SecurityTabProps) => {
   const [twoFactor, setTwoFactor] = useState(false);
 
   return (
