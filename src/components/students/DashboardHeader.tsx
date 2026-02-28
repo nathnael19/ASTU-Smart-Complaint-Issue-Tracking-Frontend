@@ -12,26 +12,36 @@ const DashboardHeader = () => {
 
   useEffect(() => {
     const refreshProfile = async () => {
-      if (!user.student_id || user.student_id === "ID Pending") {
-        try {
-          const profile = await getCurrentProfile();
-          if (profile) {
-            const updatedUser = {
-              ...user,
-              full_name: `${profile.first_name} ${profile.last_name}`.trim(),
-              student_id: profile.student_id_number,
-            };
-            localStorage.setItem("user", JSON.stringify(updatedUser));
-            setUser(updatedUser);
-          }
-        } catch (err) {
-          console.error("Header profile refresh failed:", err);
+      // Fetch profile to ensure we have the latest data (including avatar_url)
+      try {
+        const profile = await getCurrentProfile();
+        if (profile) {
+          const updatedUser = {
+            ...user,
+            full_name: `${profile.first_name} ${profile.last_name}`.trim(),
+            student_id: profile.student_id_number,
+            avatar_url: profile.avatar_url,
+          };
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          setUser(updatedUser);
         }
+      } catch (err) {
+        console.error("Header profile refresh failed:", err);
       }
     };
 
     refreshProfile();
-  }, [user.student_id]);
+
+    // Listen for profile updates from other components
+    const handleProfileUpdate = () => {
+      const refreshedUser = JSON.parse(localStorage.getItem("user") || "{}");
+      setUser(refreshedUser);
+    };
+
+    window.addEventListener("user-profile-updated", handleProfileUpdate);
+    return () =>
+      window.removeEventListener("user-profile-updated", handleProfileUpdate);
+  }, []);
 
   return (
     <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10">
@@ -76,7 +86,10 @@ const DashboardHeader = () => {
           <div className="relative">
             <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-gray-100">
               <img
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=1e3a8a&color=fff`}
+                src={
+                  user.avatar_url ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=1e3a8a&color=fff`
+                }
                 alt="User Profile"
                 className="w-full h-full object-cover"
               />

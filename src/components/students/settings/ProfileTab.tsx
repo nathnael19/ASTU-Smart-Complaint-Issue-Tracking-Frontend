@@ -163,6 +163,19 @@ const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
                     const updated = await updateUserProfile(profile.id, {
                       avatar_url: null,
                     });
+                    // Update localStorage
+                    const existingUser = JSON.parse(
+                      localStorage.getItem("user") || "{}",
+                    );
+                    localStorage.setItem(
+                      "user",
+                      JSON.stringify({
+                        ...existingUser,
+                        avatar_url: null,
+                      }),
+                    );
+                    window.dispatchEvent(new Event("user-profile-updated"));
+
                     onUpdate(updated);
                   } catch (err: any) {
                     setError(err.message || "Failed to remove photo.");
