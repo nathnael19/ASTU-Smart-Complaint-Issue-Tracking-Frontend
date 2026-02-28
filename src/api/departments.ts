@@ -10,6 +10,11 @@ const parseError = async (response: Response) => {
   }
 };
 
+export interface Department {
+  id: string;
+  name: string;
+}
+
 export const getDepartments = async () => {
   const token = localStorage.getItem("access_token");
   const response = await fetch(`${API_URL}/departments/`, {
