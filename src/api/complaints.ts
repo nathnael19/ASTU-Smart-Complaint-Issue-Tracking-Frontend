@@ -111,6 +111,9 @@ export const getMyComplaints = async (params: ComplaintFilters = {}) => {
   return response.json();
 };
 
+// For admins, the backend automatically returns all complaints when hitting the base /complaints API.
+export const getAllComplaints = getMyComplaints;
+
 export const getComplaintDetails = async (id: string) => {
   const token = localStorage.getItem("access_token");
   const response = await fetch(`${API_URL}/complaints/${id}`, {
