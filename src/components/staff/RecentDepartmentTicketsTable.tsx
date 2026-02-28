@@ -3,39 +3,23 @@ import { cn } from "../../lib/utils";
 
 interface Ticket {
   id: string;
-  requester: {
-    name: string;
-    avatar?: string;
+  ticket_number?: string;
+  users?: {
+    full_name?: string;
   };
   category: string;
-  subject: string;
-  status: "New" | "In Progress" | "Resolved";
+  title: string;
+  status: string;
 }
 
-const RecentDepartmentTicketsTable = () => {
-  const tickets: Ticket[] = [
-    {
-      id: "#TIC-8421",
-      requester: { name: "Abebe Bikila" },
-      category: "Academic Affairs",
-      subject: "Grade correction request for CEE321",
-      status: "In Progress",
-    },
-    {
-      id: "#TIC-8420",
-      requester: { name: "Selam Tesfaye" },
-      category: "Facilities",
-      subject: "Lab equipment malfunction (B-402)",
-      status: "New",
-    },
-    {
-      id: "#TIC-8419",
-      requester: { name: "Kebede G/Mariam" },
-      category: "Registrar",
-      subject: "ID Card replacement Delayed",
-      status: "Resolved",
-    },
-  ];
+interface RecentDepartmentTicketsTableProps {
+  tickets?: Ticket[];
+}
+
+const RecentDepartmentTicketsTable = ({
+  tickets = [],
+}: RecentDepartmentTicketsTableProps) => {
+  const recentTickets: Ticket[] = tickets.length > 0 ? tickets : [];
 
   const getStatusStyles = (status: string) => {
     switch (status) {
@@ -62,7 +46,9 @@ const RecentDepartmentTicketsTable = () => {
   return (
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
       <div className="p-8 pb-4 flex items-center justify-between border-b border-gray-50 mb-2">
-        <h3 className="text-xl font-black text-gray-900">Recent Department Tickets</h3>
+        <h3 className="text-xl font-black text-gray-900">
+          Recent Department Tickets
+        </h3>
         <button className="text-sm font-bold text-[#1e3a8a] hover:underline underline-offset-4">
           View History
         </button>
@@ -93,23 +79,23 @@ const RecentDepartmentTicketsTable = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {tickets.map((ticket) => (
+            {recentTickets.map((ticket) => (
               <tr
                 key={ticket.id}
                 className="hover:bg-gray-50 transition-colors group"
               >
                 <td className="px-8 py-6 text-sm font-bold text-gray-400">
-                  {ticket.id}
+                  {ticket.ticket_number || ticket.id.substring(0, 8)}
                 </td>
                 <td className="px-8 py-6">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white shadow-sm">
                       <span className="text-blue-600 text-xs font-black">
-                        {getInitials(ticket.requester.name)}
+                        {getInitials(ticket.users?.full_name || "Unknown User")}
                       </span>
                     </div>
                     <span className="text-sm font-black text-gray-900">
-                      {ticket.requester.name}
+                      {ticket.users?.full_name || "Unknown User"}
                     </span>
                   </div>
                 </td>
@@ -120,7 +106,7 @@ const RecentDepartmentTicketsTable = () => {
                 </td>
                 <td className="px-8 py-6">
                   <span className="text-sm font-black text-gray-900">
-                    {ticket.subject}
+                    {ticket.title}
                   </span>
                 </td>
                 <td className="px-8 py-6">

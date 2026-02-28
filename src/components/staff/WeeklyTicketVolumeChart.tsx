@@ -1,30 +1,41 @@
 import { ChevronDown } from "lucide-react";
+import type { DepartmentTrendStat } from "../../api/analytics";
 
-const WeeklyTicketVolumeChart = () => {
-  // Sample data for the chart
-  const chartData = [
-    { day: "MON", value: 8 },
-    { day: "TUE", value: 12 },
-    { day: "WED", value: 15 },
-    { day: "THU", value: 18 },
-    { day: "FRI", value: 22 },
-    { day: "SAT", value: 20 },
-    { day: "SUN", value: 10 },
-  ];
+interface WeeklyTicketVolumeChartProps {
+  chartData: DepartmentTrendStat[];
+}
+
+const WeeklyTicketVolumeChart = ({
+  chartData,
+}: WeeklyTicketVolumeChartProps) => {
+  if (!chartData || chartData.length === 0) {
+    return (
+      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 flex items-center justify-center h-full min-h-[300px]">
+        <p className="text-gray-500 font-medium">
+          No ticket volume data available
+        </p>
+      </div>
+    );
+  }
 
   const maxValue = Math.max(...chartData.map((d) => d.value));
 
   return (
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-black text-gray-900">Weekly Ticket Volume</h3>
+        <h3 className="text-xl font-black text-gray-900">
+          Weekly Ticket Volume
+        </h3>
         <div className="flex items-center gap-2">
           <select className="text-sm font-bold text-gray-600 bg-transparent border-none focus:outline-none cursor-pointer appearance-none pr-6">
             <option>Last 7 Days</option>
             <option>Last 30 Days</option>
             <option>Last 90 Days</option>
           </select>
-          <ChevronDown size={16} className="text-gray-400 -ml-4 pointer-events-none" />
+          <ChevronDown
+            size={16}
+            className="text-gray-400 -ml-4 pointer-events-none"
+          />
         </div>
       </div>
 

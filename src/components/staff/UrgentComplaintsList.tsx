@@ -5,34 +5,21 @@ interface UrgentComplaint {
   id: string;
   title: string;
   description: string;
-  priority: "HIGH" | "URGENT" | "CRITICAL";
-  timeAgo: string;
+  priority: "MEDIUM" | "HIGH" | "CRITICAL" | "LOW" | string;
+  created_at?: string;
+  status?: string;
 }
 
-const UrgentComplaintsList = () => {
-  const urgentComplaints: UrgentComplaint[] = [
-    {
-      id: "1",
-      title: "Dormitory Water Leakage",
-      description: "Major leakage reported in Block B...",
-      priority: "HIGH",
-      timeAgo: "2h ago",
-    },
-    {
-      id: "2",
-      title: "LMS Access Denied",
-      description: "3rd year students unable to access...",
-      priority: "URGENT",
-      timeAgo: "5h ago",
-    },
-    {
-      id: "3",
-      title: "Security System Outage",
-      description: "Main gate RFID sensors non-...",
-      priority: "CRITICAL",
-      timeAgo: "Yesterday",
-    },
-  ];
+interface UrgentComplaintsListProps {
+  complaints?: UrgentComplaint[];
+}
+
+const UrgentComplaintsList = ({
+  complaints = [],
+}: UrgentComplaintsListProps) => {
+  // Use props if available, otherwise show empty state
+  const urgentComplaints: UrgentComplaint[] =
+    complaints.length > 0 ? complaints : [];
 
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
@@ -51,7 +38,9 @@ const UrgentComplaintsList = () => {
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <h3 className="text-xl font-black text-gray-900">Urgent Complaints</h3>
+          <h3 className="text-xl font-black text-gray-900">
+            Urgent Complaints
+          </h3>
           <span className="bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded-full">
             {urgentComplaints.length}
           </span>
@@ -72,7 +61,7 @@ const UrgentComplaintsList = () => {
                     "shrink-0",
                     complaint.priority === "CRITICAL"
                       ? "text-red-600"
-                      : complaint.priority === "URGENT"
+                      : complaint.priority === "HIGH"
                         ? "text-orange-600"
                         : "text-yellow-600",
                   )}
@@ -87,7 +76,9 @@ const UrgentComplaintsList = () => {
                 </span>
               </div>
               <span className="text-xs font-bold text-gray-400 whitespace-nowrap">
-                {complaint.timeAgo}
+                {new Date(
+                  complaint.created_at || new Date(),
+                ).toLocaleDateString()}
               </span>
             </div>
             <h4 className="text-sm font-black text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
