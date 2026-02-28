@@ -5,40 +5,17 @@ import {
   Clock,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminStatCard from "../../components/admin/AdminStatCard";
 import ComplaintsCategoryChart from "../../components/admin/ComplaintsCategoryChart";
 import TrendsTimeChart from "../../components/admin/TrendsTimeChart";
 import UserManagementTable from "../../components/admin/UserManagementTable";
-import {
-  getDashboardSummary,
-  type DashboardSummary,
-} from "../../api/analytics";
-import { getCurrentProfile } from "../../api/users";
+import { useDashboardSummary } from "../../hooks/useAnalytics";
+import { useCurrentProfile } from "../../hooks/useUsers";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState<DashboardSummary | null>(null);
-  const [currentProfile, setCurrentProfile] = useState<any>(null);
-  const [, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [summaryData, profileData] = await Promise.all([
-          getDashboardSummary(),
-          getCurrentProfile(),
-        ]);
-        setStats(summaryData);
-        setCurrentProfile(profileData);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const { data: stats } = useDashboardSummary();
+  const { data: currentProfile } = useCurrentProfile();
 
   return (
     <AdminLayout>
