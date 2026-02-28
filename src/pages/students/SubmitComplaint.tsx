@@ -12,6 +12,7 @@ import DashboardLayout from "../../components/students/DashboardLayout";
 import { cn } from "../../lib/utils";
 import { supabase } from "../../lib/supabase";
 import { createComplaint } from "../../api/complaints";
+import { invalidateCache } from "../../lib/cache";
 import { useNavigate } from "react-router-dom";
 
 const SubmitComplaint = () => {
@@ -136,6 +137,8 @@ const SubmitComplaint = () => {
       // Note: In a real app, we'd need the actual paths used in the loop above.
       // For simplicity and matching the user's specific request "place it in the complaint table",
       // the primary goal is achieved by the attachment_url above.
+
+      invalidateCache("complaints:list*", "dashboard:summary");
 
       setIsSuccess(true);
       // Wait a bit then redirect
