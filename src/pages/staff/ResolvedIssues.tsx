@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Search,
   Filter,
@@ -9,11 +9,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
-import {
-  getDepartmentSummary,
-  type DepartmentSummary,
-} from "../../api/analytics";
-import { getMyComplaints } from "../../api/complaints";
+import { useDepartmentSummary } from "../../hooks/useAnalytics";
+import { useComplaints } from "../../hooks/useComplaints";
 
 interface BackendResolvedTicket {
   id: string;
@@ -29,28 +26,17 @@ interface BackendResolvedTicket {
 }
 
 const ResolvedIssues = () => {
-  const [summary, setSummary] = useState<DepartmentSummary | null>(null);
-  const [tickets, setTickets] = useState<BackendResolvedTicket[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [summaryData, ticketsData] = await Promise.all([
-          getDepartmentSummary(),
-          getMyComplaints({ status: "RESOLVED", limit: 50 }),
-        ]);
-        setSummary(summaryData);
-        setTickets(ticketsData.data || []);
-      } catch (error) {
-        console.error("Failed to fetch resolved tickets page data", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const { data: summary, loading: summaryLoading } = useDepartmentSummary();
+  const { data: ticketsData, loading: ticketsLoading } = useComplaints({
+    status: "RESOLVED",
+    limit: 50,
+  });
+
+  const loading = summaryLoading || ticketsLoading;
+  const tickets: BackendResolvedTicket[] = (ticketsData?.data ||
+    []) as BackendResolvedTicket[];
 
   const filteredTickets = tickets.filter(
     (ticket) =>
@@ -247,7 +233,6 @@ const ResolvedIssues = () => {
                         <p className="text-[14px] font-medium text-gray-500 max-w-[250px] truncate">
                           Successfully resolved marked by staff.
                         </p>
-                        
                       </td>
                       <td className="px-8 py-6 text-right">
                         <button className="inline-flex items-center gap-1.5 text-[#1e3a8a] hover:text-blue-800 font-bold text-[13px] transition-colors bg-blue-50/50 hover:bg-blue-100 px-4 py-2 rounded-xl">

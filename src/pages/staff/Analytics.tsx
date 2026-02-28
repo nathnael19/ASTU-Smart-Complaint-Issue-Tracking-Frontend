@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Calendar,
   Download,
@@ -11,44 +10,26 @@ import {
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import {
-  getDepartmentSummary,
-  getDepartmentCategoryDistribution,
-  getDepartmentMonthlyTrends,
-  type DepartmentSummary,
-  type CategoryStat,
-  type DepartmentMonthlyTrendStat,
-} from "../../api/analytics";
-import { getDepartmentReports, type Report } from "../../api/reports";
+  useDepartmentSummary,
+  useDepartmentCategoryDistribution,
+  useDepartmentMonthlyTrends,
+} from "../../hooks/useAnalytics";
+import { useDepartmentReports } from "../../hooks/useReports";
 
 const Analytics = () => {
-  const [summary, setSummary] = useState<DepartmentSummary | null>(null);
-  const [reports, setReports] = useState<Report[]>([]);
-  const [categories, setCategories] = useState<CategoryStat[]>([]);
-  const [trends, setTrends] = useState<DepartmentMonthlyTrendStat[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: summary, loading: summaryLoading } = useDepartmentSummary();
+  const { data: reportsData, loading: reportsLoading } = useDepartmentReports();
+  const { data: categoriesData, loading: categoriesLoading } =
+    useDepartmentCategoryDistribution();
+  const { data: trendsData, loading: trendsLoading } =
+    useDepartmentMonthlyTrends();
 
-  useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        const [summaryData, reportsData, categoriesData, trendsData] =
-          await Promise.all([
-            getDepartmentSummary(),
-            getDepartmentReports(),
-            getDepartmentCategoryDistribution(),
-            getDepartmentMonthlyTrends(),
-          ]);
-        setSummary(summaryData);
-        setReports(reportsData);
-        setCategories(categoriesData);
-        setTrends(trendsData);
-      } catch (error) {
-        console.error("Failed to load analytics data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAllData();
-  }, []);
+  const loading =
+    summaryLoading || reportsLoading || categoriesLoading || trendsLoading;
+
+  const reports = reportsData || [];
+  const categories = categoriesData || [];
+  const trends = trendsData || [];
 
   const totalComplaintsInCategories = categories.reduce(
     (sum, cat) => sum + cat.count,
