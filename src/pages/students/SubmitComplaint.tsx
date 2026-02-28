@@ -170,22 +170,6 @@ const SubmitComplaint = () => {
                 </span>
               </p>
             </div>
-
-            {/* Simple progress overview */}
-            <div className="flex flex-wrap items-center gap-3 text-[11px] sm:text-xs text-gray-500">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-1 rounded-full bg-blue-600" />
-                <span className="font-semibold text-gray-800">Details</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-1 rounded-full bg-blue-200" />
-                <span>Attachments</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-1 rounded-full bg-blue-200" />
-                <span>Review &amp; submit</span>
-              </div>
-            </div>
           </div>
 
           {isSuccess && (

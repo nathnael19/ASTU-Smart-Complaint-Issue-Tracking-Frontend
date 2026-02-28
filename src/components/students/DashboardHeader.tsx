@@ -1,16 +1,31 @@
 import { useState, useEffect } from "react";
 import { Search, Bell, HelpCircle, ChevronDown } from "lucide-react";
 import { getCurrentProfile } from "../../api/users";
+import { getNotifications } from "../../api/notifications";
+import type { Notification } from "../../api/notifications";
+import NotificationModal from "../notifications/NotificationModal";
 
 const DashboardHeader = () => {
   const [user, setUser] = useState<any>(() =>
     JSON.parse(localStorage.getItem("user") || "{}"),
   );
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   const fullName = user.full_name || "Student User";
   const studentId = user.student_id || "ID Pending";
 
+  const fetchNotifications = async () => {
+    try {
+      const data = await getNotifications();
+      setNotifications(data);
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    }
+  };
+
   useEffect(() => {
+    fetchNotifications();
     const refreshProfile = async () => {
       // Fetch profile to ensure we have the latest data (including avatar_url)
       try {
@@ -62,14 +77,26 @@ const DashboardHeader = () => {
       {/* Right Side Actions */}
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-3">
-          <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all relative">
+          <button
+            onClick={() => setIsNotificationOpen(true)}
+            className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all relative"
+          >
             <Bell size={20} />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+            {notifications.some((n) => !n.is_read) && (
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+            )}
           </button>
           <button className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all">
             <HelpCircle size={20} />
           </button>
         </div>
+
+        <NotificationModal
+          isOpen={isNotificationOpen}
+          notifications={notifications}
+          onClose={() => setIsNotificationOpen(false)}
+          onRefresh={fetchNotifications}
+        />
 
         <div className="h-8 w-[1px] bg-gray-100 mx-2" />
 
