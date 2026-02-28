@@ -192,16 +192,21 @@ const MyComplaints = () => {
             </div>
           </div>
 
-          <button
-            onClick={handleClearFilters}
-            className="flex items-center gap-2 text-xs font-black text-gray-500 hover:text-[#1e3a8a] transition-colors bg-gray-50 px-4 py-2 rounded-lg group"
-          >
-            <X
-              size={14}
-              className="group-hover:rotate-90 transition-transform duration-300"
-            />
-            Clear Filters
-          </button>
+          {(searchQuery ||
+            statusFilter !== "All Statuses" ||
+            startDate ||
+            endDate) && (
+            <button
+              onClick={handleClearFilters}
+              className="flex items-center gap-2 text-xs font-black text-gray-500 hover:text-[#1e3a8a] transition-colors bg-gray-50 px-4 py-2 rounded-lg group animate-in fade-in slide-in-from-top-1 duration-300"
+            >
+              <X
+                size={14}
+                className="group-hover:rotate-90 transition-transform duration-300"
+              />
+              Clear Filters
+            </button>
+          )}
         </div>
 
         {/* Complaints Table */}
