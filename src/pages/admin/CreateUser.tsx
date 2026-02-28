@@ -12,7 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import { adminCreateUser } from "../../api/users";
-import { getDepartments } from "../../api/departments";
+import { useDepartments } from "../../hooks/useDepartments";
 
 const AdminCreateUser = () => {
   const navigate = useNavigate();
@@ -24,25 +24,19 @@ const AdminCreateUser = () => {
   const [departments, setDepartments] = useState<any[]>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDepartmentsLoading, setIsDepartmentsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { data: departmentsData, loading: isDepartmentsLoading } =
+    useDepartments();
+
   useEffect(() => {
-    const fetchDepartments = async () => {
-      try {
-        const data = await getDepartments();
-        setDepartments(data || []);
-        if (data && data.length > 0) {
-          setDepartmentId(data[0].id); // Select first department by default
-        }
-      } catch (err) {
-        console.error("Failed to fetch departments", err);
-      } finally {
-        setIsDepartmentsLoading(false);
+    if (departmentsData && departmentsData.length > 0) {
+      setDepartments(departmentsData);
+      if (!departmentId) {
+        setDepartmentId(departmentsData[0].id);
       }
-    };
-    fetchDepartments();
-  }, []);
+    }
+  }, [departmentsData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
