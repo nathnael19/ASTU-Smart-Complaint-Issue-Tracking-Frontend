@@ -1,3 +1,5 @@
+import { clearCache } from "../lib/cache";
+
 const API_URL = "http://localhost:8000/api/v1";
 
 const parseError = async (response: Response) => {
@@ -86,6 +88,7 @@ export const logoutUser = async () => {
   } catch (err) {
     console.error("Backend logout failed:", err);
   } finally {
+    clearCache();
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user");
