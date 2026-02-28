@@ -1,4 +1,3 @@
-import React from "react";
 import { User, Building2, Wrench, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "../../lib/utils";
