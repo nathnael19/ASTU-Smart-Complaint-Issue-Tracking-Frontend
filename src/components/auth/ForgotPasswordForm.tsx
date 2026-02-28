@@ -1,6 +1,7 @@
-import { Mail, ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
+import { Mail, ArrowRight, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import AuthError from "./AuthError";
 
 interface ForgotPasswordFormProps {
   email: string;
@@ -33,15 +34,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
         </div>
 
         <form className="space-y-8" onSubmit={onSubmit}>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-4 rounded-xl"
-            >
-              {error}
-            </motion.div>
-          )}
+          <AuthError message={error} />
 
           {isSuccess && (
             <motion.div
@@ -94,7 +87,6 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
         </Link>
       </div>
 
-      {/* Internal Footer Branding */}
       <div className="bg-slate-50 border-t border-gray-100 py-4 px-6 text-center">
         <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
           Secured By ASTU Directorate

@@ -1,15 +1,9 @@
-import {
-  Lock,
-  Eye,
-  EyeOff,
-  CheckCircle2,
-  Circle,
-  ShieldCheck,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Lock, Eye, EyeOff, CheckCircle2, Circle } from "lucide-react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import { cn } from "../../lib/utils";
+import AuthError from "./AuthError";
 
 interface NewPasswordFormProps {
   onSubmit: (password: string) => void;
@@ -77,19 +71,7 @@ const NewPasswordForm: React.FC<NewPasswordFormProps> = ({
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <AnimatePresence mode="wait">
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-4 rounded-xl flex items-center gap-2"
-              >
-                <div className="w-1 h-1 bg-red-600 rounded-full" />
-                {error}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <AuthError message={error} />
 
           <div className="space-y-4">
             {/* New Password */}
@@ -201,7 +183,6 @@ const NewPasswordForm: React.FC<NewPasswordFormProps> = ({
         </Link>
       </div>
 
-      {/* Internal Footer Branding */}
       <div className="bg-slate-50 border-t border-gray-100 py-4 px-6 text-center">
         <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
           SECURED BY ASTU ICT DIRECTORATE

@@ -1,7 +1,7 @@
-import { Mail, CheckCircle2, ArrowLeft } from "lucide-react";
+import { CheckCircle2, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import React, { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import AuthError from "./AuthError";
 
 interface CheckEmailFormProps {
   onVerify: (code: string) => void;
@@ -60,7 +60,6 @@ const CheckEmailForm: React.FC<CheckEmailFormProps> = ({
     });
     setCode(newCode);
 
-    // Focus the last filled input or the first empty one
     const nextIndex = Math.min(pastedData.length, 5);
     inputs.current[nextIndex]?.focus();
   };
@@ -97,20 +96,12 @@ const CheckEmailForm: React.FC<CheckEmailFormProps> = ({
           </h2>
           <p className="text-gray-400 text-sm font-medium leading-relaxed max-w-xs mx-auto">
             We have sent a 6-digit verification code to your university email
-            address. Please enter it below to reset your password.
+            address. Please enter it below to verify your account.
           </p>
         </div>
 
         <form className="space-y-8" onSubmit={handleSubmit}>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-4 rounded-xl"
-            >
-              {error}
-            </motion.div>
-          )}
+          <AuthError message={error} />
           <div className="flex justify-between gap-2 md:gap-4">
             {code.map((digit, i) => (
               <input
@@ -166,7 +157,6 @@ const CheckEmailForm: React.FC<CheckEmailFormProps> = ({
         </Link>
       </div>
 
-      {/* Internal Footer Branding */}
       <div className="bg-slate-50 border-t border-gray-100 py-4 px-6 text-center">
         <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
           SECURED BY ASTU ICT DIRECTORATE

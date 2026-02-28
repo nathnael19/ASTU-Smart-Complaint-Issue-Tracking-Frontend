@@ -1,5 +1,27 @@
 const API_URL = "http://localhost:8000/api/v1";
 
+const parseError = async (response: Response) => {
+  try {
+    const data = await response.json();
+    if (data.detail) {
+      if (Array.isArray(data.detail)) {
+        // Flatten FastAPI validation errors: [{loc: [], msg: "", type: ""}]
+        return data.detail.map((err: any) => err.msg).join(". ");
+      }
+
+      // Handle specific Supabase/Auth errors
+      if (data.detail.toLowerCase().includes("rate limit exceeded")) {
+        return "You've made too many attempts. Please wait a while (usually up to an hour) before trying again.";
+      }
+
+      return data.detail;
+    }
+    return "An unexpected error occurred.";
+  } catch (e) {
+    return "Connection error. Please check your network.";
+  }
+};
+
 export const registerUser = async (userData: any) => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
@@ -15,25 +37,21 @@ export const registerUser = async (userData: any) => {
     }),
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new Error(data.detail || "Registration failed");
+    throw new Error(await parseError(response));
   }
 
-  return data;
+  return response.json();
 };
 
 export const fetchDepartments = async () => {
   const response = await fetch(`${API_URL}/departments/`);
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new Error(data.detail || "Failed to fetch departments");
+    throw new Error(await parseError(response));
   }
-
-  return data;
+  return response.json();
 };
+
 export const loginUser = async (credentials: any) => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -43,13 +61,11 @@ export const loginUser = async (credentials: any) => {
     body: JSON.stringify(credentials),
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new Error(data.detail || "Login failed");
+    throw new Error(await parseError(response));
   }
 
-  return data;
+  return response.json();
 };
 
 export const logoutUser = async () => {
@@ -67,12 +83,12 @@ export const logoutUser = async () => {
   } catch (err) {
     console.error("Backend logout failed:", err);
   } finally {
-    // Always clear local storage regardless of backend success
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user");
   }
 };
+
 export const requestPasswordReset = async (email: string) => {
   const response = await fetch(`${API_URL}/auth/forgot-password`, {
     method: "POST",
@@ -82,13 +98,11 @@ export const requestPasswordReset = async (email: string) => {
     body: JSON.stringify({ email }),
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new Error(data.detail || "Failed to request password reset");
+    throw new Error(await parseError(response));
   }
 
-  return data;
+  return response.json();
 };
 
 export const resetPassword = async (password: string) => {
@@ -103,13 +117,11 @@ export const resetPassword = async (password: string) => {
     body: JSON.stringify({ password }),
   });
 
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new Error(data.detail || "Failed to reset password");
+    throw new Error(await parseError(response));
   }
 
-  return data;
+  return response.json();
 };
 
 export const verifyOTP = async (
@@ -126,8 +138,7 @@ export const verifyOTP = async (
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.detail || "Verification failed");
+    throw new Error(await parseError(response));
   }
 
   return response.json();

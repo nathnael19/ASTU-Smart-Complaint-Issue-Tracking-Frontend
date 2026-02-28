@@ -2,6 +2,7 @@ import { Mail, Lock, LogIn } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import AuthError from "./AuthError";
 
 interface LoginFormProps {
   email: string;
@@ -41,15 +42,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         </p>
 
         <form className="space-y-6" onSubmit={onSubmit}>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-4 rounded-xl"
-            >
-              {error}
-            </motion.div>
-          )}
+          <AuthError message={error} />
 
           {successMessage && (
             <motion.div

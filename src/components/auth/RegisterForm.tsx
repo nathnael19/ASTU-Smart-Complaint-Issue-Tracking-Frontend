@@ -1,7 +1,7 @@
 import { User, Mail, Lock, ChevronDown, Check } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
+import AuthError from "./AuthError";
 
 interface RegisterFormData {
   fullName: string;
@@ -48,19 +48,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
-        <AnimatePresence mode="wait">
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-4 rounded-2xl flex items-center gap-2"
-            >
-              <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse" />
-              {error}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <AuthError message={error} />
 
         <div className="grid md:grid-cols-1 gap-6">
           {/* Full Name */}
