@@ -22,18 +22,21 @@ const parseError = async (response: Response) => {
   }
 };
 
-export const registerUser = async (userData: any) => {
+export const registerUser = async (formData: any) => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      email: userData.email,
-      password: userData.password,
-      full_name: userData.fullName,
-      role: userData.role.toUpperCase(),
-      department_name: userData.department,
+      email: formData.email,
+      password: formData.password,
+      full_name: formData.fullName,
+      role: "STUDENT",
+      department_name: formData.department,
+      student_id: formData.studentId,
+      phone: formData.phone,
+      program: formData.program,
     }),
   });
 

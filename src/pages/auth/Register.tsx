@@ -13,6 +13,9 @@ const Register = () => {
     email: "",
     role: "Student",
     department: "",
+    studentId: "",
+    phone: "",
+    program: "",
     password: "",
     confirmPassword: "",
     agreedToTerms: false,
@@ -72,15 +75,28 @@ const Register = () => {
       return;
     }
 
-    /*
-    if (!formData.email.toLowerCase().endsWith("@astu.edu.et")) {
-      setError("Please use an official ASTU email ending with @astu.edu.et");
+    if (!formData.email.trim()) {
+      setError("Please enter your email.");
       return;
     }
-    */
 
     if (!formData.department) {
       setError("Please select your department.");
+      return;
+    }
+
+    if (!formData.studentId.trim()) {
+      setError("Please enter your Student ID.");
+      return;
+    }
+
+    if (!formData.phone.trim()) {
+      setError("Please enter your phone number.");
+      return;
+    }
+
+    if (!formData.program.trim()) {
+      setError("Please enter your program/batch.");
       return;
     }
 
@@ -102,7 +118,7 @@ const Register = () => {
     setIsLoading(true);
     try {
       await registerUser(formData);
-      sessionStorage.setItem("reset_email", formData.email); // Reuse same key for consistency
+      sessionStorage.setItem("reset_email", formData.email);
       navigate("/check-email", {
         state: { email: formData.email, type: "signup" },
       });

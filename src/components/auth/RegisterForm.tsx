@@ -1,4 +1,13 @@
-import { User, Mail, Lock, ChevronDown, Check } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  ChevronDown,
+  Check,
+  CreditCard,
+  Phone,
+  GraduationCap,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import AuthError from "./AuthError";
@@ -8,6 +17,9 @@ interface RegisterFormData {
   email: string;
   role: string;
   department: string;
+  studentId: string;
+  phone: string;
+  program: string;
   password: string;
   confirmPassword: string;
   agreedToTerms: boolean;
@@ -50,9 +62,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       <form onSubmit={onSubmit} className="space-y-6">
         <AuthError message={error} />
 
-        <div className="grid md:grid-cols-1 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {/* Full Name */}
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
               Full Name
             </label>
@@ -73,7 +85,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           </div>
 
           {/* Email */}
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
               University Email
             </label>
@@ -93,7 +105,49 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             </div>
           </div>
 
-          {/* Department Selection (Role removed to restrict registration to students) */}
+          {/* Student ID */}
+          <div className="space-y-2">
+            <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
+              Student ID Number
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                <CreditCard size={18} />
+              </div>
+              <input
+                type="text"
+                placeholder="e.g. CSR/123/12"
+                className="w-full bg-slate-50/50 border border-gray-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
+                value={formData.studentId}
+                onChange={(e) =>
+                  setFormData({ ...formData, studentId: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          {/* Phone Number */}
+          <div className="space-y-2">
+            <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
+              Phone Number
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                <Phone size={18} />
+              </div>
+              <input
+                type="tel"
+                placeholder="e.g. 0912345678"
+                className="w-full bg-slate-50/50 border border-gray-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          {/* Department */}
           <div className="space-y-2">
             <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
               Department
@@ -121,8 +175,29 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             </div>
           </div>
 
-          {/* Password */}
+          {/* Program / Batch */}
           <div className="space-y-2">
+            <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
+              Program / Batch
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                <GraduationCap size={18} />
+              </div>
+              <input
+                type="text"
+                placeholder="e.g. Software Eng. 2024"
+                className="w-full bg-slate-50/50 border border-gray-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
+                value={formData.program}
+                onChange={(e) =>
+                  setFormData({ ...formData, program: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div className="space-y-2 md:col-span-2">
             <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
               Password
             </label>
@@ -174,7 +249,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           </div>
 
           {/* Confirm Password */}
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">
               Confirm Password
             </label>
@@ -199,7 +274,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           </div>
 
           {/* Terms */}
-          <div className="pt-2 flex items-center gap-3">
+          <div className="pt-2 flex items-center gap-3 md:col-span-2">
             <label className="relative flex items-center cursor-pointer group">
               <input
                 type="checkbox"
