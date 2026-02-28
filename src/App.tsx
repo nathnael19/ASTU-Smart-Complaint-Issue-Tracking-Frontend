@@ -60,7 +60,7 @@ const App = () => {
           }
         />
         <Route
-          path="/student/dashboard/complaints"
+          path="/student/complaints"
           element={
             <ProtectedRoute allowedRoles={["STUDENT"]}>
               <MyComplaints />
@@ -68,7 +68,7 @@ const App = () => {
           }
         />
         <Route
-          path="/student/dashboard/submit"
+          path="/student/submit"
           element={
             <ProtectedRoute allowedRoles={["STUDENT"]}>
               <SubmitComplaint />
@@ -76,7 +76,7 @@ const App = () => {
           }
         />
         <Route
-          path="/student/dashboard/kb"
+          path="/student/kb"
           element={
             <ProtectedRoute allowedRoles={["STUDENT"]}>
               <KnowledgeBase />
@@ -84,7 +84,7 @@ const App = () => {
           }
         />
         <Route
-          path="/student/dashboard/settings"
+          path="/student/settings"
           element={
             <ProtectedRoute allowedRoles={["STUDENT"]}>
               <Settings />

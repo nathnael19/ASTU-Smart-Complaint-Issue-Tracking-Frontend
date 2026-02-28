@@ -35,15 +35,15 @@ const Sidebar = () => {
     {
       icon: ClipboardList,
       label: "My Complaints",
-      path: "/student/dashboard/complaints",
+      path: "/student/complaints",
     },
     {
       icon: PlusCircle,
       label: "Submit New",
-      path: "/student/dashboard/submit",
+      path: "/student/submit",
     },
-    { icon: BookOpen, label: "Knowledge Base", path: "/student/dashboard/kb" },
-    { icon: Settings, label: "Settings", path: "/student/dashboard/settings" },
+    { icon: BookOpen, label: "Knowledge Base", path: "/student/kb" },
+    { icon: Settings, label: "Settings", path: "/student/settings" },
   ];
 
   return (
