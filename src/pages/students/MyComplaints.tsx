@@ -21,6 +21,12 @@ const MyComplaints = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Filter states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All Statuses");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
@@ -72,6 +78,35 @@ const MyComplaints = () => {
     return map[c] || c;
   };
 
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("All Statuses");
+    setStartDate("");
+    setEndDate("");
+  };
+
+  const filteredComplaints = complaints.filter((complaint) => {
+    // Search filter (Ticket ID or Subject)
+    const matchesSearch =
+      complaint.ticket_number
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      complaint.title?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Status filter
+    const statusLabel = formatStatus(complaint.status);
+    const matchesStatus =
+      statusFilter === "All Statuses" || statusLabel === statusFilter;
+
+    // Date range filter
+    const complaintDate = new Date(complaint.created_at);
+    const matchesStartDate = !startDate || complaintDate >= new Date(startDate);
+    const matchesEndDate =
+      !endDate || complaintDate <= new Date(endDate + "T23:59:59");
+
+    return matchesSearch && matchesStatus && matchesStartDate && matchesEndDate;
+  });
+
   return (
     <DashboardLayout>
       <div className="p-8 space-y-8 max-w-[1600px] mx-auto pb-20">
@@ -110,6 +145,8 @@ const MyComplaints = () => {
                 <input
                   type="text"
                   placeholder="Filter by Ticket ID or Subject"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-slate-50 border-none rounded-xl py-3 pl-11 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all"
                 />
               </div>
@@ -120,7 +157,11 @@ const MyComplaints = () => {
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
                 Status
               </label>
-              <select className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all appearance-none cursor-pointer">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all appearance-none cursor-pointer"
+              >
                 <option>All Statuses</option>
                 <option>Open</option>
                 <option>In Progress</option>
@@ -136,18 +177,25 @@ const MyComplaints = () => {
               <div className="flex items-center gap-3">
                 <input
                   type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
                   className="flex-1 bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all uppercase"
                 />
                 <span className="text-gray-400 font-bold">to</span>
                 <input
                   type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
                   className="flex-1 bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/10 transition-all uppercase"
                 />
               </div>
             </div>
           </div>
 
-          <button className="flex items-center gap-2 text-xs font-black text-gray-500 hover:text-[#1e3a8a] transition-colors bg-gray-50 px-4 py-2 rounded-lg group">
+          <button
+            onClick={handleClearFilters}
+            className="flex items-center gap-2 text-xs font-black text-gray-500 hover:text-[#1e3a8a] transition-colors bg-gray-50 px-4 py-2 rounded-lg group"
+          >
             <X
               size={14}
               className="group-hover:rotate-90 transition-transform duration-300"
@@ -197,22 +245,22 @@ const MyComplaints = () => {
                       <p className="text-red-500 font-bold">{error}</p>
                     </td>
                   </tr>
-                ) : complaints.length === 0 ? (
+                ) : filteredComplaints.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-8 py-20 text-center">
                       <div className="flex flex-col items-center gap-4 text-gray-400">
                         <Info size={40} />
                         <p className="text-lg font-black tracking-tight text-gray-500">
-                          No complaints found
+                          No matching complaints found
                         </p>
                         <p className="text-sm font-medium">
-                          You haven't submitted any complaints yet.
+                          Try adjusting your search or filters.
                         </p>
                       </div>
                     </td>
                   </tr>
                 ) : (
-                  complaints.map((complaint) => {
+                  filteredComplaints.map((complaint) => {
                     const status = formatStatus(complaint.status);
                     const priority = formatPriority(complaint.priority);
                     const category = formatCategory(complaint.category);
@@ -306,9 +354,11 @@ const MyComplaints = () => {
             <span className="text-sm font-bold text-gray-400">
               Showing{" "}
               <span className="text-gray-900">
-                {complaints.length > 0 ? 1 : 0} to {complaints.length}
+                {filteredComplaints.length > 0 ? 1 : 0} to{" "}
+                {filteredComplaints.length}
               </span>{" "}
-              of <span className="text-gray-900">{complaints.length}</span>{" "}
+              of{" "}
+              <span className="text-gray-900">{filteredComplaints.length}</span>{" "}
               results
             </span>
             <div className="flex items-center gap-2">
