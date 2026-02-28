@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
@@ -19,19 +19,22 @@ import {
   X,
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
-import {
-  getComplaintDetails,
-  updateComplaint,
-  deleteComplaint,
-} from "../../api/complaints";
+import { updateComplaint, deleteComplaint } from "../../api/complaints";
+import { useComplaintDetail } from "../../hooks/useComplaints";
+import { invalidateCache } from "../../lib/cache";
 import { cn } from "../../lib/utils";
 import { supabase } from "../../lib/supabase";
 
 const ComplaintDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const {
+    data: fetchComplaint,
+    loading: isLoading,
+    error: fetchError,
+  } = useComplaintDetail(id);
+
   const [complaint, setComplaint] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -53,29 +56,30 @@ const ComplaintDetail = () => {
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // We set local complaint state from the fetch to allow local optimistic updates or easy syncing
   useEffect(() => {
-    const fetchDetails = async () => {
-      if (!id) return;
-      try {
-        setIsLoading(true);
-        const data = await getComplaintDetails(id);
-        setComplaint(data);
-        setEditFormData({
-          title: data.title,
-          description: data.description,
-          category: data.category,
-          priority: data.priority,
-          attachment_url: data.attachment_url || null,
-        });
-      } catch (err: any) {
-        setError(err.message || "Failed to load complaint details.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (fetchComplaint) {
+      setComplaint(fetchComplaint);
+      setEditFormData({
+        title: fetchComplaint.title,
+        description: fetchComplaint.description,
+        category: fetchComplaint.category,
+        priority: fetchComplaint.priority,
+        attachment_url: fetchComplaint.attachment_url || null,
+      });
+    }
+  }, [fetchComplaint]);
 
-    fetchDetails();
-  }, [id]);
+  // Handle fetch error passing to local error state on initial load
+  useEffect(() => {
+    if (fetchError) {
+      setError(
+        typeof fetchError === "string"
+          ? fetchError
+          : (fetchError as any).message || "Failed to load complaint details.",
+      );
+    }
+  }, [fetchError]);
 
   const handleUpdate = async () => {
     if (!id) return;
@@ -88,6 +92,7 @@ const ComplaintDetail = () => {
       });
       setComplaint(updated);
       setIsEditMode(false);
+      invalidateCache(`complaints:detail:${id}`, "complaints:list*");
     } catch (err: any) {
       setError(err.message || "Failed to update complaint.");
     } finally {
@@ -132,6 +137,7 @@ const ComplaintDetail = () => {
       setIsDeleting(true);
       setError(null);
       await deleteComplaint(id);
+      invalidateCache(`complaints:detail:${id}`, "complaints:list*");
       navigate("/student/complaints");
     } catch (err: any) {
       setError(err.message || "Failed to delete complaint.");
