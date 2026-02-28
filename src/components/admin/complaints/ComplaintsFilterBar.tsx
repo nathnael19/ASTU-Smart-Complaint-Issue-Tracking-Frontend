@@ -1,6 +1,15 @@
 import { Search, ChevronDown, Filter } from "lucide-react";
+import type { ComplaintFilters } from "../../../api/complaints";
 
-const ComplaintsFilterBar = () => {
+interface ComplaintsFilterBarProps {
+  filters: ComplaintFilters;
+  onFilterChange: (key: keyof ComplaintFilters, value: string) => void;
+}
+
+const ComplaintsFilterBar = ({
+  filters,
+  onFilterChange,
+}: ComplaintsFilterBarProps) => {
   return (
     <div className="flex flex-col md:flex-row items-center gap-4 mt-8">
       {/* Search Input */}
@@ -10,19 +19,29 @@ const ComplaintsFilterBar = () => {
         </div>
         <input
           type="text"
+          value={filters.search || ""}
+          onChange={(e) => onFilterChange("search", e.target.value)}
           placeholder="Search by Ticket ID, name or subject..."
-          className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium"
+          className="w-full bg-white border border-gray-200 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all text-sm font-medium"
         />
       </div>
 
       {/* Filters */}
       <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
         <div className="relative shrink-0">
-          <select className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer min-w-[140px]">
-            <option>Category</option>
-            <option>ICT Infrastructure</option>
-            <option>Facilities</option>
-            <option>Academic</option>
+          <select
+            value={filters.category || ""}
+            onChange={(e) => onFilterChange("category", e.target.value)}
+            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] cursor-pointer min-w-[140px]"
+          >
+            <option value="">All Categories</option>
+            <option value="IT_AND_NETWORK">IT & Network</option>
+            <option value="FACILITY_AND_MAINTENANCE">Facilities</option>
+            <option value="ACADEMIC_AFFAIRS">Academic Affairs</option>
+            <option value="STUDENT_SERVICES">Student Services</option>
+            <option value="REGISTRAR_OFFICE">Registrar Office</option>
+            <option value="ACADEMIC_RESOURCES">Academic Resources</option>
+            <option value="OTHER">Other</option>
           </select>
           <ChevronDown
             size={16}
@@ -31,11 +50,16 @@ const ComplaintsFilterBar = () => {
         </div>
 
         <div className="relative shrink-0">
-          <select className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer min-w-[130px]">
-            <option>Status</option>
-            <option>In Progress</option>
-            <option>Open</option>
-            <option>Resolved</option>
+          <select
+            value={filters.status || ""}
+            onChange={(e) => onFilterChange("status", e.target.value)}
+            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] cursor-pointer min-w-[130px]"
+          >
+            <option value="">All Statuses</option>
+            <option value="OPEN">Open</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="RESOLVED">Resolved</option>
+            <option value="CLOSED">Closed</option>
           </select>
           <ChevronDown
             size={16}
@@ -44,11 +68,16 @@ const ComplaintsFilterBar = () => {
         </div>
 
         <div className="relative shrink-0">
-          <select className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer min-w-[130px]">
-            <option>Priority</option>
-            <option>High</option>
-            <option>Medium</option>
-            <option>Low</option>
+          <select
+            value={filters.priority || ""}
+            onChange={(e) => onFilterChange("priority", e.target.value)}
+            className="appearance-none bg-white border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] cursor-pointer min-w-[130px]"
+          >
+            <option value="">All Priorities</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+            <option value="CRITICAL">Critical</option>
           </select>
           <ChevronDown
             size={16}
