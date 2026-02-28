@@ -20,7 +20,7 @@ import { getCurrentProfile } from "../../api/users";
 const Dashboard = () => {
   const [stats, setStats] = useState<DashboardSummary | null>(null);
   const [currentProfile, setCurrentProfile] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {

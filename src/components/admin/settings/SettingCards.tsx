@@ -5,7 +5,6 @@ import {
   Database,
   Mail,
   Lock,
-  RefreshCw,
   AlertTriangle,
   Download,
   History,
