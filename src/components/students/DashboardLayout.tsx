@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar";
 import DashboardHeader from "./DashboardHeader";
+import ChatBot from "./ChatBot";
 import { useEffect, useRef, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -27,6 +28,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           {children}
         </main>
       </div>
+      <ChatBot />
     </div>
   );
 };
