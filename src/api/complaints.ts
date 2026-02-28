@@ -22,6 +22,7 @@ export interface ComplaintCreate {
   priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   department_id?: string;
   is_draft?: boolean;
+  attachment_url?: string;
 }
 
 export interface AttachmentCreate {
