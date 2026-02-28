@@ -1,8 +1,23 @@
 import { Search, Bell, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getCurrentProfile } from "../../api/users";
 
 const AdminHeader = () => {
   const location = useLocation();
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getCurrentProfile();
+        setProfile(data);
+      } catch (error) {
+        console.error("Failed to fetch admin profile for header", error);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const navLinks = [
     { name: "Dashboard", path: "/admin/dashboard" },
@@ -10,6 +25,16 @@ const AdminHeader = () => {
     { name: "Users", path: "/admin/users" },
     { name: "Reports", path: "/admin/reports" },
   ];
+
+  const getAvatarSource = () => {
+    if (profile?.avatar_url) return profile.avatar_url;
+    if (profile?.first_name) {
+      return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+        profile.first_name + " " + (profile.last_name || ""),
+      )}&backgroundColor=1e3a8a&textColor=ffffff`;
+    }
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=admin&backgroundColor=ffdfbf`;
+  };
 
   return (
     <header className="h-20 bg-white border-b border-gray-100 flex items-center px-8 sticky top-0 z-10 w-full">
@@ -95,9 +120,9 @@ const AdminHeader = () => {
         <div className="w-px h-6 bg-gray-200 mx-2" />
 
         {/* User Profile Avatar */}
-        <button className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center border-2 border-white shadow-sm hover:scale-105 transition-transform overflow-hidden cursor-pointer">
+        <button className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm hover:scale-105 transition-transform overflow-hidden cursor-pointer">
           <img
-            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=admin&backgroundColor=ffdfbf`}
+            src={getAvatarSource()}
             alt="Admin avatar"
             className="w-full h-full object-cover"
           />

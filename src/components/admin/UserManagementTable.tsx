@@ -11,9 +11,14 @@ interface User {
   department_id?: string;
   status: "Active" | "Inactive";
   departments?: { name: string };
+  avatar_url?: string;
 }
 
-const UserManagementTable = () => {
+interface UserManagementTableProps {
+  currentUserId?: string;
+}
+
+const UserManagementTable = ({ currentUserId }: UserManagementTableProps) => {
   const [users, setUsers] = useState<User[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,12 +29,27 @@ const UserManagementTable = () => {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
+      // Fetch a few extra records in case the current admin is in the set
       const response = await getUsers({
-        limit: pageSize,
+        limit: pageSize + 1,
         offset: (currentPage - 1) * pageSize,
       });
-      setUsers(response.data || []);
-      setTotalCount(response.total || 0);
+
+      let fetchedUsers: User[] = response.data || [];
+      let total = response.total || 0;
+
+      // Filter out the current user if they are in the result
+      if (currentUserId) {
+        const hasCurrentUser = fetchedUsers.some((u) => u.id === currentUserId);
+        fetchedUsers = fetchedUsers.filter((u) => u.id !== currentUserId);
+        if (hasCurrentUser) {
+          total = Math.max(0, total - 1);
+        }
+      }
+
+      // Ensure we only show exact pageSize after filtering
+      setUsers(fetchedUsers.slice(0, pageSize));
+      setTotalCount(total);
     } catch (err: any) {
       setError(err.message || "Failed to fetch users");
     } finally {
@@ -39,7 +59,7 @@ const UserManagementTable = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage]);
+  }, [currentPage, currentUserId]);
 
   const getRoleBadge = (role: User["role"]) => {
     switch (role) {
@@ -55,6 +75,12 @@ const UserManagementTable = () => {
   };
 
   const totalPages = Math.ceil(totalCount / pageSize);
+
+  const getAvatarUrl = (user: User) => {
+    if (user.avatar_url) return user.avatar_url;
+    // Fallback to initial-based styled avatar
+    return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.first_name + " " + user.last_name)}&backgroundColor=1e3a8a,3b82f6,0ea5e9&textColor=ffffff`;
+  };
 
   return (
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden mt-8">
@@ -125,9 +151,13 @@ const UserManagementTable = () => {
                   <td className="py-4 px-8">
                     <div className="flex items-center gap-4">
                       <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.first_name}&backgroundColor=f1f5f9`}
+                        src={getAvatarUrl(user)}
                         alt={`${user.first_name} ${user.last_name}`}
-                        className="w-10 h-10 rounded-full bg-slate-100"
+                        className="w-10 h-10 rounded-full bg-slate-100 object-cover border border-gray-200"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.first_name)}&backgroundColor=e2e8f0`;
+                        }}
                       />
                       <div>
                         <p className="text-sm font-black text-gray-900">

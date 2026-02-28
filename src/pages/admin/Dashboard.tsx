@@ -15,23 +15,29 @@ import {
   getDashboardSummary,
   type DashboardSummary,
 } from "../../api/analytics";
+import { getCurrentProfile } from "../../api/users";
 
 const Dashboard = () => {
   const [stats, setStats] = useState<DashboardSummary | null>(null);
+  const [currentProfile, setCurrentProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getDashboardSummary();
-        setStats(data);
+        const [summaryData, profileData] = await Promise.all([
+          getDashboardSummary(),
+          getCurrentProfile(),
+        ]);
+        setStats(summaryData);
+        setCurrentProfile(profileData);
       } catch (error) {
-        console.error("Failed to fetch dashboard stats:", error);
+        console.error("Failed to fetch dashboard data:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchStats();
+    fetchData();
   }, []);
 
   return (
@@ -100,21 +106,22 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ComplaintsCategoryChart />
           <TrendsTimeChart />
         </div>
 
-        {/* User Management */}
-        <UserManagementTable />
+        {/* User Management Section */}
+        <UserManagementTable currentUserId={currentProfile?.id} />
       </div>
 
       {/* Footer minimal representation */}
-      <footer className="text-center py-6 text-xs font-medium text-gray-400">
-        © 2024 Adama Science and Technology University - Smart Tracking System.
-        All rights reserved.
-      </footer>
+      <div className="text-center pb-8 shrink-0">
+        <p className="text-xs font-bold text-gray-400">
+          Adama Science and Technology University - Admin Portal v2.0
+        </p>
+      </div>
     </AdminLayout>
   );
 };
