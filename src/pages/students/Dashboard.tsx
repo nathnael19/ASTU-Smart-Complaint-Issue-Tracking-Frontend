@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
   ClipboardList,
   MessageSquare,
@@ -12,73 +12,59 @@ import {
 import DashboardLayout from "../../components/students/DashboardLayout";
 import StatCard from "../../components/students/StatCard";
 import RecentComplaints from "../../components/students/RecentComplaints";
-import { getMyComplaints } from "../../api/complaints";
-import { getCurrentProfile } from "../../api/users";
+import { useComplaints } from "../../hooks/useComplaints";
+import { useCurrentProfile } from "../../hooks/useUsers";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [complaints, setComplaints] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [userProfile, setUserProfile] = useState<any>(
-    JSON.parse(localStorage.getItem("user") || "{}"),
-  );
+  const {
+    data: profileRes,
+    loading: profileLoading,
+    error: profileError,
+  } = useCurrentProfile();
 
-  const [stats, setStats] = useState({
-    total: 0,
-    open: 0,
-    inProgress: 0,
-    resolved: 0,
-  });
+  // Notice we can fetch without filters since the hook automatically caches
+  const {
+    data: complaintsRes,
+    loading: complaintsLoading,
+    error: complaintsError,
+  } = useComplaints({ limit: 100, offset: 0 });
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
+  const complaints = complaintsRes?.data || [];
+  const loading = profileLoading || complaintsLoading;
+  const error = profileError || complaintsError;
 
-        // Parallel fetch for complaints and potential profile refresh
-        const [complaintsRes, profileRes] = await Promise.all([
-          getMyComplaints(),
-          !userProfile.student_id ? getCurrentProfile() : Promise.resolve(null),
-        ]);
+  // Let local storage fallback if the user profile API call fails or is loading
+  const cachedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const userProfile = profileRes || cachedUser;
 
-        const data = complaintsRes.data || [];
-        setComplaints(data);
-
-        // Update profile if refreshed
-        if (profileRes) {
-          const updatedUser = {
-            ...userProfile,
-            full_name:
-              `${profileRes.first_name} ${profileRes.last_name}`.trim(),
-            student_id: profileRes.student_id_number,
-          };
-          localStorage.setItem("user", JSON.stringify(updatedUser));
-          setUserProfile(updatedUser);
-        }
-
-        // Calculate stats
-        const newStats = {
-          total: data.length,
-          open: data.filter((c: any) => c.status === "OPEN").length,
-          inProgress: data.filter((c: any) => c.status === "IN_PROGRESS")
-            .length,
-          resolved: data.filter((c: any) => c.status === "RESOLVED").length,
-        };
-        setStats(newStats);
-      } catch (err: any) {
-        console.error("Dashboard fetch error:", err);
-        setError("Failed to load dashboard data. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+  // Sync profile update format
+  if (
+    profileRes &&
+    (!cachedUser.student_id ||
+      cachedUser.full_name !==
+        `${profileRes.first_name} ${profileRes.last_name}`.trim())
+  ) {
+    const updatedUser = {
+      ...cachedUser,
+      full_name: `${profileRes.first_name} ${profileRes.last_name}`.trim(),
+      student_id: profileRes.student_id_number,
     };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  }
 
-    fetchDashboardData();
-  }, []);
+  const stats = useMemo(() => {
+    return {
+      total: complaints.length,
+      open: complaints.filter((c: any) => c.status === "OPEN").length,
+      inProgress: complaints.filter((c: any) => c.status === "IN_PROGRESS")
+        .length,
+      resolved: complaints.filter((c: any) => c.status === "RESOLVED").length,
+    };
+  }, [complaints]);
 
-  const firstName = userProfile.full_name?.split(" ")[0] || "Student";
+  const firstName = userProfile?.full_name?.split(" ")[0] || "Student";
 
   return (
     <DashboardLayout>
