@@ -74,9 +74,31 @@ export const addAttachmentMetadata = async (
   return response.json();
 };
 
-export const getMyComplaints = async () => {
+export interface ComplaintFilters {
+  status?: string;
+  priority?: string;
+  category?: string;
+  search?: string;
+  start_date?: string;
+  end_date?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export const getMyComplaints = async (params: ComplaintFilters = {}) => {
   const token = localStorage.getItem("access_token");
-  const response = await fetch(`${API_URL}/complaints/`, {
+  const queryParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      queryParams.append(key, value.toString());
+    }
+  });
+
+  const queryString = queryParams.toString();
+  const url = `${API_URL}/complaints/${queryString ? `?${queryString}` : ""}`;
+
+  const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

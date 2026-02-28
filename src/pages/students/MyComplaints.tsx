@@ -21,29 +21,60 @@ const MyComplaints = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 10;
+
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getMyComplaints();
-        // Assuming response matches { data: any[], total: number } or is just the array
-        const data = Array.isArray(response) ? response : response.data || [];
-        setComplaints(data);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch complaints.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchComplaints = async () => {
+    try {
+      setIsLoading(true);
 
+      // Map status label back to enum
+      let statusParam = undefined;
+      if (statusFilter === "Open") statusParam = "OPEN";
+      else if (statusFilter === "In Progress") statusParam = "IN_PROGRESS";
+      else if (statusFilter === "Resolved") statusParam = "RESOLVED";
+
+      const response = await getMyComplaints({
+        search: searchQuery,
+        status: statusParam,
+        start_date: startDate || undefined,
+        end_date: endDate || undefined,
+        limit: pageSize,
+        offset: (currentPage - 1) * pageSize,
+      });
+
+      setComplaints(response.data || []);
+      setTotalCount(response.total || 0);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch complaints.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchComplaints();
-  }, []);
+  }, [currentPage, statusFilter, startDate, endDate]);
+
+  // Handle search with a slight delay or on enter
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (currentPage !== 1) {
+        setCurrentPage(1);
+      } else {
+        fetchComplaints();
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const formatPriority = (p: string) => {
     const map: any = {
@@ -83,29 +114,12 @@ const MyComplaints = () => {
     setStatusFilter("All Statuses");
     setStartDate("");
     setEndDate("");
+    setCurrentPage(1);
   };
 
-  const filteredComplaints = complaints.filter((complaint) => {
-    // Search filter (Ticket ID or Subject)
-    const matchesSearch =
-      complaint.ticket_number
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      complaint.title?.toLowerCase().includes(searchQuery.toLowerCase());
-
-    // Status filter
-    const statusLabel = formatStatus(complaint.status);
-    const matchesStatus =
-      statusFilter === "All Statuses" || statusLabel === statusFilter;
-
-    // Date range filter
-    const complaintDate = new Date(complaint.created_at);
-    const matchesStartDate = !startDate || complaintDate >= new Date(startDate);
-    const matchesEndDate =
-      !endDate || complaintDate <= new Date(endDate + "T23:59:59");
-
-    return matchesSearch && matchesStatus && matchesStartDate && matchesEndDate;
-  });
+  // We no longer need client-side filteredComplaints, we use complaints directly
+  const displayComplaints = complaints;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <DashboardLayout>
@@ -250,7 +264,7 @@ const MyComplaints = () => {
                       <p className="text-red-500 font-bold">{error}</p>
                     </td>
                   </tr>
-                ) : filteredComplaints.length === 0 ? (
+                ) : displayComplaints.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-8 py-20 text-center">
                       <div className="flex flex-col items-center gap-4 text-gray-400">
@@ -265,7 +279,7 @@ const MyComplaints = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredComplaints.map((complaint) => {
+                  displayComplaints.map((complaint) => {
                     const status = formatStatus(complaint.status);
                     const priority = formatPriority(complaint.priority);
                     const category = formatCategory(complaint.category);
@@ -364,30 +378,58 @@ const MyComplaints = () => {
             <span className="text-sm font-bold text-gray-400">
               Showing{" "}
               <span className="text-gray-900">
-                {filteredComplaints.length > 0 ? 1 : 0} to{" "}
-                {filteredComplaints.length}
+                {totalCount > 0 ? (currentPage - 1) * pageSize + 1 : 0} to{" "}
+                {Math.min(currentPage * pageSize, totalCount)}
               </span>{" "}
-              of{" "}
-              <span className="text-gray-900">{filteredComplaints.length}</span>{" "}
-              results
+              of <span className="text-gray-900">{totalCount}</span> results
             </span>
             <div className="flex items-center gap-2">
               <button
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 text-gray-400 hover:bg-gray-50 transition-colors disabled:opacity-50"
-                disabled
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 text-gray-400 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={currentPage === 1 || isLoading}
               >
                 <ChevronLeft size={16} />
               </button>
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1e3a8a] text-white text-xs font-black">
-                1
-              </button>
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 text-gray-900 text-xs font-black hover:bg-gray-50">
-                2
-              </button>
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 text-gray-900 text-xs font-black hover:bg-gray-50">
-                3
-              </button>
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 text-gray-400 hover:bg-gray-50 transition-colors">
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => {
+                  // Show current, first, last, and neighbors
+                  return (
+                    p === 1 ||
+                    p === totalPages ||
+                    Math.abs(p - currentPage) <= 1
+                  );
+                })
+                .map((p, i, arr) => (
+                  <div key={p} className="flex items-center gap-2">
+                    {i > 0 && arr[i - 1] !== p - 1 && (
+                      <span className="text-gray-300 text-xs">...</span>
+                    )}
+                    <button
+                      onClick={() => setCurrentPage(p)}
+                      className={cn(
+                        "w-8 h-8 flex items-center justify-center rounded-lg text-xs font-black transition-all",
+                        currentPage === p
+                          ? "bg-[#1e3a8a] text-white shadow-lg shadow-blue-900/20"
+                          : "border border-gray-100 text-gray-900 hover:bg-gray-50",
+                      )}
+                      disabled={isLoading}
+                    >
+                      {p}
+                    </button>
+                  </div>
+                ))}
+
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                }
+                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-100 text-gray-400 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={
+                  currentPage === totalPages || totalPages === 0 || isLoading
+                }
+              >
                 <ChevronRight size={16} />
               </button>
             </div>
