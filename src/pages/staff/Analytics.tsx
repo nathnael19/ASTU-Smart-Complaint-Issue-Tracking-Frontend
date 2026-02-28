@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Calendar,
   Download,
@@ -9,7 +7,6 @@ import {
   Briefcase,
   FileText,
   FileSpreadsheet,
-  ChevronRight,
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 
