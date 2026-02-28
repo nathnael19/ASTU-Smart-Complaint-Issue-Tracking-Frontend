@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
@@ -15,6 +15,8 @@ import {
   Trash2,
   Save,
   XCircle,
+  Paperclip,
+  X,
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
 import {
@@ -23,6 +25,7 @@ import {
   deleteComplaint,
 } from "../../api/complaints";
 import { cn } from "../../lib/utils";
+import { supabase } from "../../lib/supabase";
 
 const ComplaintDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,13 +42,16 @@ const ComplaintDetail = () => {
     title: string;
     description: string;
     category: string;
-    priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" | "";
+    priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+    attachment_url: string | null;
   }>({
     title: "",
     description: "",
     category: "",
-    priority: "",
+    priority: "MEDIUM",
+    attachment_url: null,
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -59,6 +65,7 @@ const ComplaintDetail = () => {
           description: data.description,
           category: data.category,
           priority: data.priority,
+          attachment_url: data.attachment_url || null,
         });
       } catch (err: any) {
         setError(err.message || "Failed to load complaint details.");
@@ -75,13 +82,47 @@ const ComplaintDetail = () => {
     try {
       setIsUpdating(true);
       setError(null);
-      const updated = await updateComplaint(id, editFormData);
+      const updated = await updateComplaint(id, {
+        ...editFormData,
+        attachment_url: editFormData.attachment_url || undefined,
+      });
       setComplaint(updated);
       setIsEditMode(false);
     } catch (err: any) {
       setError(err.message || "Failed to update complaint.");
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !id) return;
+
+    try {
+      setIsUpdating(true);
+      setError(null);
+
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${id}-${Date.now()}.${fileExt}`;
+      const filePath = `complaints/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("complaint-attachments")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("complaint-attachments").getPublicUrl(filePath);
+
+      setEditFormData((prev) => ({ ...prev, attachment_url: publicUrl }));
+    } catch (err: any) {
+      setError(err.message || "Failed to upload file.");
+    } finally {
+      setIsUpdating(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -417,7 +458,57 @@ const ComplaintDetail = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-3 pt-4">
+                  <div className="space-y-4 pt-4">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+                      Attachment
+                    </label>
+                    {editFormData.attachment_url ? (
+                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-gray-100">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm">
+                            <Paperclip size={18} />
+                          </div>
+                          <span className="text-xs font-bold text-gray-600">
+                            Attachment Uploaded
+                          </span>
+                        </div>
+                        <button
+                          onClick={() =>
+                            setEditFormData((prev) => ({
+                              ...prev,
+                              attachment_url: null,
+                            }))
+                          }
+                          className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                          <X size={20} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="border-2 border-dashed border-gray-200 rounded-3xl p-8 text-center hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group"
+                      >
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleFileUpload}
+                          className="hidden"
+                        />
+                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-gray-400 mx-auto mb-3 group-hover:scale-110 transition-transform">
+                          <Paperclip size={24} />
+                        </div>
+                        <p className="text-sm font-black text-gray-900">
+                          Click to upload a file
+                        </p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                          PNG, JPG or PDF up to 5MB
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-6">
                     <button
                       onClick={() => setIsEditMode(false)}
                       className="px-8 py-4 rounded-2xl font-black text-sm text-gray-400 hover:text-gray-900 transition-colors"
