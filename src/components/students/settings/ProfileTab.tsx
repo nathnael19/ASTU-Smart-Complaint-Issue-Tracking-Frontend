@@ -1,6 +1,54 @@
-import { Camera, ShieldCheck, HelpCircle, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import {
+  Camera,
+  ShieldCheck,
+  HelpCircle,
+  ChevronRight,
+  Loader2,
+  CheckCircle2,
+} from "lucide-react";
+import { updateUserProfile } from "../../../api/users";
 
-const ProfileTab = () => {
+interface ProfileTabProps {
+  profile: any;
+  onUpdate: (updatedProfile: any) => void;
+}
+
+const ProfileTab = ({ profile, onUpdate }: ProfileTabProps) => {
+  const [formData, setFormData] = useState({
+    first_name: profile?.first_name || "",
+    last_name: profile?.last_name || "",
+    phone: profile?.phone || "",
+    program: profile?.program || "",
+    // bio is not in our schema but let's keep it for UI if we want to add later
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      setError(null);
+      setSaveSuccess(false);
+
+      const updated = await updateUserProfile(profile.id, {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        phone: formData.phone,
+        program: formData.program,
+      });
+
+      onUpdate(updated);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err: any) {
+      setError(err.message || "Failed to update profile.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Profile Information Card */}
@@ -47,11 +95,27 @@ const ProfileTab = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-2">
             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-              Full Name
+              First Name
             </label>
             <input
               type="text"
-              defaultValue="Abebe Kebede"
+              value={formData.first_name}
+              onChange={(e) =>
+                setFormData({ ...formData, first_name: e.target.value })
+              }
+              className="w-full bg-slate-50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              value={formData.last_name}
+              onChange={(e) =>
+                setFormData({ ...formData, last_name: e.target.value })
+              }
               className="w-full bg-slate-50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all"
             />
           </div>
@@ -61,7 +125,7 @@ const ProfileTab = () => {
             </label>
             <input
               type="text"
-              defaultValue="UG/2021/4582"
+              defaultValue={profile?.student_id_number || "N/A"}
               disabled
               className="w-full bg-slate-50/50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-400 cursor-not-allowed"
             />
@@ -72,21 +136,36 @@ const ProfileTab = () => {
             </label>
             <input
               type="email"
-              defaultValue="abebe.kebede@astu.edu.et"
+              defaultValue={profile?.email}
               disabled
               className="w-full bg-slate-50/50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-400 cursor-not-allowed"
             />
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-              Department
+              Phone Number
             </label>
-            <select className="w-full bg-slate-50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all appearance-none cursor-pointer">
-              <option>Software Engineering</option>
-              <option>Computer Science</option>
-              <option>Electrical Engineering</option>
-              <option>Mechanical Engineering</option>
-            </select>
+            <input
+              type="text"
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
+              className="w-full bg-slate-50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
+              Program / Major
+            </label>
+            <input
+              type="text"
+              value={formData.program}
+              onChange={(e) =>
+                setFormData({ ...formData, program: e.target.value })
+              }
+              className="w-full bg-slate-50 border-none rounded-xl py-4 px-5 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all"
+            />
           </div>
           <div className="md:col-span-2 space-y-2">
             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
@@ -101,12 +180,29 @@ const ProfileTab = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-4 pt-10">
-          <button className="text-gray-500 hover:text-gray-900 px-8 py-4 rounded-2xl font-black text-sm transition-colors border border-gray-100">
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-4 pt-10">
+          {error && (
+            <p className="text-red-500 text-xs font-bold mr-auto">{error}</p>
+          )}
+          {saveSuccess && (
+            <div className="flex items-center gap-2 text-green-600 font-bold text-xs mr-auto animate-in fade-in zoom-in duration-300">
+              <CheckCircle2 size={16} />
+              Profile updated successfully!
+            </div>
+          )}
+          <button
+            disabled={isSaving}
+            className="text-gray-500 hover:text-gray-900 px-8 py-4 rounded-2xl font-black text-sm transition-colors border border-gray-100 disabled:opacity-50"
+          >
             Cancel
           </button>
-          <button className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl shadow-blue-600/20 hover:bg-blue-700 transition-all hover:translate-y-[-2px]">
-            Save Changes
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black text-sm shadow-xl shadow-blue-600/20 hover:bg-blue-700 transition-all hover:translate-y-[-2px] disabled:opacity-50 flex items-center gap-2"
+          >
+            {isSaving && <Loader2 size={16} className="animate-spin" />}
+            {isSaving ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>
