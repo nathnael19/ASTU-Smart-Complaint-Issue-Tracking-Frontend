@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { ChevronRight, AlertTriangle } from "lucide-react";
 
-const AccountTab = () => {
+interface AccountTabProps {
+  profile: any;
+}
+
+const AccountTab = ({ profile }: AccountTabProps) => {
   const [accountSettings, setAccountSettings] = useState({
     shareData: true,
     publicProfile: false,
