@@ -3,14 +3,15 @@ import { cn } from "../../lib/utils";
 
 interface TicketActionsCardProps {
   status: string;
-  assignedStaff: {
+  assignedStaff?: {
     name: string;
     avatar?: string;
-  };
-  priority: "HIGH" | "MEDIUM" | "LOW";
+  } | null;
+  priority: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
   onStatusChange?: (status: string) => void;
-  onPriorityChange?: (priority: "HIGH" | "MEDIUM" | "LOW") => void;
-  slaDeadline?: string;
+  onPriorityChange?: (priority: string) => void;
+  slaDeadline?: string | null;
+  isUpdating?: boolean;
 }
 
 const TicketActionsCard = ({
@@ -20,6 +21,7 @@ const TicketActionsCard = ({
   onStatusChange,
   onPriorityChange,
   slaDeadline,
+  isUpdating = false,
 }: TicketActionsCardProps) => {
   const getInitials = (name: string) => {
     return name
@@ -35,6 +37,8 @@ const TicketActionsCard = ({
       return "bg-white text-gray-600 border-gray-200 hover:border-gray-300";
     }
     switch (priority) {
+      case "CRITICAL":
+        return "bg-red-50 text-red-700 border-red-200";
       case "HIGH":
         return "bg-red-50 text-red-700 border-red-200";
       case "MEDIUM":
@@ -46,6 +50,8 @@ const TicketActionsCard = ({
     }
   };
 
+  const assignedName = assignedStaff?.name ?? "Unassigned";
+
   return (
     <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 space-y-6">
       <h3 className="text-xl font-black text-gray-900">Ticket Actions</h3>
@@ -55,11 +61,18 @@ const TicketActionsCard = ({
         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
           Current Status
         </label>
-        <div className="relative">
+        <div
+          className={cn(
+            "relative",
+            isUpdating && "opacity-50 cursor-not-allowed",
+          )}
+        >
           <select
             value={status}
-            onChange={(e) => onStatusChange?.(e.target.value)}
-            className="w-full bg-slate-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 appearance-none cursor-pointer"
+            onChange={(e) => !isUpdating && onStatusChange?.(e.target.value)}
+            disabled={isUpdating}
+            className="w-full bg-slate-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-200 appearance-none cursor-pointer disabled:cursor-not-allowed"
+            aria-label="Current status"
           >
             <option>Open</option>
             <option>In Progress</option>
@@ -81,13 +94,18 @@ const TicketActionsCard = ({
         <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-gray-200">
           <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center border-2 border-white shadow-sm">
             <span className="text-orange-600 font-black text-sm">
-              {getInitials(assignedStaff.name)}
+              {getInitials(assignedName)}
             </span>
           </div>
           <span className="flex-1 text-sm font-black text-gray-900">
-            {assignedStaff.name}
+            {assignedName}
           </span>
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+          <button
+            type="button"
+            disabled={isUpdating}
+            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Change assigned staff"
+          >
             <Edit2 size={16} />
           </button>
         </div>
@@ -98,13 +116,14 @@ const TicketActionsCard = ({
         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
           Priority Level
         </label>
-        <div className="flex gap-2">
-          {(["HIGH", "MEDIUM", "LOW"] as const).map((level) => (
+        <div className={cn("flex flex-wrap gap-2", isUpdating && "opacity-50")}>
+          {(["CRITICAL", "HIGH", "MEDIUM", "LOW"] as const).map((level) => (
             <button
               key={level}
-              onClick={() => onPriorityChange?.(level)}
+              disabled={isUpdating}
+              onClick={() => !isUpdating && onPriorityChange?.(level)}
               className={cn(
-                "flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase border transition-all",
+                "flex-1 py-2.5 px-3 rounded-xl text-xs font-black uppercase border transition-all disabled:cursor-not-allowed",
                 getPriorityStyles(level, priority === level),
               )}
             >
@@ -122,7 +141,9 @@ const TicketActionsCard = ({
           </label>
           <div className="flex items-center gap-2 p-3 bg-red-50 rounded-xl border border-red-200">
             <Clock size={16} className="text-red-600 shrink-0" />
-            <span className="text-sm font-black text-red-700">{slaDeadline}</span>
+            <span className="text-sm font-black text-red-700">
+              {slaDeadline}
+            </span>
           </div>
         </div>
       )}
