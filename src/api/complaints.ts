@@ -23,6 +23,8 @@ export interface ComplaintCreate {
   department_id?: string;
   is_draft?: boolean;
   attachment_url?: string;
+  satisfaction_rating?: number;
+  satisfaction_message?: string;
 }
 
 export interface AttachmentCreate {
@@ -83,6 +85,7 @@ export interface ComplaintFilters {
   end_date?: string;
   limit?: number;
   offset?: number;
+  submitted_by?: string;
 }
 
 export const getMyComplaints = async (params: ComplaintFilters = {}) => {
@@ -188,14 +191,11 @@ export const getComplaintRemarks = async (
   complaintId: string,
 ): Promise<{ data: ComplaintRemark[] }> => {
   const token = localStorage.getItem("access_token");
-  const response = await fetch(
-    `${API_URL}/complaints/${complaintId}/remarks`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  const response = await fetch(`${API_URL}/complaints/${complaintId}/remarks`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-  );
+  });
   if (!response.ok) {
     throw new Error(await parseError(response));
   }
@@ -207,17 +207,14 @@ export const postComplaintRemark = async (
   content: string,
 ): Promise<ComplaintRemark> => {
   const token = localStorage.getItem("access_token");
-  const response = await fetch(
-    `${API_URL}/complaints/${complaintId}/remarks`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ content: content.trim() }),
+  const response = await fetch(`${API_URL}/complaints/${complaintId}/remarks`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-  );
+    body: JSON.stringify({ content: content.trim() }),
+  });
   if (!response.ok) {
     throw new Error(await parseError(response));
   }
