@@ -22,7 +22,10 @@ const CommunicationLogCard = ({ entries }: CommunicationLogCardProps) => {
       </div>
 
       <div className="space-y-4">
-        {entries.map((entry) => (
+        {entries.length === 0 ? (
+          <p className="text-sm text-gray-500 py-4">No log entries yet.</p>
+        ) : (
+        entries.map((entry) => (
           <div key={entry.id} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
             <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 shrink-0" />
             <div className="flex-1">
@@ -35,7 +38,8 @@ const CommunicationLogCard = ({ entries }: CommunicationLogCardProps) => {
               <p className="text-sm font-medium text-gray-600">{entry.message}</p>
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
     </div>
   );
