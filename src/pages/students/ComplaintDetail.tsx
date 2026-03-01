@@ -16,6 +16,7 @@ import {
   XCircle,
   Paperclip,
   X,
+  Star,
 } from "lucide-react";
 import DashboardLayout from "../../components/students/DashboardLayout";
 import ComplaintThread from "../../components/shared/ComplaintThread";
@@ -40,6 +41,12 @@ const ComplaintDetail = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Rating state
+  const [rating, setRating] = useState<number>(0);
+  const [ratingMessage, setRatingMessage] = useState("");
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+  const [showRatingSuccess, setShowRatingSuccess] = useState(false);
 
   const [editFormData, setEditFormData] = useState<{
     title: string;
@@ -144,6 +151,25 @@ const ComplaintDetail = () => {
       setShowDeleteConfirm(false);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleRatingSubmit = async () => {
+    if (!id || rating === 0) return;
+    try {
+      setIsSubmittingRating(true);
+      setError(null);
+      const updated = await updateComplaint(id, {
+        satisfaction_rating: rating,
+        satisfaction_message: ratingMessage,
+      });
+      setComplaint(updated);
+      setShowRatingSuccess(true);
+      invalidateCache(`complaints:detail:${id}`);
+    } catch (err: any) {
+      setError(err.message || "Failed to submit rating.");
+    } finally {
+      setIsSubmittingRating(false);
     }
   };
 
@@ -576,6 +602,111 @@ const ComplaintDetail = () => {
                 placeholder="Ask a question or add a message for staff..."
                 submitLabel="Send"
               />
+            )}
+
+            {/* Satisfaction Rating Form */}
+            {complaint.status === "RESOLVED" &&
+              !complaint.satisfaction_rating &&
+              !showRatingSuccess && (
+                <div className="bg-gradient-to-br from-blue-600 to-[#1e3a8a] rounded-[2.5rem] p-10 text-white shadow-xl shadow-blue-900/20 space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+                      <CheckCircle2 size={24} className="text-blue-100" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-black">How did we do?</h2>
+                      <p className="text-blue-100/70 font-medium">
+                        Your feedback helps us improve our services.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => setRating(star)}
+                          className="hover:scale-110 transition-transform focus:outline-none"
+                        >
+                          <Star
+                            size={32}
+                            className={cn(
+                              "transition-all",
+                              star <= rating
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-blue-400/50 fill-transparent",
+                            )}
+                          />
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-blue-200 uppercase tracking-widest px-1">
+                        Share your thoughts (Optional)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={ratingMessage}
+                        onChange={(e) => setRatingMessage(e.target.value)}
+                        placeholder="What could we have done better?"
+                        className="w-full bg-white/10 border-none rounded-2xl py-4 px-6 text-white placeholder:text-blue-200/50 focus:ring-2 focus:ring-white/20 transition-all resize-none shadow-inner"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleRatingSubmit}
+                      disabled={isSubmittingRating || rating === 0}
+                      className="w-full bg-white text-blue-900 px-8 py-4 rounded-2xl font-black shadow-xl hover:bg-blue-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+                    >
+                      {isSubmittingRating ? (
+                        <Clock className="animate-spin" size={18} />
+                      ) : (
+                        <Save
+                          size={18}
+                          className="group-hover:scale-110 transition-transform"
+                        />
+                      )}
+                      {isSubmittingRating ? "Submitting..." : "Submit Feedback"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+            {/* Success Message after Rating */}
+            {(complaint.satisfaction_rating || showRatingSuccess) && (
+              <div className="bg-green-50 border border-green-100 rounded-[2.5rem] p-10 text-center space-y-4 animate-in fade-in zoom-in duration-500">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 mx-auto mb-2">
+                  <CheckCircle2 size={32} />
+                </div>
+                <h2 className="text-2xl font-black text-green-900">
+                  Thank you for your feedback!
+                </h2>
+                <p className="text-green-700 font-medium max-w-md mx-auto">
+                  We've received your rating and message. Your input helps us
+                  provide better support for all students.
+                </p>
+                <div className="flex justify-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star
+                      key={s}
+                      size={20}
+                      className={cn(
+                        "transition-all",
+                        s <= (complaint.satisfaction_rating || rating)
+                          ? "fill-green-500 text-green-500"
+                          : "text-green-200 fill-transparent",
+                      )}
+                    />
+                  ))}
+                </div>
+                {complaint.satisfaction_message && (
+                  <div className="mt-4 p-4 bg-white/50 rounded-2xl italic text-green-800 text-sm">
+                    "{complaint.satisfaction_message}"
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
