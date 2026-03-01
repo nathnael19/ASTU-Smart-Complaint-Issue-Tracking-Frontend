@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout";
 import ComplaintBreadcrumbs from "../../components/admin/complaints/detail/ComplaintBreadcrumbs";
@@ -7,11 +8,14 @@ import InternalRemarks from "../../components/admin/complaints/detail/InternalRe
 import ManagementControls from "../../components/admin/complaints/detail/ManagementControls";
 import ResolutionTimeline from "../../components/admin/complaints/detail/ResolutionTimeline";
 import AssignedPersonnel from "../../components/admin/complaints/detail/AssignedPersonnel";
+import AssignStaffModal from "../../components/admin/complaints/detail/AssignStaffModal";
 import { useComplaintDetail } from "../../hooks/useComplaints";
+import { invalidateCache } from "../../lib/cache";
 import { Loader2, AlertCircle } from "lucide-react";
 
 const ComplaintDetail = () => {
   const { id } = useParams();
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
   const { data: complaint, loading, error } = useComplaintDetail(id);
 
   if (loading) {
@@ -62,6 +66,7 @@ const ComplaintDetail = () => {
         <ComplaintDetailHeader
           ticketId={ticketId}
           status={complaint.status}
+          onAssignStaff={() => setAssignModalOpen(true)}
           studentName={
             complaint.users?.full_name ||
             [complaint.users?.first_name, complaint.users?.last_name].filter(Boolean).join(" ").trim() ||
@@ -85,6 +90,19 @@ const ComplaintDetail = () => {
             },
           )}
         />
+
+        {assignModalOpen && id && (
+          <AssignStaffModal
+            complaintId={id}
+            ticketNumber={ticketId}
+            departmentId={complaint.department_id}
+            currentAssignedTo={complaint.assigned_to}
+            onClose={() => setAssignModalOpen(false)}
+            onAssigned={() => {
+              invalidateCache(`complaints:detail:${id}`, "complaints:list*");
+            }}
+          />
+        )}
 
         {/* Two Column Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
