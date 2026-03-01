@@ -2,8 +2,8 @@ import { FileText, MapPin, Smartphone } from "lucide-react";
 
 interface ComplaintDescriptionCardProps {
   description: string;
-  location: string;
-  reportedVia: string;
+  location?: string | null;
+  reportedVia?: string | null;
 }
 
 const ComplaintDescriptionCard = ({
@@ -31,7 +31,7 @@ const ComplaintDescriptionCard = ({
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
               Location
             </span>
-            <p className="text-sm font-bold text-gray-900">{location}</p>
+            <p className="text-sm font-bold text-gray-900">{location || "—"}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -40,7 +40,7 @@ const ComplaintDescriptionCard = ({
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
               Reported Via
             </span>
-            <p className="text-sm font-bold text-gray-900">{reportedVia}</p>
+            <p className="text-sm font-bold text-gray-900">{reportedVia || "Student Portal"}</p>
           </div>
         </div>
       </div>

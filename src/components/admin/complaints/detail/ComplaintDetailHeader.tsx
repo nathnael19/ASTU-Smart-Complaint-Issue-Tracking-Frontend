@@ -6,6 +6,7 @@ interface ComplaintDetailHeaderProps {
   studentName: string;
   studentId: string;
   dateSubmitted: string;
+  onAssignStaff?: () => void;
 }
 
 const ComplaintDetailHeader = ({
@@ -14,6 +15,7 @@ const ComplaintDetailHeader = ({
   studentName,
   studentId,
   dateSubmitted,
+  onAssignStaff,
 }: ComplaintDetailHeaderProps) => {
   const getStatusBadge = (status: string) => {
     const s = status?.toUpperCase();
@@ -57,7 +59,11 @@ const ComplaintDetailHeader = ({
           <Download size={16} />
           Export PDF
         </button>
-        <button className="bg-[#1e3a8a] text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-900/20 hover:bg-blue-950 transition-colors text-sm">
+        <button
+          type="button"
+          onClick={onAssignStaff}
+          className="bg-[#1e3a8a] text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-900/20 hover:bg-blue-950 transition-colors text-sm"
+        >
           <UserPlus size={16} />
           Assign Staff
         </button>
