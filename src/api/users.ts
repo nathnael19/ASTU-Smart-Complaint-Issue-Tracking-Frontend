@@ -45,6 +45,7 @@ export const getUsers = async (
   params: {
     role?: string;
     status?: string;
+    department_id?: string;
     limit?: number;
     offset?: number;
     search?: string;
@@ -112,6 +113,23 @@ export const deleteUser = async (userId: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return response.json();
+};
+export const getUserByIdNumber = async (idNumber: string) => {
+  const token = localStorage.getItem("access_token");
+  const response = await fetch(
+    `${API_URL}/users/by-id-number/${encodeURIComponent(idNumber)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
 
   if (!response.ok) {
     throw new Error(await parseError(response));
