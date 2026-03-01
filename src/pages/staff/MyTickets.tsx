@@ -100,7 +100,9 @@ const MyTickets = () => {
           <StatCard
             label="Resolved this week"
             value={
-              loading ? "..." : summary?.resolved_this_week.toString() || "0"
+              loading
+                ? "..."
+                : summary?.personal_resolved_this_week.toString() || "0"
             }
             icon={CheckCircle2}
             color="text-emerald-600"
@@ -233,12 +235,15 @@ const MyTickets = () => {
                           : "N/A"}
                       </td>
                       <td className="px-6 sm:px-8 py-5 text-right">
-                        <button
-                          onClick={() => handleProcess(ticket.id)}
-                          className="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-bold bg-[#1e3a8a] text-white shadow-sm hover:bg-blue-900 transition-colors"
-                        >
-                          Process
-                        </button>
+                        {ticket.status !== "RESOLVED" &&
+                          ticket.status !== "CLOSED" && (
+                            <button
+                              onClick={() => handleProcess(ticket.id)}
+                              className="inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-bold bg-[#1e3a8a] text-white shadow-sm hover:bg-blue-900 transition-colors"
+                            >
+                              Process
+                            </button>
+                          )}
                       </td>
                     </tr>
                   ))

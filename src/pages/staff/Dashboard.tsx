@@ -1,4 +1,4 @@
-import { Ticket, FolderOpen, Clock, CheckCircle2 } from "lucide-react";
+import { Ticket, FolderOpen, Clock, CheckCircle2, Star } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import StatCard from "../../components/students/StatCard";
 import WeeklyTicketVolumeChart from "../../components/staff/WeeklyTicketVolumeChart";
@@ -7,6 +7,7 @@ import RecentDepartmentTicketsTable from "../../components/staff/RecentDepartmen
 
 import React from "react";
 import { useCurrentProfile } from "../../hooks/useUsers";
+import { cn } from "../../lib/utils";
 import {
   useDepartmentSummary,
   useDepartmentTrends,
@@ -54,12 +55,21 @@ const StaffDashboard = () => {
   const { data: recentData, loading: recentLoading } = useComplaints({
     limit: 5,
   });
+  const { data: resolvedData, loading: resolvedLoading } = useComplaints({
+    status: "RESOLVED",
+    limit: 3,
+  });
 
   const loading =
-    summaryLoading || trendsLoading || urgentLoading || recentLoading;
+    summaryLoading ||
+    trendsLoading ||
+    urgentLoading ||
+    recentLoading ||
+    resolvedLoading;
 
   const urgentComplaints = urgentData?.data || [];
   const recentTickets = recentData?.data || [];
+  const resolvedTickets = resolvedData?.data || [];
 
   return (
     <ErrorBoundary>
@@ -123,6 +133,67 @@ const StaffDashboard = () => {
             </div>
             <div>
               <UrgentComplaintsList complaints={urgentComplaints} />
+
+              {/* Recent Feedback Section */}
+              <div className="mt-6 bg-white rounded-3xl border border-gray-200/60 shadow-sm overflow-hidden">
+                <div className="p-5 border-b border-gray-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Star className="text-amber-500 fill-amber-500" size={18} />
+                    <h2 className="text-[16px] font-black text-gray-900">
+                      Recent Reviews
+                    </h2>
+                  </div>
+                </div>
+                <div className="p-5 space-y-4">
+                  {loading ? (
+                    <div className="text-center py-4 text-gray-400 text-sm">
+                      Loading feedback...
+                    </div>
+                  ) : resolvedTickets.filter((t: any) => t.satisfaction_rating)
+                      .length === 0 ? (
+                    <div className="text-center py-4 text-gray-400 text-sm italic">
+                      No recent reviews
+                    </div>
+                  ) : (
+                    resolvedTickets
+                      .filter((t: any) => t.satisfaction_rating)
+                      .map((ticket: any) => (
+                        <div
+                          key={ticket.id}
+                          className="space-y-2 pb-4 border-b border-gray-50 last:border-0 last:pb-0"
+                        >
+                          <div className="flex justify-between items-start">
+                            <span className="text-[10px] font-black tracking-widest text-[#8ca1c2] uppercase">
+                              {ticket.ticket_number ||
+                                ticket.id.substring(0, 8)}
+                            </span>
+                            <div className="flex gap-0.5">
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <Star
+                                  key={s}
+                                  size={10}
+                                  className={cn(
+                                    s <= ticket.satisfaction_rating
+                                      ? "fill-amber-400 text-amber-400"
+                                      : "text-gray-200 fill-transparent",
+                                  )}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-[13px] font-bold text-gray-800 leading-tight line-clamp-1">
+                            {ticket.title}
+                          </p>
+                          {ticket.satisfaction_message && (
+                            <p className="text-[11px] font-medium text-gray-500 italic line-clamp-2 bg-slate-50 p-2 rounded-lg">
+                              "{ticket.satisfaction_message}"
+                            </p>
+                          )}
+                        </div>
+                      ))
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

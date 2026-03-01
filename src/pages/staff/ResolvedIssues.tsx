@@ -11,6 +11,7 @@ import {
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
 import { useDepartmentSummary } from "../../hooks/useAnalytics";
 import { useComplaints } from "../../hooks/useComplaints";
+import { cn } from "../../lib/utils";
 
 interface BackendResolvedTicket {
   id: string;
@@ -20,6 +21,8 @@ interface BackendResolvedTicket {
   status: string;
   created_at?: string;
   resolved_at?: string;
+  satisfaction_rating?: number;
+  satisfaction_message?: string;
   users?: {
     full_name?: string;
   };
@@ -169,7 +172,7 @@ const ResolvedIssues = () => {
                     Resolved Date
                   </th>
                   <th className="px-6 py-5 text-[11px] uppercase font-black tracking-widest text-gray-500">
-                    Resolution Outcome
+                    Student Review
                   </th>
                   <th className="px-8 py-5 text-[11px] uppercase font-black tracking-widest text-gray-500 text-right">
                     Action
@@ -230,9 +233,32 @@ const ResolvedIssues = () => {
                         </div>
                       </td>
                       <td className="px-6 py-6">
-                        <p className="text-[14px] font-medium text-gray-500 max-w-[250px] truncate">
-                          Successfully resolved marked by staff.
-                        </p>
+                        {ticket.satisfaction_rating ? (
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-0.5">
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <Star
+                                  key={s}
+                                  size={12}
+                                  className={cn(
+                                    s <= ticket.satisfaction_rating!
+                                      ? "fill-amber-400 text-amber-400"
+                                      : "text-gray-200 fill-transparent",
+                                  )}
+                                />
+                              ))}
+                            </div>
+                            {ticket.satisfaction_message && (
+                              <p className="text-[12px] font-medium text-gray-500 max-w-[200px] line-clamp-2 italic">
+                                "{ticket.satisfaction_message}"
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-[12px] font-medium text-gray-400 italic">
+                            No review yet
+                          </span>
+                        )}
                       </td>
                       <td className="px-8 py-6 text-right">
                         <button className="inline-flex items-center gap-1.5 text-[#1e3a8a] hover:text-blue-800 font-bold text-[13px] transition-colors bg-blue-50/50 hover:bg-blue-100 px-4 py-2 rounded-xl">

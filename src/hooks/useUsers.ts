@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryResult } from "./useQuery";
-import { getCurrentProfile, getUsers } from "../api/users";
+import { getCurrentProfile, getUsers, getDepartmentUsers } from "../api/users";
 
 const FIVE_MIN_MS = 5 * 60 * 1000;
 
@@ -20,6 +20,12 @@ export function useUsers(params: any = {}): UseQueryResult<any> {
   const cacheKey = `users:list:${JSON.stringify(sortedParams)}`;
 
   return useQuery(cacheKey, () => getUsers(params), {
+    ttl: FIVE_MIN_MS,
+  });
+}
+
+export function useDepartmentUsers(): UseQueryResult<any> {
+  return useQuery("users:department", getDepartmentUsers, {
     ttl: FIVE_MIN_MS,
   });
 }

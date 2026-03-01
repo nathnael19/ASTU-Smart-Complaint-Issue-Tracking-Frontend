@@ -1,95 +1,27 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, Filter, List, Info } from "lucide-react";
+import { Search, Plus, Filter, List, Info, UserPlus } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
+import { useDepartmentUsers } from "../../hooks/useUsers";
+import { useComplaints } from "../../hooks/useComplaints";
+import { useDepartmentSummary } from "../../hooks/useAnalytics";
 
-// Interfaces for mock data
+// Interfaces
 interface Task {
   id: string;
-  subject: string;
-  requester: string;
-  priority: "CRITICAL" | "HIGH" | "NORMAL" | "LOW";
-  assigneeName?: string;
-  assigneeAvatar?: string;
-  status: "New" | "In Progress" | "Completed";
+  title: string;
+  priority: "LOW" | "NORMAL" | "HIGH" | "CRITICAL";
+  status: string;
+  assigned_to?: string;
+  users?: {
+    full_name?: string;
+  };
+  assigned_user?: {
+    full_name?: string;
+    avatar_url?: string;
+  };
+  ticket_number?: string;
 }
-
-interface TeamMember {
-  name: string;
-  role: string;
-  activeCount: number;
-  capacityLevel: number; // 0-100
-  avatar?: string;
-}
-
-// Mock Data
-const tasks: Task[] = [
-  {
-    id: "#ICT-9012",
-    subject: "Wi-Fi Connectivity Issues - Dorm 4",
-    requester: "Abel M.",
-    priority: "CRITICAL",
-    assigneeName: "John D.",
-    assigneeAvatar: "https://i.pravatar.cc/150?u=a04258a2462d826712d",
-    status: "In Progress",
-  },
-  {
-    id: "#ICT-9015",
-    subject: "LMS Integration for Engineering",
-    requester: "Dr. Martha",
-    priority: "NORMAL",
-    assigneeName: "Unassigned",
-    status: "New",
-  },
-  {
-    id: "#ICT-8998",
-    subject: "Printer Repair - Registrar Office",
-    requester: "Office Clerk",
-    priority: "HIGH",
-    assigneeName: "Sara T.",
-    assigneeAvatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-    status: "Completed",
-  },
-  {
-    id: "#ICT-9022",
-    subject: "Software Update - Computer Lab C",
-    requester: "Scheduled Maintenance",
-    priority: "LOW",
-    assigneeName: "Biniyam L.",
-    assigneeAvatar: "https://i.pravatar.cc/150?u=a04258114e29026302d",
-    status: "In Progress",
-  },
-];
-
-const teamData: TeamMember[] = [
-  {
-    name: "John Doe",
-    role: "NETWORK ADMIN",
-    activeCount: 8,
-    capacityLevel: 80,
-    avatar: "https://i.pravatar.cc/150?u=a04258a2462d826712d",
-  },
-  {
-    name: "Sara Tesfaye",
-    role: "HARDWARE TECH",
-    activeCount: 4,
-    capacityLevel: 40,
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-  },
-  {
-    name: "Biniyam Lulseged",
-    role: "SOFTWARE DEV",
-    activeCount: 12,
-    capacityLevel: 95,
-    avatar: "https://i.pravatar.cc/150?u=a04258114e29026302d",
-  },
-  {
-    name: "Tadesse G.",
-    role: "SUPPORT DESK",
-    activeCount: 2,
-    capacityLevel: 20,
-  },
-];
 
 // Helper functions for styling
 const getPriorityStyles = (priority: Task["priority"]) => {
@@ -102,10 +34,12 @@ const getPriorityStyles = (priority: Task["priority"]) => {
       return { bg: "bg-blue-50", text: "text-blue-600", dot: "bg-blue-500" };
     case "LOW":
       return { bg: "bg-gray-100", text: "text-gray-600", dot: "bg-gray-500" };
+    default:
+      return { bg: "bg-gray-50", text: "text-gray-500", dot: "bg-gray-400" };
   }
 };
 
-const getStatusStyles = (status: Task["status"]) => {
+const getStatusStyles = (status: string) => {
   switch (status) {
     case "New":
       return "bg-blue-50 text-blue-600 font-bold border-blue-100";
@@ -113,12 +47,48 @@ const getStatusStyles = (status: Task["status"]) => {
       return "bg-amber-50 text-amber-600 font-bold border-amber-100";
     case "Completed":
       return "bg-emerald-50 text-emerald-600 font-bold border-emerald-100";
+    default:
+      return "bg-gray-50 text-gray-600 font-bold border-gray-100";
   }
 };
 
 const DepartmentTasks = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("All Tasks");
+
+  const { data: teamMembers, loading: teamLoading } = useDepartmentUsers();
+  const { data: complaintsData, loading: complaintsLoading } = useComplaints({
+    limit: 50,
+  });
+  const { data: summary, loading: summaryLoading } = useDepartmentSummary();
+
+  const loading = teamLoading || complaintsLoading || summaryLoading;
+
+  // Map backend users to TeamMember interface
+  const teamData = (teamMembers || [])
+    .filter((m: any) => m.role === "STAFF" || m.role === "ADMIN")
+    .map((m: any) => ({
+      name: m.full_name || `${m.first_name} ${m.last_name}`,
+      role: m.role,
+      activeCount: m.active_tickets_count || 0,
+      capacityLevel: Math.min(
+        Math.round(((m.active_tickets_count || 0) / 10) * 100),
+        100,
+      ),
+      avatar: m.avatar_url,
+    }));
+
+  const allComplaints = complaintsData?.data || [];
+
+  // Filter tasks based on activeTab
+  const filteredTasks = allComplaints.filter((task: any) => {
+    if (activeTab === "All Tasks") return true;
+    if (activeTab === "Unassigned") return !task.assigned_to;
+    if (activeTab === "In Progress") return task.status === "IN_PROGRESS";
+    if (activeTab === "Completed")
+      return task.status === "RESOLVED" || task.status === "CLOSED";
+    return true;
+  });
 
   return (
     <StaffDashboardLayout>
@@ -214,88 +184,120 @@ const DepartmentTasks = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100/60">
-                  {tasks.map((task, i) => {
-                    const priorityStyles = getPriorityStyles(task.priority);
-                    return (
-                      <tr
-                        key={i}
-                        className="hover:bg-slate-50/50 transition-colors group"
+                  {loading ? (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-6 py-8 text-center text-gray-400 text-sm"
                       >
-                        <td className="px-6 py-5">
-                          <span className="text-[13px] font-black text-slate-400 group-hover:text-blue-600 transition-colors">
-                            {task.id}
-                          </span>
-                        </td>
-                        <td className="px-6 py-5 min-w-[200px]">
-                          <p className="text-[14px] font-black text-gray-900 leading-tight mb-1">
-                            {task.subject}
-                          </p>
-                          <p className="text-[12px] font-semibold text-gray-400">
-                            Requested by{" "}
-                            <span className="text-gray-500">
-                              {task.requester}
+                        Loading department tasks...
+                      </td>
+                    </tr>
+                  ) : filteredTasks.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-6 py-8 text-center text-gray-400 text-sm italic"
+                      >
+                        No tasks found in this category.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredTasks.map((task: any) => {
+                      const priorityStyles = getPriorityStyles(
+                        task.priority as any,
+                      );
+                      const statusMap: any = {
+                        OPEN: "New",
+                        IN_PROGRESS: "In Progress",
+                        RESOLVED: "Completed",
+                        CLOSED: "Completed",
+                      };
+                      const status = statusMap[task.status] || task.status;
+
+                      return (
+                        <tr
+                          key={task.id}
+                          className="hover:bg-slate-50/50 transition-colors group cursor-pointer"
+                          onClick={() => navigate(`/staff/tickets/${task.id}`)}
+                        >
+                          <td className="px-6 py-5">
+                            <span className="text-[13px] font-black text-slate-400 group-hover:text-blue-600 transition-colors">
+                              {task.ticket_number || task.id.substring(0, 8)}
                             </span>
-                          </p>
-                        </td>
-                        <td className="px-6 py-5">
-                          <div
-                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-wide uppercase ${priorityStyles.bg} ${priorityStyles.text}`}
-                          >
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${priorityStyles.dot}`}
-                            ></span>
-                            {task.priority}
-                          </div>
-                        </td>
-                        <td className="px-6 py-5">
-                          {task.assigneeName === "Unassigned" ? (
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-full border border-dashed border-gray-300 bg-gray-50 flex items-center justify-center text-gray-400">
-                                <Plus size={14} />
-                              </div>
-                              <span className="text-[13px] font-bold text-gray-400">
-                                {task.assigneeName}
+                          </td>
+                          <td className="px-6 py-5 min-w-[200px]">
+                            <p className="text-[14px] font-black text-gray-900 leading-tight mb-1">
+                              {task.title}
+                            </p>
+                            <p className="text-[12px] font-semibold text-gray-400">
+                              Requested by{" "}
+                              <span className="text-gray-500">
+                                {task.users?.full_name || "Student"}
                               </span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2.5">
-                              {task.assigneeAvatar ? (
-                                <img
-                                  src={task.assigneeAvatar}
-                                  alt={task.assigneeName}
-                                  className="w-8 h-8 rounded-full shadow-sm object-cover"
-                                />
-                              ) : (
-                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-black text-xs">
-                                  {task.assigneeName?.charAt(0)}
-                                </div>
-                              )}
-                              <span className="text-[13px] font-bold text-gray-800">
-                                {task.assigneeName}
-                              </span>
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-5 text-right">
-                          <div className="flex justify-end">
-                            <span
-                              className={`inline-flex px-3 py-1.5 rounded-full text-[11px] border text-center leading-none ${getStatusStyles(task.status)}`}
+                            </p>
+                          </td>
+                          <td className="px-6 py-5">
+                            <div
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-wide uppercase ${priorityStyles.bg} ${priorityStyles.text}`}
                             >
-                              {task.status}
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${priorityStyles.dot}`}
+                              ></span>
+                              {task.priority}
+                            </div>
+                          </td>
+                          <td className="px-6 py-5">
+                            {!task.assigned_to ? (
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-full border border-dashed border-gray-300 bg-gray-50 flex items-center justify-center text-gray-400">
+                                  <Plus size={14} />
+                                </div>
+                                <span className="text-[13px] font-bold text-gray-400">
+                                  Unassigned
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2.5">
+                                {task.assigned_user?.avatar_url ? (
+                                  <img
+                                    src={task.assigned_user.avatar_url}
+                                    alt={task.assigned_user.full_name}
+                                    className="w-8 h-8 rounded-full shadow-sm object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-black text-xs">
+                                    {(
+                                      task.assigned_user?.full_name || "S"
+                                    ).charAt(0)}
+                                  </div>
+                                )}
+                                <span className="text-[13px] font-bold text-gray-800">
+                                  {task.assigned_user?.full_name || "Staff"}
+                                </span>
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-5 text-right">
+                            <div className="flex justify-end">
+                              <span
+                                className={`inline-flex px-3 py-1.5 rounded-full text-[11px] border text-center leading-none ${getStatusStyles(status as any)}`}
+                              >
+                                {status}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
 
-            {/* Pagination Footer */}
             <div className="p-4 border-t border-gray-100 flex items-center justify-between text-[13px]">
               <span className="text-gray-500 font-medium">
-                Showing 1 to 4 of 28 tasks
+                Showing {filteredTasks.length} of {allComplaints.length} tasks
               </span>
               <div className="flex items-center gap-1 text-sm font-semibold">
                 <button className="px-3 py-1.5 text-gray-500 hover:text-gray-900 border border-gray-200/60 rounded-lg mr-1 disabled:opacity-50">
@@ -321,64 +323,74 @@ const DepartmentTasks = () => {
             </h2>
 
             {/* Staff Workload Cards */}
-            {teamData.map((member, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-3xl border border-gray-200/60 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.03)] p-5"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    {member.avatar ? (
-                      <img
-                        src={member.avatar}
-                        alt={member.name}
-                        className="w-[42px] h-[42px] rounded-full shadow-sm object-cover"
-                      />
-                    ) : (
-                      <div className="w-[42px] h-[42px] rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-black">
-                        {member.name.charAt(0)}
+            {teamLoading ? (
+              <div className="text-gray-400 text-sm italic px-2">
+                Loading team...
+              </div>
+            ) : teamData.length === 0 ? (
+              <div className="text-gray-400 text-sm italic px-2">
+                No team members found
+              </div>
+            ) : (
+              teamData.map((member: any, idx: number) => (
+                <div
+                  key={idx}
+                  className="bg-white rounded-3xl border border-gray-200/60 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.03)] p-5"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      {member.avatar ? (
+                        <img
+                          src={member.avatar}
+                          alt={member.name}
+                          className="w-[42px] h-[42px] rounded-full shadow-sm object-cover"
+                        />
+                      ) : (
+                        <div className="w-[42px] h-[42px] rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-black">
+                          {member.name.charAt(0)}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="text-[14px] font-black text-gray-900 line-clamp-1">
+                          {member.name}
+                        </h4>
+                        <p className="text-[10px] font-black tracking-widest uppercase text-gray-400 mt-0.5">
+                          {member.role}
+                        </p>
                       </div>
-                    )}
-                    <div>
-                      <h4 className="text-[14px] font-black text-gray-900">
-                        {member.name}
-                      </h4>
-                      <p className="text-[10px] font-black tracking-widest uppercase text-gray-400 mt-0.5">
-                        {member.role}
-                      </p>
+                    </div>
+                    <div className="text-right flex flex-col items-end">
+                      <span className="text-[13px] font-black text-[#1e3a8a] bg-blue-50/50 px-2 py-0.5 rounded-md">
+                        {member.activeCount} active
+                      </span>
                     </div>
                   </div>
-                  <div className="text-right flex flex-col items-end">
-                    <span className="text-[13px] font-black text-[#1e3a8a] bg-blue-50/50 px-2 py-0.5 rounded-md">
-                      {member.activeCount} active
-                    </span>
-                  </div>
-                </div>
 
-                <div className="space-y-1.5">
-                  <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${member.capacityLevel > 85 ? "bg-red-500" : "bg-[#1e3a8a]"}`}
-                      style={{ width: `${member.capacityLevel}%` }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between items-center text-[11px] font-bold">
-                    <span className="text-gray-400">Capacity</span>
-                    <span
-                      className={
-                        member.capacityLevel > 85
-                          ? "text-red-500"
-                          : "text-gray-900"
-                      }
-                    >
-                      {member.capacityLevel > 85
-                        ? `High (${member.capacityLevel}%)`
-                        : `${member.capacityLevel}%`}
-                    </span>
+                  <div className="space-y-1.5">
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${member.capacityLevel > 85 ? "bg-red-500" : "bg-[#1e3a8a]"}`}
+                        style={{ width: `${member.capacityLevel}%` }}
+                      ></div>
+                    </div>
+                    <div className="flex justify-between items-center text-[11px] font-bold">
+                      <span className="text-gray-400">Capacity</span>
+                      <span
+                        className={
+                          member.capacityLevel > 85
+                            ? "text-red-500"
+                            : "text-gray-900"
+                        }
+                      >
+                        {member.capacityLevel > 85
+                          ? `High (${member.capacityLevel}%)`
+                          : `${member.capacityLevel}%`}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
 
             {/* Dept Summary Card */}
             <div className="bg-blue-50/50 rounded-3xl border border-blue-100/50 p-5 mt-4">
@@ -389,21 +401,29 @@ const DepartmentTasks = () => {
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-[13px]">
                   <span className="text-gray-500 font-semibold">
-                    Unassigned Tickets:
+                    Open Tickets:
                   </span>
-                  <span className="font-black text-gray-900">6</span>
+                  <span className="font-black text-gray-900">
+                    {summaryLoading ? "..." : summary?.pending_dept_tasks || 0}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center text-[13px]">
                   <span className="text-gray-500 font-semibold">
-                    Average Load:
+                    My Assigned:
                   </span>
-                  <span className="font-black text-gray-900">58%</span>
+                  <span className="font-black text-gray-900">
+                    {summaryLoading ? "..." : summary?.assigned_tickets || 0}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center text-[13px]">
                   <span className="text-gray-500 font-semibold">
-                    SLAs at Risk:
+                    Avg. Resolution:
                   </span>
-                  <span className="font-black text-red-500">2</span>
+                  <span className="font-black text-gray-900">
+                    {summaryLoading
+                      ? "..."
+                      : summary?.avg_response_time || "N/A"}
+                  </span>
                 </div>
               </div>
             </div>
