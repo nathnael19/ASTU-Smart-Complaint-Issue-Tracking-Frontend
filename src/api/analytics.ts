@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000/api/v1";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
 
 const parseError = async (response: Response) => {
   try {
@@ -31,6 +31,7 @@ export interface DepartmentSummary {
   pending_dept_tasks: number;
   avg_response_time: string;
   resolved_this_week: number;
+  personal_resolved_this_week: number;
   avg_satisfaction_rating: number;
 }
 
