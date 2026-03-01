@@ -4,7 +4,7 @@ import { cn } from "../../lib/utils";
 
 interface TicketDetailHeaderProps {
   ticketId: string;
-  status: "Open" | "In Progress" | "Resolved" | "Closed";
+  status: string;
   title: string;
 }
 
@@ -16,17 +16,21 @@ const TicketDetailHeader = ({
   const navigate = useNavigate();
 
   const getStatusStyles = (status: string) => {
-    switch (status) {
-      case "In Progress":
+    const s = (status || "").toUpperCase().replace(/\s+/g, "_");
+    switch (s) {
+      case "IN_PROGRESS":
+      case "IN PROGRESS":
         return "bg-orange-100 text-orange-700 border-orange-200";
-      case "Resolved":
+      case "RESOLVED":
         return "bg-green-100 text-green-700 border-green-200";
-      case "Closed":
+      case "CLOSED":
         return "bg-gray-100 text-gray-700 border-gray-200";
       default:
         return "bg-blue-100 text-blue-700 border-blue-200";
     }
   };
+
+  const displayStatus = status === "IN_PROGRESS" ? "In Progress" : (status || "Open").replace(/_/g, " ");
 
   return (
     <div className="flex items-center justify-between pb-6 border-b border-gray-100">
@@ -45,7 +49,7 @@ const TicketDetailHeader = ({
               getStatusStyles(status),
             )}
           >
-            {status.toUpperCase()}
+            {displayStatus.toUpperCase()}
           </span>
           <span className="text-lg font-black text-gray-900">{title}</span>
         </div>
