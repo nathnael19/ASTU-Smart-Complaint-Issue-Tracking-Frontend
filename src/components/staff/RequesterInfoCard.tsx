@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 interface RequesterInfoCardProps {
   name: string;
-  program: string;
+  program?: string | null;
   id: string;
   email: string;
-  phone: string;
+  phone?: string | null;
   avatar?: string;
 }
 
@@ -50,7 +50,7 @@ const RequesterInfoCard = ({
           </div>
         )}
         <h4 className="text-lg font-black text-gray-900 mt-4">{name}</h4>
-        <p className="text-sm font-bold text-gray-500">{program}</p>
+        <p className="text-sm font-bold text-gray-500">{program || "—"}</p>
       </div>
 
       <div className="space-y-3 pt-6 border-t border-gray-100">
@@ -86,7 +86,7 @@ const RequesterInfoCard = ({
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">
               Phone
             </span>
-            <p className="text-sm font-bold text-gray-900 truncate">{phone}</p>
+            <p className="text-sm font-bold text-gray-900 truncate">{phone || "—"}</p>
           </div>
         </div>
       </div>
