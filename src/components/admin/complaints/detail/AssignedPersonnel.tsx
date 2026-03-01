@@ -3,9 +3,18 @@ import { Mail } from "lucide-react";
 interface AssignedPersonnelProps {
   assignedTo?: string;
   assignedUser?: {
-    full_name: string;
+    full_name?: string;
+    first_name?: string;
+    last_name?: string;
     role: string;
   };
+}
+
+function getAssignedUserName(u: NonNullable<AssignedPersonnelProps["assignedUser"]>): string {
+  if (u.full_name?.trim()) return u.full_name.trim();
+  const first = (u.first_name ?? "").trim();
+  const last = (u.last_name ?? "").trim();
+  return `${first} ${last}`.trim() || "Staff";
 }
 
 const AssignedPersonnel = ({
@@ -25,11 +34,13 @@ const AssignedPersonnel = ({
     );
   }
 
-  const initials = assignedUser.full_name
+  const displayName = getAssignedUserName(assignedUser);
+  const initials = displayName
     .split(" ")
     .map((n) => n[0])
     .join("")
-    .toUpperCase();
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
     <div className="bg-white rounded-[1.5rem] border border-gray-100 shadow-sm p-6 mb-6">
@@ -46,7 +57,7 @@ const AssignedPersonnel = ({
           </div>
           <div>
             <h4 className="text-sm font-black text-gray-900 leading-none mb-1.5">
-              {assignedUser.full_name}
+              {displayName}
             </h4>
             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
               {assignedUser.role}
@@ -54,7 +65,11 @@ const AssignedPersonnel = ({
           </div>
         </div>
 
-        <button className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-[#1e3a8a] hover:bg-blue-50 transition-colors">
+        <button
+          type="button"
+          className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-[#1e3a8a] hover:bg-blue-50 transition-colors"
+          aria-label="Email assigned staff"
+        >
           <Mail size={18} />
         </button>
       </div>
