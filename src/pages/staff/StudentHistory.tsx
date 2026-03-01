@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   History,
@@ -7,65 +8,54 @@ import {
   Clock,
   XCircle,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 import StaffDashboardLayout from "../../components/staff/StaffDashboardLayout";
+import { getUserByIdNumber } from "../../api/users";
+import { getAllComplaints } from "../../api/complaints";
 
 const StudentHistory = () => {
   const { studentId } = useParams<{ studentId: string }>();
   const navigate = useNavigate();
-  // Decode studentId if it was URL encoded
-  const decodedId = studentId ? decodeURIComponent(studentId) : "Unknown ID";
 
-  // Mock data for the student
-  const student = {
-    name: "Abebe Bikila",
-    program: "BSc. Electrical Engineering, 3rd Year",
-    id: decodedId,
-    email: "abebe.b@astu.edu.et",
-    phone: "+251 911 223 344",
-    joinedDate: "Sept 2021",
-    status: "Active",
-  };
+  const [student, setStudent] = useState<any>(null);
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data for history
-  const history = [
-    {
-      id: "#TIC-8455",
-      title: "Lab PC #14 Component Failure",
-      date: "Oct 24, 2023",
-      status: "In Progress",
-      category: "Hardware",
-    },
-    {
-      id: "#TIC-8120",
-      title: "Network connectivity issue in Dorm Block 4",
-      date: "Sep 12, 2023",
-      status: "Resolved",
-      category: "Network",
-    },
-    {
-      id: "#TIC-7944",
-      title: "Library portal access denied",
-      date: "Aug 05, 2023",
-      status: "Resolved",
-      category: "Account Access",
-    },
-    {
-      id: "#TIC-7501",
-      title: "Class projector not turning on",
-      date: "Jun 18, 2023",
-      status: "Closed",
-      category: "Hardware",
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!studentId) return;
+
+      setLoading(true);
+      setError(null);
+      try {
+        // 1. Fetch student by ID number
+        const studentData = await getUserByIdNumber(studentId);
+        setStudent(studentData);
+
+        // 2. Fetch history (complaints submitted by this student)
+        const historyData = await getAllComplaints({
+          submitted_by: studentData.id,
+        });
+        setHistory(historyData.data || []);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch student history.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [studentId]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "Resolved":
+      case "RESOLVED":
         return <CheckCircle2 className="w-5 h-5 text-green-500" />;
-      case "In Progress":
+      case "IN_PROGRESS":
         return <Clock className="w-5 h-5 text-amber-500" />;
-      case "Closed":
+      case "CLOSED":
         return <XCircle className="w-5 h-5 text-gray-500" />;
       default:
         return <AlertCircle className="w-5 h-5 text-blue-500" />;
@@ -74,16 +64,61 @@ const StudentHistory = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "Resolved":
+      case "RESOLVED":
         return "bg-green-50 text-green-700 border-green-200";
-      case "In Progress":
+      case "IN_PROGRESS":
         return "bg-amber-50 text-amber-700 border-amber-200";
-      case "Closed":
+      case "CLOSED":
         return "bg-gray-50 text-gray-700 border-gray-200";
       default:
         return "bg-blue-50 text-blue-700 border-blue-200";
     }
   };
+
+  if (loading) {
+    return (
+      <StaffDashboardLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <p className="text-lg font-bold text-gray-600">
+            Loading student history...
+          </p>
+        </div>
+      </StaffDashboardLayout>
+    );
+  }
+
+  if (error || !student) {
+    return (
+      <StaffDashboardLayout>
+        <div className="p-8 max-w-[1200px] mx-auto">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center text-gray-500 hover:text-gray-900 transition-colors mb-6 font-medium"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+          </button>
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-black text-gray-900 mb-2">Error</h2>
+            <p className="text-gray-600 font-medium">
+              {error || "Student not found."}
+            </p>
+          </div>
+        </div>
+      </StaffDashboardLayout>
+    );
+  }
+
+  const initials = student.full_name
+    ? student.full_name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+    : (student.first_name?.[0] || "") + (student.last_name?.[0] || "");
+
+  const fullName =
+    student.full_name || `${student.first_name} ${student.last_name}`;
 
   return (
     <StaffDashboardLayout>
@@ -101,14 +136,11 @@ const StudentHistory = () => {
             <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 text-center flex flex-col items-center">
               <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center border-4 border-white shadow-md mb-4">
                 <span className="text-blue-600 font-black text-3xl">
-                  {student.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
+                  {initials}
                 </span>
               </div>
               <h2 className="text-2xl font-black text-gray-900 mb-1">
-                {student.name}
+                {fullName}
               </h2>
               <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-200 mb-4 inline-block">
                 {student.status} Student
@@ -120,7 +152,7 @@ const StudentHistory = () => {
                     ID Number
                   </label>
                   <p className="text-sm font-bold text-gray-900">
-                    {student.id}
+                    {student.student_id_number || "N/A"}
                   </p>
                 </div>
                 <div>
@@ -128,7 +160,7 @@ const StudentHistory = () => {
                     Program
                   </label>
                   <p className="text-sm font-bold text-gray-900">
-                    {student.program}
+                    {student.program || "Not specified"}
                   </p>
                 </div>
                 <div>
@@ -144,15 +176,15 @@ const StudentHistory = () => {
                     Phone
                   </label>
                   <p className="text-sm font-bold text-gray-900">
-                    {student.phone}
+                    {student.phone || "N/A"}
                   </p>
                 </div>
                 <div>
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">
-                    Joined
+                    Department
                   </label>
                   <p className="text-sm font-bold text-gray-900">
-                    {student.joinedDate}
+                    {student.department?.name || "N/A"}
                   </p>
                 </div>
               </div>
@@ -186,43 +218,54 @@ const StudentHistory = () => {
               </div>
 
               <div className="space-y-4">
-                {history.map((ticket, index) => (
-                  <div
-                    key={index}
-                    onClick={() =>
-                      navigate(`/staff/tickets/${ticket.id.replace("#", "")}`)
-                    }
-                    className="p-5 rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-start gap-4">
-                        <div className="mt-1">
-                          {getStatusIcon(ticket.status)}
-                        </div>
-                        <div>
-                          <p className="text-sm font-black text-gray-500 mb-1">
-                            {ticket.id}
-                          </p>
-                          <h4 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                            {ticket.title}
-                          </h4>
-                          <div className="flex items-center gap-3 mt-2 text-sm font-medium text-gray-500">
-                            <span>{ticket.date}</span>
-                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                            <span>{ticket.category}</span>
+                {history.length > 0 ? (
+                  history.map((ticket, index) => (
+                    <div
+                      key={index}
+                      onClick={() => navigate(`/staff/tickets/${ticket.id}`)}
+                      className="p-5 rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all cursor-pointer bg-gray-50 hover:bg-white group"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                          <div className="mt-1">
+                            {getStatusIcon(ticket.status)}
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-gray-500 mb-1">
+                              {ticket.ticket_number}
+                            </p>
+                            <h4 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                              {ticket.title}
+                            </h4>
+                            <div className="flex items-center gap-3 mt-2 text-sm font-medium text-gray-500">
+                              <span>
+                                {new Date(
+                                  ticket.created_at,
+                                ).toLocaleDateString()}
+                              </span>
+                              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                              <span>{ticket.category?.replace(/_/g, " ")}</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="self-start sm:self-center shrink-0">
-                        <span
-                          className={`px-3 py-1 text-xs font-bold rounded-full border ${getStatusBadge(ticket.status)}`}
-                        >
-                          {ticket.status}
-                        </span>
+                        <div className="self-start sm:self-center shrink-0">
+                          <span
+                            className={`px-3 py-1 text-xs font-bold rounded-full border ${getStatusBadge(ticket.status)}`}
+                          >
+                            {ticket.status}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12">
+                    <TicketIcon className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+                    <p className="text-gray-500 font-medium">
+                      No complaints found for this student.
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
