@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000/api/v1";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -13,7 +13,10 @@ export interface ChatResponse {
 const parseError = async (response: Response): Promise<string> => {
   try {
     const data = await response.json();
-    if (data.detail) return Array.isArray(data.detail) ? data.detail.map((e: any) => e.msg).join(". ") : data.detail;
+    if (data.detail)
+      return Array.isArray(data.detail)
+        ? data.detail.map((e: any) => e.msg).join(". ")
+        : data.detail;
     return "Something went wrong.";
   } catch {
     return "Connection error.";
@@ -22,7 +25,7 @@ const parseError = async (response: Response): Promise<string> => {
 
 export const sendChatMessage = async (
   message: string,
-  history?: ChatMessage[]
+  history?: ChatMessage[],
 ): Promise<ChatResponse> => {
   const token = localStorage.getItem("access_token");
   const response = await fetch(`${API_URL}/chat/`, {
